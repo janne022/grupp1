@@ -27,7 +27,7 @@ if (app.Environment.IsDevelopment())
 
 app.UseOutputCache();
 
-string[] summaries = ["Freezing", "Bracing", "Chilly", "Cool", "Mild", "Warm", "Balmy", "Hot", "Sweltering", "Scorching"];
+string[] summaries = ["Freezing", "Bracing", "Chilly", "Cool", "Mild", "Warm", "Balmy", "Hot", "Sweltering", "Scorching", "Sunny"];
 
 var api = app.MapGroup("/api");
 api.MapGet("weatherforecast", () =>
