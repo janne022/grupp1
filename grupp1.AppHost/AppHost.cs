@@ -1,3 +1,5 @@
+using Scalar.Aspire;
+
 var builder = DistributedApplication.CreateBuilder(args);
 
 var cache = builder.AddRedis("cache");
@@ -20,6 +22,11 @@ var server = builder.AddProject<Projects.grupp1_Server>("server")
 var webfrontend = builder.AddViteApp("webfrontend", "../grupp1.Frontend")
     .WithReference(server)
     .WaitFor(server);
+
+var scalar = builder.AddScalarApiReference()
+    .ExcludeFromManifest();
+
+scalar.WithApiReference(server);
 
 server.PublishWithContainerFiles(webfrontend, "wwwroot");
 
