@@ -1,17 +1,7 @@
 using Scalar.Aspire;
 
 var builder = DistributedApplication.CreateBuilder(args);
-builder.Eventing.Subscribe<ResourceEndpointsAllocatedEvent>((@event, ct) =>
-{
-    foreach (var ep in @event.Resource.Annotations.OfType<EndpointAnnotation>())
-    {
-        if (ep.AllocatedEndpoint is { Address: "localhost" } alloc)
-        {
-            ep.AllocatedEndpoint = new AllocatedEndpoint(ep, "127.0.0.1", alloc.Port, alloc.BindingMode, alloc.TargetPortExpression, alloc.NetworkID);
-        }
-    }
-    return Task.CompletedTask;
-});
+
 var cache = builder.AddRedis("cache");
 
 var postgres = builder.AddAzurePostgresFlexibleServer("databaseServer")
