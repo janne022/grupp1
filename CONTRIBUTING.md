@@ -8,6 +8,8 @@ An Issue should define _what_ needs to be implemented or changed, and _why._ It 
 
 A well-defined Issue gives the developer the context they need to understand what the unimplemented feature or problem is, along with the expected result at the end ("the sum of the two supplied integers are returned as an integer").
 
+Ensure you link the project and the relevant milestone before you submit your Issue.
+
 ### Issue Title
 
 Keep the title simple and specific.
