@@ -109,7 +109,7 @@ Do _not_ add project or milestone for the PR! This should already be connected t
 
 - Treat team members with respect
 - Criticise product, not the developer
-- try to embrace blame free culture (focus on _what went wrong_ and _how to prevent it_, not _who caused it_)
+- Try to embrace blame free culture (focus on _what went wrong_ and _how to prevent it_, not _who caused it_)
 
 ### Reviewing PRs
 
