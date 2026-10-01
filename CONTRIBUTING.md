@@ -1,9 +1,10 @@
-# So you wish to contribute!
+# So you wish to contribute
+
 Let these clean and cool guidelines help you help your colleagues
 
 ## Defining an Issue
 
-An Issue should define *what* needs to be implemented or changed, and *why.* It should not define *how* the developer chooses to fulfill the Issue.
+An Issue should define _what_ needs to be implemented or changed, and _why._ It should not define _how_ the developer chooses to fulfill the Issue.
 
 A well-defined Issue gives the developer the context they need to understand what the unimplemented feature or problem is, along with the expected result at the end ("the sum of the two supplied integers are returned as an integer").
 
@@ -45,11 +46,11 @@ Add anything that may help the developer working on the issue understand the Iss
 
 ### Keep Issues focused
 
-One Issue should represent *one piece of work*.
+One Issue should represent _one piece of work_.
 
 If an Issue starts containing several unrelated features, consider splitting it into multiple Issues.
 
-### Describe *what* needs to be done, not *how*
+### Describe _what_ needs to be done, not _how_
 
 Issues should generally describe the desired behaviour or outcome rather than how the developer should reach this result.
 
@@ -68,37 +69,44 @@ The first describes the requirement. The second unnecessarily decides the implem
 Finally, add the appropriate labels to your Issue. This allows developers to get an overview on the work being done, before they decide which Issue to take on and when going through the Project's history.
 
 ## Writing a Pull Request (PR)
+
 If possible: when you start working on an issue, open a connected PR as a draft. This lets other developers in the team be able to watch your progress, ask clarifying questions and hold a live discussion about the solution as it is being created.
 
 Make sure your PR has these following points ticked off, before making your draft PR into a real one:
 
 ### Lives up to the user story/connected issue
+
 Make an extra effort to tick off each requirement in the linked user story or issue, so the change is what is expected, and the reviewer can focus on reviewing the correct implementation.
 
 ### One PR, one atomic change
+
 Do not create insanely huge PRs with several features. Rather, make several, small PRs, where each and every PR focuses on **one change**.
 
 ### Structure your PRs
+
 Make sure your PR follow this structure:
 
 [TITLE]
-Should explain what changed and why on one line. Not "fix bug", rather "added validation to service.jsx to mitigate error saving emails" 
+Should explain what changed and why on one line. Not "fix bug", rather "added validation to service.jsx to mitigate error saving emails"
 
 [DESCRIPTION]
 Should have substructure such as:
+
 - What was the issue?
 - What does the change do to fix it?
 - What other solutions did you (optionally) try before creating this one?
 - What should the reviewer focus on/how to test the change?
-- What tests have *you* performed?
+- What tests have _you_ performed?
 
 [LABELS]
 Add labels and metadata to the PR to make it easier to scan what the PR entails.
 
 ## Writing an issue
+
 Throw new NotImplementedException
 
 ## Community and general expectations a.k.a. game rules
+
 - Treat team members with respect
 - Criticise product, not the developer
-- try to embrace blame free culture (focus on *what went wrong* and *how to prevent it*, not *who caused it*)
+- try to embrace blame free culture (focus on _what went wrong_ and _how to prevent it_, not _who caused it_)
