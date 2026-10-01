@@ -101,10 +101,6 @@ Should have substructure such as:
 [LABELS]
 Add labels and metadata to the PR to make it easier to scan what the PR entails.
 
-## Writing an issue
-
-Throw new NotImplementedException
-
 ## Community and general expectations a.k.a. game rules
 
 - Treat team members with respect
