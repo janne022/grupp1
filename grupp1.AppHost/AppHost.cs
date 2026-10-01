@@ -17,7 +17,7 @@ var server = builder.AddProject<Projects.grupp1_Server>("server")
     .WithReference(database)
     .WaitFor(database);
 
-var webfrontend = builder.AddViteApp("webfrontend", "../frontend")
+var webfrontend = builder.AddViteApp("webfrontend", "../grupp1.Frontend")
     .WithReference(server)
     .WaitFor(server);
 

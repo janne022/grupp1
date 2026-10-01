@@ -1,0 +1,7 @@
+<Solution>
+  <Project Path="grupp1.Frontend/grupp1.Frontend.esproj">
+    <Build />
+  </Project>
+  <Project Path="grupp1.AppHost/grupp1.AppHost.csproj" />
+  <Project Path="grupp1.Server/grupp1.Server.csproj" />
+</Solution>
