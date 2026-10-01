@@ -1,6 +1,72 @@
 # So you wish to contribute!
 Let these clean and cool guidelines help you help your colleagues
 
+## Defining an Issue
+
+An Issue should define *what* needs to be implemented or changed, and *why.* It should not define *how* the developer chooses to fulfill the Issue.
+
+A well-defined Issue gives the developer the context they need to understand what the unimplemented feature or problem is, along with the expected result at the end ("the sum of the two supplied integers are returned as an integer").
+
+### Issue Title
+
+Keep the title simple and specific.
+
+Like this:
+
+- `Add password validation to account creation`
+- `Prevent duplicate entries from being added to database`
+- `Allow user to log out from the user dashboard`
+
+And not like this:
+
+- `Fix this bug`
+- `Authentication`
+- `Business logic stuff`
+- `Make feature better!!`
+
+### Issue Description
+
+Try to keep this design as your guide, unless it is for some reason not fitting for your particular issue.
+
+**[DESCRIPTION]**
+What is the problem, need, or reason for this Issue to exist?
+
+**[ACCEPTANCE CRITERIA]**
+This describes what will be required for the Issue to be considered solved.
+
+Assuming the current Issue is about the user registration process, it may look something like this:
+
+- User cannot create an account with an invalid password
+- Validation errors are shown to the user on the frontend
+- User is sent to their dashboard when account creation is successful
+
+**[CONTEXT]**
+Add anything that may help the developer working on the issue understand the Issue. This is further description of the Issue's general context if the Description field gets too wordy describing the general context, possibly links to documentation or references to specific files. Whatever may be needed to give the developer the context they need to start working.
+
+### Keep Issues focused
+
+One Issue should represent *one piece of work*.
+
+If an Issue starts containing several unrelated features, consider splitting it into multiple Issues.
+
+### Describe *what* needs to be done, not *how*
+
+Issues should generally describe the desired behaviour or outcome rather than how the developer should reach this result.
+
+For example:
+
+> The user should be blocked from adding a duplicate database entry.
+
+Is better than:
+
+> Add an `CheckIfEntryExistsInDatabaseAlready()` method to `DatabaseRepository` and call it from `AddDatabaseEntry()`.
+
+The first describes the requirement. The second unnecessarily decides the implementation before the developer has investigated the problem and thought about how to best solve the Issue.
+
+### Issue labels
+
+Finally, add the appropriate labels to your Issue. This allows developers to get an overview on the work being done, before they decide which Issue to take on and when going through the Project's history.
+
 ## Writing a Pull Request (PR)
 If possible: when you start working on an issue, open a connected PR as a draft. This lets other developers in the team be able to watch your progress, ask clarifying questions and hold a live discussion about the solution as it is being created.
 
