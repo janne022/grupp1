@@ -106,3 +106,11 @@ Do _not_ add project or milestone for the PR! This should already be connected t
 - Treat team members with respect
 - Criticise product, not the developer
 - try to embrace blame free culture (focus on _what went wrong_ and _how to prevent it_, not _who caused it_)
+
+### Reviewing PRs
+
+When reviewing PRs you do not need to run through the code line by line or scrutinize every detail. You should only focus on minimizing human error and asking yourself the following questions:
+
+- Does the PR fulfill the linked Issue's Acceptance Criteria without scope creep?
+- Is the code clean, readable, and structured according to project conventions?
+- Are there any obvious bugs, edge cases or security vulnerabilities that have not been considered?
