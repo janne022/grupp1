@@ -18,5 +18,6 @@
     <PackageReference Include="Aspire.Hosting.JavaScript" Version="13.6.0" />
     <PackageReference Include="Aspire.Hosting.PostgreSQL" Version="13.6.0" />
     <PackageReference Include="Aspire.Hosting.Redis" Version="13.6.0" />
+    <PackageReference Include="Scalar.Aspire" Version="0.11.28" />
   </ItemGroup>
 </Project>
