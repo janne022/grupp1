@@ -100,7 +100,7 @@ Should have substructure such as:
 + make sure to end your description with "Resolves/Closes #<numberOftheIssue>
 [LABELS]
 Add labels and metadata to the PR to make it easier to scan what the PR entails.
-
+Do _not_ add project or milestone for the PR! This should already be connected to the issue itself.
 ## Community and general expectations a.k.a. game rules
 
 - Treat team members with respect
