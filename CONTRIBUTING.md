@@ -97,7 +97,7 @@ Should have substructure such as:
 - What other solutions did you (optionally) try before creating this one?
 - What should the reviewer focus on/how to test the change?
 - What tests have _you_ performed?
-
++ make sure to end your description with "Resolves/Closes #<numberOftheIssue>
 [LABELS]
 Add labels and metadata to the PR to make it easier to scan what the PR entails.
 
