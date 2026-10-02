@@ -2,7 +2,8 @@ using Scalar.Aspire;
 
 var builder = DistributedApplication.CreateBuilder(args);
 
-var cache = builder.AddRedis("cache");
+var cache = builder.AddAzureManagedRedis("cache")
+    .RunAsContainer();
 
 var postgres = builder.AddAzurePostgresFlexibleServer("databaseServer")
     .RunAsContainer(db => db.WithLifetime(ContainerLifetime.Persistent)
