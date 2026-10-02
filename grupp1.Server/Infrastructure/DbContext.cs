@@ -3,7 +3,7 @@ using Microsoft.AspNetCore.Identity.EntityFrameworkCore;
 using Microsoft.EntityFrameworkCore;
 using Vicaria.Server.Domain.Models;
 
-namespace grupp1.Server.Infrastructure;
+namespace Vicaria.Server.Infrastructure;
 
 public class VicariaDbContext : IdentityDbContext<User>
 {

@@ -1,4 +1,4 @@
-using grupp1.Server.Infrastructure;
+using Vicaria.Server.Infrastructure;
 using Microsoft.AspNetCore.Identity;
 using Vicaria.Server.Domain.Models;
 
