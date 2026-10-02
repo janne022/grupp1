@@ -13,7 +13,7 @@ builder.Services.AddProblemDetails();
 // Learn more about configuring OpenAPI at https://aka.ms/aspnet/openapi
 builder.Services.AddOpenApi();
 
-builder.AddNpgsqlDbContext<Context>("database");
+builder.AddNpgsqlDbContext<VicariaDbContext>("database");
 
 var app = builder.Build();
 
