@@ -26,7 +26,8 @@ public class Program
 
         builder.AddNpgsqlDbContext<VicariaDbContext>("database");
 
-        // TODO: add CORS config here
+        // TODO: configure CORS here
+        builder.Services.AddCors();
 
         builder.Services
             .AddIdentityApiEndpoints<User>(options =>
@@ -56,6 +57,9 @@ public class Program
         {
             app.MapOpenApi();
         }
+
+        // TODO: implement CORS here
+        app.UseCors();
 
         var api = app.MapGroup("/api");
 
