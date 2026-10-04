@@ -24,6 +24,8 @@ var webfrontend = builder.AddViteApp("webfrontend", "../grupp1.Frontend")
     .WithReference(server)
     .WaitFor(server);
 
+server.WithReference(webfrontend); // for CORS
+
 var scalar = builder.AddScalarApiReference()
     .ExcludeFromManifest();
 
