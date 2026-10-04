@@ -12,11 +12,7 @@ public class Program
 
         var builder = WebApplication.CreateBuilder(args);
 
-        string[] frontendOrigins =
-        [
-            builder.Configuration["Cors:AllowedOrigins:Frontend:Http1"] ?? throw new InvalidOperationException(message: "cannot find Http1 origin for frontend"),
-            builder.Configuration["Cors:AllowedOrigins:Frontend:Http2"] ?? throw new InvalidOperationException(message: "cannot find Http2 origin for frontend")
-        ];
+        var frontendOrigin = builder.Configuration["WEBFRONTEND_HTTP"] ?? throw new InvalidOperationException(message: "Could not fetch frontend origin from Aspire");
 
         builder.AddRedisClientBuilder("cache").WithOutputCache();
 
@@ -36,7 +32,7 @@ public class Program
         {
             options.AddPolicy(name: "Frontend", configurePolicy: p =>
             {
-                p.WithOrigins(frontendOrigins)
+                p.WithOrigins(frontendOrigin)
                 .AllowAnyHeader()
                 .AllowAnyMethod()
                 .AllowCredentials();
