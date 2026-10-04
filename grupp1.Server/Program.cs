@@ -12,6 +12,12 @@ public class Program
 
         var builder = WebApplication.CreateBuilder(args);
 
+        string[] frontendOrigins =
+        [
+            builder.Configuration["Cors:AllowedOrigins:Frontend:Http1"] ?? throw new InvalidOperationException(message: "cannot find Http1 origin for frontend"),
+            builder.Configuration["Cors:AllowedOrigins:Frontend:Http2"] ?? throw new InvalidOperationException(message: "cannot find Http2 origin for frontend")
+        ];
+
         builder.AddRedisClientBuilder("cache").WithOutputCache();
 
         builder.AddServiceDefaults();
@@ -26,8 +32,16 @@ public class Program
 
         builder.AddNpgsqlDbContext<VicariaDbContext>("database");
 
-        // TODO: configure CORS here
-        builder.Services.AddCors();
+        builder.Services.AddCors(options =>
+        {
+            options.AddPolicy(name: "Frontend", configurePolicy: p =>
+            {
+                p.WithOrigins(frontendOrigins)
+                .AllowAnyHeader()
+                .AllowAnyMethod()
+                .AllowCredentials();
+            });
+        });
 
         builder.Services
             .AddIdentityApiEndpoints<User>(options =>
@@ -56,10 +70,9 @@ public class Program
         if (app.Environment.IsDevelopment())
         {
             app.MapOpenApi();
+            app.UseCors(policyName: "Frontend");
         }
 
-        // TODO: implement CORS here
-        app.UseCors();
 
         var api = app.MapGroup("/api");
 
