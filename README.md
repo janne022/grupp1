@@ -1,4 +1,16 @@
 # Vicaria: a C# sub-teacher scheduler
+## Maintainers/collaborators
+We are grupp1!
+- @SunberryBlossom
+- @janne022
+- @KiddN7
+- @Erik-Backdahl
+- @gurrakeller
+- @erkan334
+
+A team of students from class NET25 of Chas Academy
+
+
 ## What is this for?
 Vicaria is being made as a clean and simple substitute teacher matching calendar, where your company's personel-responsible administrators can easily filter and find those of your substitute teachers are available to work for specific dates, locations and periods. No more cold calling to try and get a match for your kindergarten or school: just log in, apply which date and school you need a sub for, and Vicaria will give you a list of available people ready to help you out.
 
@@ -35,3 +47,6 @@ No need to manually enter environment variables, we got it covered through the A
 Do you have ideas on how Vicaria can get better? Either fork the repository and submit a Pull Request (PR), or create an Issue under the issue-tab.
 
 _Make sure to read our CONTRIBUTING.md before opening an issue/ticket or a PR, to follow our guidelines and syntax._
+
+### extra contrib. information
+Vicaria is written in .NET10/C#14, orchestrated through Aspire, with a frontend written in React Typescript (Vite). Stick to this stack when developing new features.
