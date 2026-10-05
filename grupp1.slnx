@@ -3,5 +3,6 @@
     <Build />
   </Project>
   <Project Path="grupp1.AppHost/grupp1.AppHost.csproj" />
+  <Project Path="grupp1.MigrationService/grupp1.MigrationService.csproj" />
   <Project Path="grupp1.Server/grupp1.Server.csproj" />
 </Solution>
