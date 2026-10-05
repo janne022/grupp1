@@ -11,6 +11,7 @@
 
   <ItemGroup>
     <ProjectReference Include="..\grupp1.Server\grupp1.Server.csproj" />
+    <ProjectReference Include="..\grupp1.MigrationService\grupp1.MigrationService.csproj" />
   </ItemGroup>
 
   <ItemGroup>
