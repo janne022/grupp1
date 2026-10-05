@@ -12,6 +12,8 @@ public class Program
 
         var builder = WebApplication.CreateBuilder(args);
 
+        var frontendOrigin = builder.Configuration["WEBFRONTEND_HTTP"] ?? throw new InvalidOperationException(message: "Could not fetch frontend origin from Aspire");
+
         builder.AddRedisClientBuilder("cache").WithOutputCache();
 
         builder.AddServiceDefaults();
@@ -26,7 +28,16 @@ public class Program
 
         builder.AddNpgsqlDbContext<VicariaDbContext>("database");
 
-        // TODO: add CORS config here
+        builder.Services.AddCors(options =>
+        {
+            options.AddPolicy(name: "Frontend", configurePolicy: p =>
+            {
+                p.WithOrigins(frontendOrigin)
+                .AllowAnyHeader()
+                .AllowAnyMethod()
+                .AllowCredentials();
+            });
+        });
 
         builder.Services
             .AddIdentityApiEndpoints<User>(options =>
@@ -48,6 +59,9 @@ public class Program
 
         var app = builder.Build();
 
+        // Add health check endpoints
+        app.MapDefaultEndpoints();
+
         #endregion
         #region Middleware setup
         app.UseExceptionHandler();
@@ -55,7 +69,9 @@ public class Program
         if (app.Environment.IsDevelopment())
         {
             app.MapOpenApi();
+            app.UseCors(policyName: "Frontend");
         }
+
 
         var api = app.MapGroup("/api");
 
