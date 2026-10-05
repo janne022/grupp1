@@ -12,12 +12,17 @@ var postgres = builder.AddAzurePostgresFlexibleServer("databaseServer")
 
 var database = postgres.AddDatabase("database");
 
+var migrationService = builder.AddProject<Projects.grupp1_MigrationService>("migrationservice")
+    .WithReference(database)
+    .WaitFor(database);
+
 var server = builder.AddProject<Projects.grupp1_Server>("server")
     .WithReference(cache)
     .WaitFor(cache)
     .WithHttpHealthCheck("/health")
     .WithExternalHttpEndpoints()
     .WithReference(database)
+    .WaitFor(migrationService)
     .WaitFor(database);
 
 var webfrontend = builder.AddViteApp("webfrontend", "../grupp1.Frontend")
