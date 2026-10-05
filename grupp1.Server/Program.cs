@@ -59,6 +59,9 @@ public class Program
 
         var app = builder.Build();
 
+        // Add health check endpoints
+        app.MapDefaultEndpoints();
+
         #endregion
         #region Middleware setup
         app.UseExceptionHandler();
