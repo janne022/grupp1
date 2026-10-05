@@ -57,6 +57,12 @@ public class Program
             .AddEntityFrameworkStores<VicariaDbContext>()
             .AddDefaultTokenProviders();
 
+        builder.Services.ConfigureApplicationCookie(option =>
+        {
+            option.Cookie.SameSite = SameSiteMode.None;
+            option.Cookie.SecurePolicy = CookieSecurePolicy.Always;
+        });
+
         var app = builder.Build();
 
         // Add health check endpoints
