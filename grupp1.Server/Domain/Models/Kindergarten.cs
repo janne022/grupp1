@@ -9,5 +9,5 @@ public class Kindergarten
     public Point Location { get; set; } /// FIXA POSTGIS
     public HashSet<UserKinderGarten> Managers { get; set; } = null!;
     public ICollection<DecidedTime> DecidedTimes { get; set; } = [];
-    public ICollection<KindergartenAvailableTime> KindergartenAvailableTimes { get; set; } = [];
+    public HashSet<KindergartenAvailableTime> AvailableSubs { get; set; } = [];
 }
