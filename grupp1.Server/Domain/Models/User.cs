@@ -1,5 +1,19 @@
+using System.ComponentModel.DataAnnotations;
 using Microsoft.AspNetCore.Identity;
 
 namespace Vicaria.Server.Domain.Models;
 
-public class User : IdentityUser {}
+public class User : IdentityUser<Guid>
+{
+    public User()
+    {
+        Id = Guid.CreateVersion7();
+    }
+    [MaxLength(200)]
+    public string FirstName { get; set; } = null!;
+    [MaxLength(200)]
+    public string LastName { get; set; } = null!;
+    public HashSet<UserKinderGarten> Kindergartens { get; set; } = [];
+    public HashSet<AvailableTime> AvailableTimes { get; set; } = [];
+    public HashSet<DecidedTime> DecidedTimes { get; set; } = [];
+}

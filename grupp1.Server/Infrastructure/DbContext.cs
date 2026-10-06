@@ -1,11 +1,12 @@
 using System;
+using Microsoft.AspNetCore.Identity;
 using Microsoft.AspNetCore.Identity.EntityFrameworkCore;
 using Microsoft.EntityFrameworkCore;
 using Vicaria.Server.Domain.Models;
 
 namespace Vicaria.Server.Infrastructure;
 
-public class VicariaDbContext : IdentityDbContext<User>
+public class VicariaDbContext : IdentityDbContext<User, IdentityRole<Guid>, Guid>
 {
     #region constructors
 
@@ -26,6 +27,10 @@ public class VicariaDbContext : IdentityDbContext<User>
     protected override void OnModelCreating(ModelBuilder builder)
     {
         base.OnModelCreating(builder);
+
+        builder.Entity<User>()
+            .Property(u => u.Id)
+            .ValueGeneratedNever();
     }
 
     #endregion
