@@ -39,7 +39,7 @@ To take part of the bleeding-edge development version of Vicaria, follow these s
    2. Run and interact with the API documentation through _scalar_
    3. Run and interact with the database through _pgadmin_
 
-No need to manually enter environment variables, we got it covered through the Aspire orchestration
+No need to manually enter environment variables, we got it covered through the Aspire orchestration.
 
 ## Example
 
