@@ -13,8 +13,7 @@ public class Program
 
         var builder = WebApplication.CreateBuilder(args);
 
-        var frontendOrigin = builder.Configuration["WEBFRONTEND_HTTP"] ?? throw new InvalidOperationException(message: "Could not fetch frontend origin from Aspire");
-
+        var frontendOrigin = builder.Configuration["WEBFRONTEND_HTTP"] ?? "";
         builder.AddRedisClientBuilder("cache").WithOutputCache();
 
         builder.AddServiceDefaults();
