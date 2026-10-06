@@ -14,7 +14,7 @@ public class User : IdentityUser<Guid>
     public string FirstName { get; set; } = null!;
     [MaxLength(200)]
     public string LastName { get; set; } = null!;
-    public ICollection<UserKinderGarten> Kindergartens { get; set; } = [];
-    public ICollection<AvailableTime> AvailableTimes { get; set; } = [];
-    public ICollection<DecidedTime> DecidedTimes { get; set; } = [];
+    public HashSet<UserKinderGarten> Kindergartens { get; set; } = [];
+    public HashSet<AvailableTime> AvailableTimes { get; set; } = [];
+    public HashSet<DecidedTime> DecidedTimes { get; set; } = [];
 }
