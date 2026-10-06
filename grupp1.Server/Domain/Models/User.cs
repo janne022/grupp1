@@ -8,7 +8,6 @@ public class User : IdentityUser<Guid>
     public User()
     {
         Id = Guid.CreateVersion7();
-        SecurityStamp = Guid.NewGuid().ToString();
     }
     [MaxLength(200)]
     public string FirstName { get; set; } = null!;
