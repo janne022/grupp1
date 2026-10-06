@@ -6,6 +6,6 @@ public class AvailableTime
     public DateTime StartTime { get; set; }
     public DateTime EndTime { get; set; }
     public Guid UserId { get; set; }
-    public User User { get; set; } = null!;
+    public User Substitute { get; set; } = null!;
     public ICollection<KindergartenAvailableTime> KindergartenAvailableTimes { get; set; } = [];
 }
