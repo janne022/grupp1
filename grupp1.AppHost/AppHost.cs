@@ -2,7 +2,8 @@ using Scalar.Aspire;
 
 var builder = DistributedApplication.CreateBuilder(args);
 
-var cache = builder.AddRedis("cache");
+var cache = builder.AddAzureManagedRedis("cache")
+    .RunAsContainer();
 
 var postgres = builder.AddAzurePostgresFlexibleServer("databaseServer")
     .RunAsContainer(db => db.WithLifetime(ContainerLifetime.Persistent)
@@ -11,17 +12,24 @@ var postgres = builder.AddAzurePostgresFlexibleServer("databaseServer")
 
 var database = postgres.AddDatabase("database");
 
+var migrationService = builder.AddProject<Projects.grupp1_MigrationService>("migrationservice")
+    .WithReference(database)
+    .WaitFor(database);
+
 var server = builder.AddProject<Projects.grupp1_Server>("server")
     .WithReference(cache)
     .WaitFor(cache)
     .WithHttpHealthCheck("/health")
     .WithExternalHttpEndpoints()
     .WithReference(database)
+    .WaitFor(migrationService)
     .WaitFor(database);
 
 var webfrontend = builder.AddViteApp("webfrontend", "../grupp1.Frontend")
     .WithReference(server)
     .WaitFor(server);
+
+server.WithReference(webfrontend); // for CORS
 
 var scalar = builder.AddScalarApiReference()
     .ExcludeFromManifest();

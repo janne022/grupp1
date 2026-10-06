@@ -1,57 +1,87 @@
-using grupp1.Server.Infrastructure;
+using Vicaria.Server.Infrastructure;
+using Microsoft.AspNetCore.Identity;
+using Vicaria.Server.Domain.Models;
 
-var builder = WebApplication.CreateBuilder(args);
+namespace Vicaria.Server;
 
-// Add service defaults & Aspire client integrations.
-builder.AddServiceDefaults();
-builder.AddRedisClientBuilder("cache")
-    .WithOutputCache();
-
-// Add services to the container.
-builder.Services.AddProblemDetails();
-
-// Learn more about configuring OpenAPI at https://aka.ms/aspnet/openapi
-builder.Services.AddOpenApi();
-
-builder.AddNpgsqlDbContext<Context>("database");
-
-var app = builder.Build();
-
-// Configure the HTTP request pipeline.
-app.UseExceptionHandler();
-
-if (app.Environment.IsDevelopment())
+public class Program
 {
-    app.MapOpenApi();
-}
+    public static void Main(string[] args)
+    {
+        #region Build configuration
 
-app.UseOutputCache();
+        var builder = WebApplication.CreateBuilder(args);
 
-string[] summaries = ["Freezing", "Bracing", "Chilly", "Cool", "Mild", "Warm", "Balmy", "Hot", "Sweltering", "Scorching"];
+        var frontendOrigin = builder.Configuration["WEBFRONTEND_HTTP"] ?? throw new InvalidOperationException(message: "Could not fetch frontend origin from Aspire");
 
-var api = app.MapGroup("/api");
-api.MapGet("weatherforecast", () =>
-{
-    var forecast = Enumerable.Range(1, 5).Select(index =>
-        new WeatherForecast
-        (
-            DateOnly.FromDateTime(DateTime.Now.AddDays(index)),
-            Random.Shared.Next(-20, 55),
-            summaries[Random.Shared.Next(summaries.Length)]
-        ))
-        .ToArray();
-    return forecast;
-})
-.CacheOutput(p => p.Expire(TimeSpan.FromSeconds(5)))
-.WithName("GetWeatherForecast");
+        builder.AddRedisClientBuilder("cache").WithOutputCache();
 
-app.MapDefaultEndpoints();
+        builder.AddServiceDefaults();
 
-app.UseFileServer();
+        builder.Services.AddProblemDetails();
+        builder.Services.AddOpenApi();
 
-app.Run();
+        builder.Services.AddControllers();
+        builder.Services.AddAuthorization();
+        builder.Services.AddAuthentication();
+        builder.Services.AddHttpContextAccessor(); // Pre-setup to be able to access HTTP request/responses, e.g. see the cookies for current user
 
-record WeatherForecast(DateOnly Date, int TemperatureC, string? Summary)
-{
-    public int TemperatureF => 32 + (int)(TemperatureC / 0.5556);
+        builder.AddNpgsqlDbContext<VicariaDbContext>("database");
+
+        builder.Services.AddCors(options =>
+        {
+            options.AddPolicy(name: "Frontend", configurePolicy: p =>
+            {
+                p.WithOrigins(frontendOrigin)
+                .AllowAnyHeader()
+                .AllowAnyMethod()
+                .AllowCredentials();
+            });
+        });
+
+        builder.Services
+            .AddIdentityApiEndpoints<User>(options =>
+            {
+                options.User.RequireUniqueEmail = true;
+
+                options.Password.RequiredLength = 8;
+                options.Password.RequireDigit = true;
+                options.Password.RequireLowercase = true;
+                options.Password.RequireUppercase = true;
+                options.Password.RequireNonAlphanumeric = true;
+
+                options.Lockout.DefaultLockoutTimeSpan = TimeSpan.FromMinutes(10);
+                options.Lockout.MaxFailedAccessAttempts = 3;
+            })
+            .AddRoles<IdentityRole>()
+            .AddEntityFrameworkStores<VicariaDbContext>()
+            .AddDefaultTokenProviders();
+
+        var app = builder.Build();
+
+        // Add health check endpoints
+        app.MapDefaultEndpoints();
+
+        #endregion
+        #region Middleware setup
+        app.UseExceptionHandler();
+
+        if (app.Environment.IsDevelopment())
+        {
+            app.MapOpenApi();
+            app.UseCors(policyName: "Frontend");
+        }
+
+
+        var api = app.MapGroup("/api");
+
+        app.UseAuthentication();
+        app.UseAuthorization();
+        api.MapIdentityApi<User>();
+
+        app.MapControllers();
+        app.Run();
+
+        #endregion
+    }
 }
