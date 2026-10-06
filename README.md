@@ -1,12 +1,12 @@
 # Vicaria: a C# sub-teacher scheduler
 ## Maintainers/collaborators
 We are grupp1!
-- @SunberryBlossom
-- @janne022
-- @KiddN7
-- @Erik-Backdahl
-- @gurrakeller
-- @erkan334
+- [@SunberryBlossom](https://github.com/SunberryBlossom)
+- [@janne022](https://github.com/janne022)
+- [@KiddN7](https://github.com/KiddN7)
+- [@Erik-Backdahl](https://github.com/Erik-Backdahl)
+- [@gurrakeller](https://github.com/gurrakeller)
+- [@erkan334](https://github.com/erkan334)
 
 A team of students from class NET25 of Chas Academy
 
