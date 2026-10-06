@@ -7,5 +7,5 @@ public class AvailableTime
     public DateTime EndTime { get; set; }
     public Guid UserId { get; set; }
     public User Substitute { get; set; } = null!;
-    public ICollection<KindergartenAvailableTime> KindergartenAvailableTimes { get; set; } = [];
+    public HashSet<KindergartenAvailableTime> Kindergartens { get; set; } = [];
 }
