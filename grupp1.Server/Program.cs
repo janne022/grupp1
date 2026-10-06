@@ -1,6 +1,7 @@
 using Vicaria.Server.Infrastructure;
 using Microsoft.AspNetCore.Identity;
 using Vicaria.Server.Domain.Models;
+using Microsoft.EntityFrameworkCore;
 
 namespace Vicaria.Server;
 
@@ -26,7 +27,13 @@ public class Program
         builder.Services.AddAuthentication();
         builder.Services.AddHttpContextAccessor(); // Pre-setup to be able to access HTTP request/responses, e.g. see the cookies for current user
 
-        builder.AddNpgsqlDbContext<VicariaDbContext>("database");
+        builder.AddNpgsqlDbContext<VicariaDbContext>("database", configureDbContextOptions: options =>
+        {
+            options.UseNpgsql(npgsqlOptions =>
+            {
+                npgsqlOptions.UseNetTopologySuite();
+            });
+        });
 
         builder.Services.AddCors(options =>
         {

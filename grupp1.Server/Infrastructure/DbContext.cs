@@ -10,7 +10,7 @@ public class VicariaDbContext : IdentityDbContext<User, IdentityRole<Guid>, Guid
 {
     #region constructors
 
-    public VicariaDbContext(DbContextOptions<VicariaDbContext> options) : base(options){}
+    public VicariaDbContext(DbContextOptions<VicariaDbContext> options) : base(options) { }
 
     #endregion
 
@@ -27,6 +27,8 @@ public class VicariaDbContext : IdentityDbContext<User, IdentityRole<Guid>, Guid
     protected override void OnModelCreating(ModelBuilder builder)
     {
         base.OnModelCreating(builder);
+
+        builder.HasPostgresExtension("postgis");
 
         builder.Entity<User>()
             .Property(u => u.Id)
