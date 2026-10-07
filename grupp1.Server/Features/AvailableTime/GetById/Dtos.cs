@@ -5,9 +5,10 @@ namespace Vicaria.Server.Features.AvailableTime.GetById;
 #region Requests
 
 public record class GetByIdQuery(Guid AvailableTimeId);
-#endregion
 
+#endregion
 #region Responses
 
 public record class GetByIdResponse(DateTime StartTime, DateTime EndTime, KindergartenAvailableTime[] Kindergartens);
+
 #endregion
