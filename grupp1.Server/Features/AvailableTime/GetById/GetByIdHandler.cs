@@ -14,6 +14,13 @@ public class GetByIdHandler : IHandler<GetByIdQuery, GetByIdResponse>
 
 
     #region Constructors
+
+    public GetByIdHandler(Logger<GetByIdHandler> logger, VicariaDbContext dbContext)
+    {
+        _logger = logger;
+        _dbContext = dbContext;
+    }
+    
     #endregion
 
 
