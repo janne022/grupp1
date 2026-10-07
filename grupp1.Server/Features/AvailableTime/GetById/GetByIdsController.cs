@@ -31,6 +31,9 @@ public class GetByIdsController : ControllerBase
     [Route("getbyid")] // TODO: iterate over route... not super happy about it naming wise
     public async Task<ActionResult<GetByIdResponse>> GetById([FromBody] GetByIdQuery request, CancellationToken ct)
     {
+
+        _logger.LogInformation($"Starting to fetch AvailableTime by id with  ID: {request.AvailableTimeId}");
+
         if (request is null)
         {
             return BadRequest();
