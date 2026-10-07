@@ -1,7 +1,6 @@
 using System;
 using grupp1.Server.Infrastructure;
 using Microsoft.EntityFrameworkCore;
-using Vicaria.Server.Domain.Models;
 using Vicaria.Server.Features.AvailableTime.GetAll.DTOs;
 using Vicaria.Server.Infrastructure;
 
@@ -10,10 +9,10 @@ namespace grupp1.Server.Features.AvailableTime.GetAll;
 public class GetAllAvailableTimeHandler(
     VicariaDbContext DbContext,
     ILogger<GetAllAvailableTimeHandler> _logger
-) : IHandler<GetAllAvailableTimesRequest, GetAllAvailableTimesResponse>
+) : IHandler<GetAllAvailableTimesQuery, GetAllAvailableTimesResponse>
 {
     public async Task<GetAllAvailableTimesResponse> HandleAsync(
-        GetAllAvailableTimesRequest request,
+        GetAllAvailableTimesQuery query,
         CancellationToken cancellationToken = default
     )
     {
@@ -32,6 +31,8 @@ public class GetAllAvailableTimeHandler(
                     .ToList()
             ))
             .ToListAsync(cancellationToken);
+
+        // TODO: Get UserId and filter by it, when authorisation is up.
 
         return new GetAllAvailableTimesResponse(availableTimes);
     }
