@@ -10,14 +10,16 @@ public class GetByIdsController : ControllerBase
 {
     #region Fields
     private readonly IHandler<GetByIdQuery, GetByIdResponse> _handler;
+    private readonly ILogger<GetByIdsController> _logger;
 
     #endregion
 
 
     #region Constructors
-    public GetByIdsController(GetByIdHandler handler)
+    public GetByIdsController(GetByIdHandler handler, Logger<GetByIdsController> logger)
     {
         _handler = handler;
+        _logger = logger;
     }
 
     #endregion
@@ -34,9 +36,22 @@ public class GetByIdsController : ControllerBase
             return BadRequest();
         }
 
-        var responseDto = await _handler.HandleAsync(request, ct);
+        try
+        {
+            var responseDto = await _handler.HandleAsync(request, ct);
 
-        return responseDto is null ? NotFound() : Ok(responseDto);
+            return responseDto is null ? NotFound() : Ok(responseDto);
+        }
+        catch (Exception ex)
+        {
+            _logger.LogError
+            (
+                exception: ex,
+                message: $"{ex.GetType} got thrown with message: {ex.Message}"
+            );
+
+            throw ex;
+        }
     }
 
     #endregion
