@@ -8,6 +8,8 @@ namespace Vicaria.Server.Features.AvailableTime.GetById;
 public class GetByIdsController : ControllerBase
 {
     #region Fields
+    private readonly IHandler<GetByIdQuery, GetByIdResponse> _handler;
+
     #endregion
 
 
