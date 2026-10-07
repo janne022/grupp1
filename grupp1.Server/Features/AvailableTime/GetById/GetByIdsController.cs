@@ -1,4 +1,4 @@
-using grupp1.Server.Infrastructure;
+using Vicaria.Server.Infrastructure;
 using Microsoft.AspNetCore.Mvc; // To inherit from ControllerBase
 
 namespace Vicaria.Server.Features.AvailableTime.GetById;
