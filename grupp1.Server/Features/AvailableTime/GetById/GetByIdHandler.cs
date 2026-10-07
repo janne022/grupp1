@@ -3,32 +3,40 @@ using Vicaria.Server.Infrastructure; // To implement IHandler
 
 namespace Vicaria.Server.Features.AvailableTime.GetById;
 
-public class GetByIdHandler : IHandler<GetByIdQuery, GetByIdResponse>
+public class GetByIdHandler : IHandler<GetByIdQuery?, GetByIdResponse?>
 {
     #region Fields
 
-    private readonly ILogger<GetByIdHandler> _logger;
     private readonly VicariaDbContext _dbContext;
 
     #endregion
-
-
     #region Constructors
 
-    public GetByIdHandler(Logger<GetByIdHandler> logger, VicariaDbContext dbContext)
+    public GetByIdHandler(VicariaDbContext dbContext)
     {
-        _logger = logger;
         _dbContext = dbContext;
     }
-    
+
     #endregion
-
-
     #region Methods
 
-    public Task<GetByIdResponse> HandleAsync(GetByIdQuery request, CancellationToken cancellationToken = default)
+    public async Task<GetByIdResponse?> HandleAsync(GetByIdQuery? request, CancellationToken cancellationToken = default)
     {
-        throw new NotImplementedException();
+        Guid inputId = request?.AvailableTimeId ?? Guid.Empty;
+
+        var availableTime = await _dbContext.AvailableTimes.FindAsync(inputId);
+
+        if (availableTime is null)
+        {
+            return null;
+        }
+
+        return new GetByIdResponse
+        (
+            StartTime: availableTime.StartTime,
+            EndTime: availableTime.EndTime,
+            Kindergartens: [.. availableTime.Kindergartens]
+        );
     }
     #endregion
 }
