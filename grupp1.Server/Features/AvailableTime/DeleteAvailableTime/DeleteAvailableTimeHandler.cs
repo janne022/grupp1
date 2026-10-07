@@ -6,10 +6,10 @@ namespace Vicaria.Server.Features.AvailableTime.Delete;
 public class DeleteAvailableTimeHandler(
     VicariaDbContext dbContext,
     ILogger<DeleteAvailableTimeHandler> _logger
-) : IHandler<DeleteAvailableTimeRequest, bool>
+) : IHandler<DeleteAvailableTimeQuery, bool>
 {
     public async Task<bool> HandleAsync(
-        DeleteAvailableTimeRequest request,
+        DeleteAvailableTimeQuery request,
         CancellationToken cancellationToken = default)
     {
         var deletedTime = await dbContext.AvailableTimes

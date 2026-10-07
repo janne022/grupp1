@@ -6,11 +6,11 @@ namespace Vicaria.Server.Features.AvailableTime.Delete;
 [Route("api/availabletime")]
 [ApiController]
 public class DeleteAvailableTimeController(
-    IHandler<DeleteAvailableTimeRequest, bool> handler) : ControllerBase
+    IHandler<DeleteAvailableTimeQuery, bool> handler) : ControllerBase
 {
     [HttpDelete("delete/{id}")]
     public async Task<IActionResult> Delete(
-        [FromRoute(Name = "id")] DeleteAvailableTimeRequest request,
+        [FromRoute(Name = "id")] DeleteAvailableTimeQuery request,
         CancellationToken cancellationToken
     )
     {
