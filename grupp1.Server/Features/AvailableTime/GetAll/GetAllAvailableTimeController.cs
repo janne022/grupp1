@@ -9,7 +9,7 @@ namespace grupp1.Server.Features.AvailableTime.GetAll
     [ApiController]
     public class GetAllAvailableTimeController(GetAllAvailableTimeHandler handler) : ControllerBase
     {
-        [HttpGet("getall")]
+        [HttpGet("get")]
         public async Task<ActionResult<GetAllAvailableTimesResponse>> GetAll(CancellationToken ct)
         {
             var query = new GetAllAvailableTimesQuery(); // I love this so much <3
