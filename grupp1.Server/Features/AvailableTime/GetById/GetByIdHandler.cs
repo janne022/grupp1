@@ -1,3 +1,4 @@
+using System.Collections.Immutable;
 using Vicaria.Server.Infrastructure; // To implement IHandler
 
 namespace Vicaria.Server.Features.AvailableTime.GetById;
@@ -34,7 +35,12 @@ public class GetByIdHandler : IHandler<GetByIdQuery?, GetByIdResponse?>
         (
             StartTime: availableTime.StartTime,
             EndTime: availableTime.EndTime,
-            Kindergartens: [.. availableTime.Kindergartens]
+            Kindergartens: [.. availableTime.Kindergartens.Select(k => new KindergartenDto
+            (
+                k.Kindergarten.Name,
+                k.Kindergarten.Id,
+                k.Kindergarten.Location
+            ))]
         );
     }
     #endregion
