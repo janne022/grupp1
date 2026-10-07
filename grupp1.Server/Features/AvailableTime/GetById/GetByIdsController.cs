@@ -23,5 +23,13 @@ public class GetByIdsController : ControllerBase
 
 
     #region Endpoint
+
+    [HttpGet]
+    [Route("getbyid")] // TODO: iterate over route... not super happy about it naming wise
+    public async Task<ActionResult<GetByIdResponse>> GetById([FromBody] GetByIdQuery request, CancellationToken ct)
+    {
+        throw new NotImplementedException();
+    }
+
     #endregion
 }
