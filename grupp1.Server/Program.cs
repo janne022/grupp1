@@ -69,6 +69,19 @@ public class Program
             option.Cookie.SecurePolicy = CookieSecurePolicy.Always;
         });
 
+        // Bootleg wolverine, scans for all handlers and registers them as scoped services
+        var handlers = typeof(Program).Assembly
+        .GetTypes()
+        .Where(t => t.IsClass && !t.IsAbstract && t.Name.EndsWith("Handler"));
+
+        foreach (var handler in handlers)
+        {
+            foreach (var @interface in handler.GetInterfaces())
+            {
+                builder.Services.AddScoped(@interface, handler);
+            }
+        }
+
         var app = builder.Build();
 
         // Add health check endpoints
