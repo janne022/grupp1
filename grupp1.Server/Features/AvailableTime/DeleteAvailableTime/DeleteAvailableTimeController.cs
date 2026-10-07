@@ -10,11 +10,11 @@ public class DeleteAvailableTimeController(
 {
     [HttpDelete("delete/{id}")]
     public async Task<IActionResult> Delete(
-        [FromRoute(Name = "id")] DeleteAvailableTimeQuery request,
+        [FromRoute(Name = "id")] DeleteAvailableTimeQuery query,
         CancellationToken cancellationToken
     )
     {
-        var FoundAndDeleted = await handler.HandleAsync(request, cancellationToken);
+        var FoundAndDeleted = await handler.HandleAsync(query, cancellationToken);
 
         if (!FoundAndDeleted)
             return NotFound();

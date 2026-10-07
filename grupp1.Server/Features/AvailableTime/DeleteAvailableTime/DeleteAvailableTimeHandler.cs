@@ -9,16 +9,16 @@ public class DeleteAvailableTimeHandler(
 ) : IHandler<DeleteAvailableTimeQuery, bool>
 {
     public async Task<bool> HandleAsync(
-        DeleteAvailableTimeQuery request,
+        DeleteAvailableTimeQuery query,
         CancellationToken cancellationToken = default)
     {
         var deletedTime = await dbContext.AvailableTimes
-        .Where(at => at.Id == request.AvailableTimeId)
+        .Where(at => at.Id == query.AvailableTimeId)
         .ExecuteDeleteAsync(cancellationToken);
 
         if(deletedTime == 0) //nothing to delete / not found
         {
-            _logger.LogInformation($"AvailableTime {request.AvailableTimeId} not found");
+            _logger.LogInformation($"AvailableTime {query.AvailableTimeId} not found");
             return false;
         }
 
