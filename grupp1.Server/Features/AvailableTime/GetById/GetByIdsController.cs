@@ -14,6 +14,11 @@ public class GetByIdsController : ControllerBase
 
 
     #region Constructors
+    public GetByIdsController(GetByIdHandler handler)
+    {
+        _handler = handler;
+    }
+
     #endregion
 
 
