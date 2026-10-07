@@ -10,7 +10,7 @@ public class VicariaDbContext : IdentityDbContext<User, IdentityRole<Guid>, Guid
 {
     #region constructors
 
-    public VicariaDbContext(DbContextOptions<VicariaDbContext> options) : base(options){}
+    public VicariaDbContext(DbContextOptions<VicariaDbContext> options) : base(options) { }
 
     #endregion
 
@@ -18,6 +18,11 @@ public class VicariaDbContext : IdentityDbContext<User, IdentityRole<Guid>, Guid
     #endregion
 
     #region Configuration
+    public DbSet<AvailableTime> AvailableTimes { get; set; }
+    public DbSet<DecidedTime> DecidedTimes { get; set; }
+    public DbSet<Kindergarten> Kindergartens { get; set; }
+    public DbSet<KindergartenAvailableTime> KindergartenAvailableTimes { get; set; }
+    public DbSet<UserKinderGarten> UserKinderGartens { get; set; }
 
     protected override void OnConfiguring(DbContextOptionsBuilder optionsBuilder)
     {
@@ -27,6 +32,8 @@ public class VicariaDbContext : IdentityDbContext<User, IdentityRole<Guid>, Guid
     protected override void OnModelCreating(ModelBuilder builder)
     {
         base.OnModelCreating(builder);
+
+        builder.HasPostgresExtension("postgis");
 
         builder.Entity<User>()
             .Property(u => u.Id)
