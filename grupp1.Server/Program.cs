@@ -78,7 +78,7 @@ public class Program
         {
             foreach (var intrface in handler.GetInterfaces())
             {
-                builder.Services.AddScoped(intrface, handler);
+                builder.Services.AddScoped(@interface, handler);
             }
         }
 
