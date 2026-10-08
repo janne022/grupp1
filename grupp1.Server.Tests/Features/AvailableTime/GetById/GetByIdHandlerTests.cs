@@ -1,10 +1,7 @@
-using Microsoft.EntityFrameworkCore;
 using Moq;
-using Moq.EntityFrameworkCore;
 using Vicaria.Server.Features.AvailableTime.GetById;
 using Vicaria.Server.Infrastructure;
 using Model = Vicaria.Server.Domain.Models;
-
 
 namespace Vicaria.Server.Tests.AvailableTime.GetById;
 
@@ -15,6 +12,23 @@ public class GetByIdHandlerTests
     {
         // Arrange
 
+        var availableTimeMock = new Model.AvailableTime()
+        {
+            Id = Guid.Empty,
+            StartTime = new(),
+            EndTime = new(),
+            UserId = Guid.Empty,
+            Substitute = new(),
+            Kindergartens = []
+        };
+
+        var dbContextMock = new Mock<VicariaDbContext>();
+
+        dbContextMock.Setup(context => context.AvailableTimes.FindAsync(availableTimeMock.Id))
+            .ReturnsAsync(availableTimeMock);
+
+        var handlerMock = new GetByIdHandler(dbContextMock.Object);
+        
         // Act
 
         // Assert
