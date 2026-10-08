@@ -24,9 +24,10 @@ public class GetByIdHandlerTests
             Kindergartens = []
         };
 
+        // TODO: ITERATE HERE
         var dbContextMock = new Mock<VicariaDbContext>();
 
-        dbContextMock.Setup(context => context.AvailableTimes.FindAsync(availableTimeMock.Id))
+        dbContextMock.Setup(context => context.AvailableTimes.FindAsync(availableTimeMock.Id)) // This throws error!
             .ReturnsAsync(availableTimeMock);
 
         var handlerMock = new GetByIdHandler(dbContextMock.Object);
