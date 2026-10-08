@@ -2,7 +2,7 @@ using Vicaria.Server.Infrastructure; // To implement IHandler
 
 namespace Vicaria.Server.Features.AvailableTime.GetById;
 
-public class GetByIdHandler : IHandler<GetByIdQuery?, GetByIdResponse?>
+public class GetByIdHandler : IHandler<GetByIdQuery, GetByIdResponse?>
 {
     #region Fields
 
@@ -19,9 +19,9 @@ public class GetByIdHandler : IHandler<GetByIdQuery?, GetByIdResponse?>
     #endregion
     #region Methods
 
-    public async Task<GetByIdResponse?> HandleAsync(GetByIdQuery? request, CancellationToken cancellationToken = default)
+    public async Task<GetByIdResponse?> HandleAsync(GetByIdQuery request, CancellationToken cancellationToken = default)
     {
-        Guid inputId = request?.AvailableTimeId ?? Guid.Empty;
+        Guid inputId = request.AvailableTimeId;
 
         var availableTime = await _dbContext.AvailableTimes.FindAsync(inputId);
 
