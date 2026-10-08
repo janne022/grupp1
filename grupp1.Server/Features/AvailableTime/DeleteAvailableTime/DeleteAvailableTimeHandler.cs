@@ -16,7 +16,7 @@ public class DeleteAvailableTimeHandler(
         .Where(at => at.Id == query.AvailableTimeId)
         .ExecuteDeleteAsync(cancellationToken);
 
-        if(deletedTime == 0) //nothing to delete / not found
+        if (deletedTime == 0) //nothing to delete / not found
         {
             _logger.LogInformation($"AvailableTime {query.AvailableTimeId} not found");
             return false;
