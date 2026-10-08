@@ -24,7 +24,7 @@ public class GetByIdsController : ControllerBase
     #region Endpoints
 
     [HttpGet]
-    [Route("getbyid")] // TODO: iterate over route... not super happy about it naming wise
+    [Route("getbytimeid")] // TODO: iterate over route... not super happy about it naming wise
     public async Task<ActionResult<GetByIdResponse>> GetById([FromBody] GetByIdQuery? request, CancellationToken ct)
     {
 
