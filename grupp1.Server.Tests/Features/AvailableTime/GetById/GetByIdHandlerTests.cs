@@ -12,6 +12,8 @@ public class GetByIdHandlerTests
     {
         // Arrange
 
+        var requestMock = new GetByIdQuery(Guid.Empty);
+
         var availableTimeMock = new Model.AvailableTime()
         {
             Id = Guid.Empty,
@@ -28,10 +30,15 @@ public class GetByIdHandlerTests
             .ReturnsAsync(availableTimeMock);
 
         var handlerMock = new GetByIdHandler(dbContextMock.Object);
-        
+
         // Act
 
+        var result = await handlerMock.HandleAsync(requestMock);
+
         // Assert
+
+        Assert.NotNull(result);
+        Assert.IsType<GetByIdQuery>(result);
     }
 
     [Fact]
