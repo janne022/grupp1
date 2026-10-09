@@ -1,4 +1,4 @@
-using grupp1.Server.Infrastructure;
+using Vicaria.Server.Infrastructure;
 using Microsoft.AspNetCore.Mvc;
 
 namespace Vicaria.Server.Features.AvailableTime.Delete;
