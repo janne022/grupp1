@@ -1,9 +1,9 @@
 using System;
 using NetTopologySuite.Geometries;
 
-namespace Vicaria.Server.Features.AvailableTime.GetAll.DTOs;
+namespace Vicaria.Server.Features.AvailableTimes.GetAll.DTOs;
 
-public record class GetAllAvailableTimeKindergartensDTO
+public record class GetAllAvailableTimesKindergartensDTO
 (
     Guid Id,
     string Name,

@@ -1,14 +1,14 @@
 using System;
 using grupp1.Server.Infrastructure;
 using Microsoft.EntityFrameworkCore;
-using Vicaria.Server.Features.AvailableTime.GetAll.DTOs;
+using Vicaria.Server.Features.AvailableTimes.GetAll.DTOs;
 using Vicaria.Server.Infrastructure;
 
-namespace grupp1.Server.Features.AvailableTime.GetAll;
+namespace grupp1.Server.Features.AvailableTimes.GetAll;
 
-public class GetAllAvailableTimeHandler(
+public class GetAllAvailableTimesHandler(
     VicariaDbContext DbContext,
-    ILogger<GetAllAvailableTimeHandler> _logger
+    ILogger<GetAllAvailableTimesHandler> _logger
 ) : IHandler<GetAllAvailableTimesQuery, GetAllAvailableTimesResponse>
 {
     public async Task<GetAllAvailableTimesResponse> HandleAsync(
@@ -19,11 +19,11 @@ public class GetAllAvailableTimeHandler(
         _logger.LogInformation("HandleAsync entered");
 
         var availableTimes = await DbContext
-            .AvailableTimes.Select(at => new GetAllAvailableTimeDTO(
+            .AvailableTimes.Select(at => new GetAllAvailableTimesDTO(
                 at.Id,
                 at.StartTime,
                 at.EndTime,
-                at.Kindergartens.Select(kinder => new GetAllAvailableTimeKindergartensDTO(
+                at.Kindergartens.Select(kinder => new GetAllAvailableTimesKindergartensDTO(
                         kinder.Kindergarten.Id,
                         kinder.Kindergarten.Name,
                         kinder.Kindergarten.Location
