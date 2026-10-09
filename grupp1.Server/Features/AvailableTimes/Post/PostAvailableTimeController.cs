@@ -1,10 +1,11 @@
-﻿using Microsoft.AspNetCore.Mvc;
+﻿using grupp1.Server.Infrastructure;
+using Microsoft.AspNetCore.Mvc;
 
 namespace grupp1.Server.Features.AvailableTimes.Post
 {
     [Route("api/[controller]")]
     [ApiController]
-    public class PostAvailableTimeController(PostAvailableTimeHandler handler) : ControllerBase
+    public class PostAvailableTimeController(IHandler<PostAvailableTimeRequest, PostAvailableTimeResponse> handler) : ControllerBase
     {
 
         [HttpPost]
@@ -19,6 +20,7 @@ namespace grupp1.Server.Features.AvailableTimes.Post
             }
 
             return Created($"/api/availabletime/getbytimeid", response);
+
 
         }
     }

@@ -21,16 +21,26 @@ namespace grupp1.Server.Features.AvailableTimes.Post
             }
 
 
-            var availableTime = new AvailableTime // Add UserId once authorization is set up
+            if (request.Kindergartens == null || request.Kindergartens.Count == 0)
+            {
+                return new PostAvailableTimeResponse
+                {
+                    Success = false,
+                    ErrorMessage = "At least one kindergarten must be provided"
+                };
+            }
+
+
+            var availableTime = new AvailableTime // TODO: Add UserId once authorization is set up
             {
                 Id = Guid.NewGuid(),
                 StartTime = request.StartTime,
                 EndTime = request.EndTime,
-                //UserId = userId
 
             };
 
-            foreach(var kindergartenId in request.Kindergartens) 
+
+            foreach (var kindergartenId in request.Kindergartens) 
             {
                 var kindergartenExist = await context.Kindergartens.AnyAsync(k => k.Id == kindergartenId, cancellationToken);
 
@@ -47,7 +57,8 @@ namespace grupp1.Server.Features.AvailableTimes.Post
                 availableTime.Kindergartens.Add(new KindergartenAvailableTime
                 {
 
-                    KindergartenId = kindergartenId, 
+                    KindergartenId = kindergartenId,
+                    AvailableTimeId = availableTime.Id
 
                 });
             }
