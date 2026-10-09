@@ -1,11 +1,11 @@
 using Microsoft.AspNetCore.Http;
 using Microsoft.AspNetCore.Mvc;
-using Vicaria.Server.Features.AvailableTime.GetAll.DTOs;
+using Vicaria.Server.Features.AvailableTimes.GetAll.DTOs;
 
-namespace grupp1.Server.Features.AvailableTime.GetAll
+namespace grupp1.Server.Features.AvailableTimes.GetAll
 {
     // TODO: Add Authorization tag when authorisation is up.
-    [Route("api/availabletime")]
+    [Route("api/availabletimes")]
     [ApiController]
     public class GetAllAvailableTimeController(GetAllAvailableTimeHandler handler) : ControllerBase
     {
