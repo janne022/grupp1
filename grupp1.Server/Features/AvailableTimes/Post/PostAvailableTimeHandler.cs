@@ -1,6 +1,8 @@
 ﻿using grupp1.Server.Infrastructure;
 using Vicaria.Server.Domain.Models;
 using Vicaria.Server.Infrastructure;
+using Microsoft.EntityFrameworkCore;
+
 
 namespace grupp1.Server.Features.AvailableTimes.Post
 {
@@ -8,7 +10,18 @@ namespace grupp1.Server.Features.AvailableTimes.Post
     {
         public async Task<PostAvailableTimeResponse> HandleAsync(PostAvailableTimeRequest request, CancellationToken cancellationToken = default)
         {
-            var availableTime = new AvailableTime
+
+            if(request.EndTime <= request.StartTime)
+            {
+                return new PostAvailableTimeResponse
+                {
+                    Success = false,
+                    ErrorMessage = "EndTime must be later than StartTime"
+                };
+            }
+
+
+            var availableTime = new AvailableTime // Add UserId once authorization is set up
             {
                 Id = Guid.NewGuid(),
                 StartTime = request.StartTime,
@@ -19,12 +32,25 @@ namespace grupp1.Server.Features.AvailableTimes.Post
 
             foreach(var kindergartenId in request.Kindergartens) 
             {
+                var kindergartenExist = await context.Kindergartens.AnyAsync(k => k.Id == kindergartenId, cancellationToken);
+
+                if (!kindergartenExist)
+                {
+                    return new PostAvailableTimeResponse
+                    {
+                        Success = false,
+                        ErrorMessage = $"Kindergarten with Id {kindergartenId} does not exist"
+                    };
+                        
+                }
+
                 availableTime.Kindergartens.Add(new KindergartenAvailableTime
                 {
-                    KindergartenId = kindergartenId
+
+                    KindergartenId = kindergartenId, 
+
                 });
             }
-
 
 
             await context.AvailableTimes.AddAsync(availableTime, cancellationToken);
@@ -32,14 +58,12 @@ namespace grupp1.Server.Features.AvailableTimes.Post
             await context.SaveChangesAsync(cancellationToken);
 
             return new PostAvailableTimeResponse
-            (
-                availableTime.Id,
-                availableTime.StartTime,
-                availableTime.EndTime,
-                //availableTime.UserId,
-                request.Kindergartens.ToArray()
-
-            );
+            {
+                Id = availableTime.Id,
+                Success = true
+            };
+                
+           
         }
     }
 

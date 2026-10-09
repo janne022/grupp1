@@ -1,6 +1,4 @@
-﻿using Microsoft.AspNetCore.Http;
-using Microsoft.AspNetCore.Mvc;
-using System.Security.Claims;
+﻿using Microsoft.AspNetCore.Mvc;
 
 namespace grupp1.Server.Features.AvailableTimes.Post
 {
@@ -10,12 +8,18 @@ namespace grupp1.Server.Features.AvailableTimes.Post
     {
 
         [HttpPost]
-        public async Task<ActionResult<PostAvailableTimeResponse>> PostAvailableTime(PostAvailableTimeRequest request, CancellationToken cancellationToken) 
+        public async Task<ActionResult<PostAvailableTimeResponse>> PostAvailableTime(PostAvailableTimeRequest request, CancellationToken cancellationToken)
         {
 
             var response = await handler.HandleAsync(request, cancellationToken);
 
-            return Ok(response);
+            if (!response.Success)
+            {
+                return BadRequest(response.ErrorMessage);
+            }
+
+            return Created($"/api/availabletime/getbytimeid", response);
+
         }
     }
 }

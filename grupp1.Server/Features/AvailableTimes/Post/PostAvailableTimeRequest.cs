@@ -2,7 +2,7 @@
 
 namespace grupp1.Server.Features.AvailableTimes.Post
 {
-    public sealed record PostAvailableTimeRequest(
+    public record PostAvailableTimeRequest(
 
         DateTime StartTime,
         DateTime EndTime,
