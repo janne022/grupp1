@@ -1,4 +1,4 @@
-namespace Vicaria.Server.Features.AvailableTime.Delete;
+namespace Vicaria.Server.Features.AvailableTimes.Delete;
 
 public record class DeleteAvailableTimeQuery
 (

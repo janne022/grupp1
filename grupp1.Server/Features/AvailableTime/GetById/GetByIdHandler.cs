@@ -1,6 +1,6 @@
 using Vicaria.Server.Infrastructure; // To implement IHandler
 
-namespace Vicaria.Server.Features.AvailableTime.GetById;
+namespace Vicaria.Server.Features.AvailableTimes.GetById;
 
 public class GetByIdHandler : IHandler<GetByIdQuery, GetByIdResponse?>
 {
