@@ -1,7 +1,6 @@
-using grupp1.Server.Infrastructure;
 using Microsoft.EntityFrameworkCore;
 using Vicaria.Server.Infrastructure;
-namespace Vicaria.Server.Features.AvailableTime.Delete;
+namespace Vicaria.Server.Features.AvailableTimes.Delete;
 
 public class DeleteAvailableTimeHandler(
     VicariaDbContext dbContext,
