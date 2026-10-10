@@ -1,6 +1,6 @@
 using NetTopologySuite.Geometries;
 
-namespace Vicaria.Server.Features.AvailableTime.GetById;
+namespace Vicaria.Server.Features.AvailableTimes.GetById;
 
 #region Requests
 
