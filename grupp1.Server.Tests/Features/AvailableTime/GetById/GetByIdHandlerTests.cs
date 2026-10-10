@@ -1,5 +1,5 @@
 using Moq;
-using Vicaria.Server.Features.AvailableTime.GetById;
+using Vicaria.Server.Features.AvailableTimes.GetById;
 using Vicaria.Server.Infrastructure;
 using Model = Vicaria.Server.Domain.Models;
 
