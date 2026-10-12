@@ -8,19 +8,19 @@ namespace Vicaria.Server.Features.AvailableTimes.Update;
 public class UpdateAvailableTimeHandler(
     VicariaDbContext DbContext,
     ILogger<UpdateAvailableTimeHandler> _logger
-) : IHandler<UpdateAvailableTimeQuery, UpdateAvailableTimeResponse>
+) : IHandler<UpdateAvailableTimeCommand, UpdateAvailableTimeResponse>
 {
     public async Task<UpdateAvailableTimeResponse> HandleAsync(
-        UpdateAvailableTimeQuery query,
+        UpdateAvailableTimeCommand command,
         CancellationToken ct = default
     )
     {
-        if (query.StartTime > query.EndTime || query.StartTime == query.EndTime)
+        if (command.StartTime > command.EndTime || command.StartTime == command.EndTime)
         {
             _logger.LogWarning(
                 "{EndTime} was not after {StartTime}",
-                query.EndTime,
-                query.StartTime
+                command.EndTime,
+                command.StartTime
             );
             // Is this log necessary on the backend, I wonder?
             // Normally a user would get validation error on frontend.
@@ -28,26 +28,41 @@ public class UpdateAvailableTimeHandler(
             // I suppose the fact that a user somehow got past the
             // frontend validator has value in itself, too...
 
-            return new UpdateAvailableTimeResponse(UpdateAvailableTimeStatus.BadTime);
+            return new UpdateAvailableTimeResponse(
+                null,
+                null,
+                null,
+                UpdateAvailableTimeStatus.BadTime
+            );
         }
 
         var availableTime = await DbContext.AvailableTimes.FirstOrDefaultAsync(
-            at => at.Id == query.TimeId,
+            at => at.Id == command.TimeId,
             ct
         );
 
         if (availableTime is null)
         {
-            _logger.LogWarning("AvailableTiem {TimeId} was returned null.", query.TimeId);
-            return new UpdateAvailableTimeResponse(UpdateAvailableTimeStatus.WasNull);
+            _logger.LogWarning("AvailableTiem {TimeId} was returned null.", command.TimeId);
+            return new UpdateAvailableTimeResponse(
+                null,
+                command.StartTime,
+                command.EndTime,
+                UpdateAvailableTimeStatus.WasNull
+            );
         }
 
         // TODO: We should check if the user who updates this time owns their AT object
 
-        availableTime.StartTime = query.StartTime;
-        availableTime.EndTime = query.EndTime;
+        availableTime.StartTime = command.StartTime;
+        availableTime.EndTime = command.EndTime;
         await DbContext.SaveChangesAsync(ct);
 
-        return new UpdateAvailableTimeResponse(UpdateAvailableTimeStatus.Ok);
+        return new UpdateAvailableTimeResponse(
+            command.TimeId,
+            command.StartTime,
+            command.EndTime,
+            UpdateAvailableTimeStatus.Ok
+        );
     }
 }
