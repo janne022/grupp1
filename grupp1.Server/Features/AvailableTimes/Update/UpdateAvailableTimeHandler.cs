@@ -1,7 +1,6 @@
-using grupp1.Server.Infrastructure;
+using Vicaria.Server.Infrastructure;
 using Microsoft.EntityFrameworkCore;
 using Vicaria.Server.Features.AvailableTimes.Update.DTOs;
-using Vicaria.Server.Infrastructure;
 
 namespace Vicaria.Server.Features.AvailableTimes.Update;
 
