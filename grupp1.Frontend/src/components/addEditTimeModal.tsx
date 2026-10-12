@@ -1,14 +1,14 @@
+import { DatePickerTime } from "./date-picker"
+import { SelectGroups } from "./selectGroups"
 import { Button } from "./ui/button"
 import { Dialog, DialogClose, DialogContent, DialogFooter, DialogHeader, DialogTitle, DialogTrigger } from "./ui/dialog"
 import { Field, FieldGroup } from "./ui/field"
-import { Input } from "./ui/input"
-import { Label } from "./ui/label"
 
 
 export default function AddEditTimeModal() {
 
-    return (
-        <Dialog>
+  return (
+    <Dialog>
       <form>
         <DialogTrigger render={<Button variant="outline">Open Dialog</Button>} />
         <DialogContent className="sm:max-w-sm">
@@ -17,12 +17,15 @@ export default function AddEditTimeModal() {
           </DialogHeader>
           <FieldGroup>
             <Field>
-              <Label htmlFor="name-1">Name</Label>
-              <Input id="name-1" name="name" defaultValue="Pedro Duarte" />
+              <DatePickerTime labelName="Startdag"  />
             </Field>
             <Field>
-              <Label htmlFor="username-1">Username</Label>
-              <Input id="username-1" name="username" defaultValue="@peduarte" />
+              <DatePickerTime labelName="Slutdag" />
+            </Field>
+          </FieldGroup>
+          <FieldGroup>
+            <Field>
+              <SelectGroups />
             </Field>
           </FieldGroup>
           <DialogFooter>
@@ -32,5 +35,5 @@ export default function AddEditTimeModal() {
         </DialogContent>
       </form>
     </Dialog>
-    )
+  )
 }
