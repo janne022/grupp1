@@ -25,24 +25,22 @@ function RouteComponent() {
   const [date, setDate] = React.useState<Date | undefined>(new Date());
   const [open, setOpen] = React.useState(false);
 
-  function handleDayClick(day: Date) {
+  function openDialog(day?: Date) {
     setDate(day);
-    setOpen(true);
-  }
-  function handleNewClick() {
-    setDate(undefined);
     setOpen(true);
   }
 
   return (
-    <>
-      <div>Hello "/CalenderPage"!</div>
-      <Button onClick={handleNewClick}>New Time</Button>
+    <div className="mx-auto max-w-3xl flex flex-col items-center gap-4 ">
+      <Button variant="outline" onClick={() => openDialog()}>
+        New Time
+      </Button>
 
       <Calendar
         mode="single"
         selected={date}
-        onDayClick={handleDayClick}
+        onDayClick={openDialog}
+        disabled={{ dayOfWeek: [0, 6] }}
         className="rounded-lg border [--cell-size:3rem] "
       />
 
@@ -67,6 +65,6 @@ function RouteComponent() {
           </DialogDescription>
         </DialogContent>
       </Dialog>
-    </>
+    </div>
   );
 }
