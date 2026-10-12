@@ -3,7 +3,7 @@ using Microsoft.AspNetCore.Mvc;
 using Vicaria.Server.Features.AvailableTimes.Update;
 using Vicaria.Server.Features.AvailableTimes.Update.DTOs;
 
-namespace grupp1.Server.Features.AvailableTimes.Update
+namespace Vicaria.Server.Features.AvailableTimes.Update
 {
     // TODO: Add Authorization tag when authorisation is up.
     [Route("api/availabletimes")]
