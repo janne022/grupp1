@@ -15,19 +15,6 @@ public class UpdateAvailableTimeHandler(
         CancellationToken ct = default
     )
     {
-        var availableTime = await DbContext.AvailableTimes.FirstOrDefaultAsync(
-            at => at.Id == query.TimeId,
-            ct
-        );
-
-        if (availableTime is null)
-        {
-            _logger.LogWarning("AvailableTiem {TimeId} was returned null.", query.TimeId);
-            return new UpdateAvailableTimeResponse(UpdateAvailableTimeStatus.WasNull);
-        }
-
-        // TODO: We should check if the user who updates this time owns their AT object
-
         if (query.StartTime > query.EndTime || query.StartTime == query.EndTime)
         {
             _logger.LogWarning(
@@ -43,6 +30,19 @@ public class UpdateAvailableTimeHandler(
 
             return new UpdateAvailableTimeResponse(UpdateAvailableTimeStatus.BadTime);
         }
+
+        var availableTime = await DbContext.AvailableTimes.FirstOrDefaultAsync(
+            at => at.Id == query.TimeId,
+            ct
+        );
+
+        if (availableTime is null)
+        {
+            _logger.LogWarning("AvailableTiem {TimeId} was returned null.", query.TimeId);
+            return new UpdateAvailableTimeResponse(UpdateAvailableTimeStatus.WasNull);
+        }
+
+        // TODO: We should check if the user who updates this time owns their AT object
 
         availableTime.StartTime = query.StartTime;
         availableTime.EndTime = query.EndTime;
