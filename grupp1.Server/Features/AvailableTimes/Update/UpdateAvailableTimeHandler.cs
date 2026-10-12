@@ -23,7 +23,7 @@ public class UpdateAvailableTimeHandler(
         if (availableTime is null)
         {
             _logger.LogWarning("AvailableTiem {TimeId} was returned null.", query.TimeId);
-            return new UpdateAvailableTimeResponse(false, UpdateAvailableTimeStatus.WasNull);
+            return new UpdateAvailableTimeResponse(UpdateAvailableTimeStatus.WasNull);
         }
 
         // TODO: We should check if the user who updates this time owns their AT object
@@ -41,13 +41,13 @@ public class UpdateAvailableTimeHandler(
             // I suppose the fact that a user somehow got past the
             // frontend validator has value in itself, too...
 
-            return new UpdateAvailableTimeResponse(false, UpdateAvailableTimeStatus.BadTime);
+            return new UpdateAvailableTimeResponse(UpdateAvailableTimeStatus.BadTime);
         }
 
         availableTime.StartTime = query.StartTime;
         availableTime.EndTime = query.EndTime;
         await DbContext.SaveChangesAsync(ct);
 
-        return new UpdateAvailableTimeResponse(true, null);
+        return new UpdateAvailableTimeResponse(UpdateAvailableTimeStatus.Ok);
     }
 }
