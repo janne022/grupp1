@@ -7,6 +7,11 @@ using Microsoft.AspNetCore.Mvc;
 
 namespace grupp1.Server.Features.Kindergarten.GetAll
 {
+    public sealed class GetAllKindergartensHandler : IHandler<GetAllKindergartensRequest, GetAllKindergartensResponse>
+    {
+
+    }
+
     [ApiController]
     [Route("api/kindergartens")]
     public sealed class GetAllKindergartensController()
@@ -16,5 +21,13 @@ namespace grupp1.Server.Features.Kindergarten.GetAll
         {
             
         }
+    }
+
+    public class GetAllKindergartensResponse
+    {
+    }
+
+    public class GetAllKindergartensRequest
+    {
     }
 }
