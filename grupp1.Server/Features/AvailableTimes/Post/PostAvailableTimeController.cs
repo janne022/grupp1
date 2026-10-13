@@ -1,5 +1,6 @@
-﻿using grupp1.Server.Infrastructure;
-using Microsoft.AspNetCore.Mvc;
+﻿using Microsoft.AspNetCore.Mvc;
+using Vicaria.Server.Infrastructure;
+
 
 namespace grupp1.Server.Features.AvailableTimes.Post
 {

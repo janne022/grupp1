@@ -1,5 +1,4 @@
-﻿using grupp1.Server.Infrastructure;
-using Vicaria.Server.Domain.Models;
+﻿using Vicaria.Server.Domain.Models;
 using Vicaria.Server.Infrastructure;
 using Microsoft.EntityFrameworkCore;
 

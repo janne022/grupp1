@@ -1,4 +1,4 @@
-﻿using Vicaria.Server.Domain.Models;
+﻿
 
 namespace grupp1.Server.Features.AvailableTimes.Post
 {
