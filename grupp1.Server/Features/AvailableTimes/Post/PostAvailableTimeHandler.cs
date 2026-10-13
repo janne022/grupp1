@@ -6,14 +6,17 @@ using Microsoft.EntityFrameworkCore;
 
 namespace grupp1.Server.Features.AvailableTimes.Post
 {
-    public sealed class PostAvailableTimeHandler(VicariaDbContext context) : IHandler<PostAvailableTimeRequest, PostAvailableTimeResponse>
+    public sealed class PostAvailableTimeHandler(VicariaDbContext context, ILogger<PostAvailableTimeHandler> _logger) : IHandler<PostAvailableTimeRequest, PostAvailableTimeResponse>
     {
         public async Task<PostAvailableTimeResponse> HandleAsync(PostAvailableTimeRequest request, CancellationToken cancellationToken = default)
         {
 
             if(request.EndTime <= request.StartTime)
             {
+                _logger.LogInformation("Failed to create available time: EndTime must be later than StartTime");
+                
                 return new PostAvailableTimeResponse
+
                 {
                     Success = false,
                     ErrorMessage = "EndTime must be later than StartTime"
@@ -21,8 +24,10 @@ namespace grupp1.Server.Features.AvailableTimes.Post
             }
 
 
-            if (request.Kindergartens == null || request.Kindergartens.Count == 0)
+            if (request.Kindergartens is null || request.Kindergartens.Count is 0)
             {
+                _logger.LogInformation("Failed to create available time: No kindergartens provided");
+
                 return new PostAvailableTimeResponse
                 {
                     Success = false,
@@ -46,6 +51,8 @@ namespace grupp1.Server.Features.AvailableTimes.Post
 
                 if (!kindergartenExist)
                 {
+                    _logger.LogInformation($"Failed to create available time: Kindergarten with Id {kindergartenId} does not exist");
+
                     return new PostAvailableTimeResponse
                     {
                         Success = false,
@@ -66,7 +73,10 @@ namespace grupp1.Server.Features.AvailableTimes.Post
 
             await context.AvailableTimes.AddAsync(availableTime, cancellationToken);
 
+
             await context.SaveChangesAsync(cancellationToken);
+
+            _logger.LogInformation($"Available time {availableTime.Id} created successfully");
 
             return new PostAvailableTimeResponse
             {
