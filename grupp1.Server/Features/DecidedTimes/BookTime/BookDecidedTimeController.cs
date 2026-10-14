@@ -14,7 +14,7 @@ public class BookDecidedTimeController(
     [HttpPost("book")]
     public async Task<ActionResult<BookDecidedTimeResponse>> BookTime(
         [FromBody] BookDecidedTimeQuery query,
-        CancellationToken cancellationToken
+        CancellationToken cancellationToken = default
     )
     {
         var createdResult = await handler.HandleAsync(query, cancellationToken);
