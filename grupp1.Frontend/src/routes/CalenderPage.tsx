@@ -37,6 +37,7 @@ function RouteComponent() {
       </Button>
 
       <Calendar
+        locale={sv}
         mode="single"
         selected={date}
         onDayClick={openDialog}
