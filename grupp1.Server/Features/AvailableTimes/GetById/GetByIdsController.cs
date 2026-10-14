@@ -14,7 +14,7 @@ public class GetByIdsController : ControllerBase
 
     #endregion
     #region Constructors
-    public GetByIdsController(GetByIdHandler handler, Logger<GetByIdsController> logger)
+    public GetByIdsController(IHandler<GetByIdQuery, GetByIdResponse?> handler, Logger<GetByIdsController> logger)
     {
         _handler = handler;
         _logger = logger;
