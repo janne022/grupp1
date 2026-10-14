@@ -11,14 +11,12 @@ public class GetDecidedTimeByIdController(
     IHandler<GetDecidedTimeByIdQuery, GetDecidedTimeByIdResponse> handler
 ) : Controller
 {
-    [HttpPost("get/{id}")]
+    [HttpGet("{Id:guid}")]
     public async Task<ActionResult<GetDecidedTimeByIdResponse>> GetById(
-        [FromRoute] GetDecidedTimeByIdQuery query,
-        CancellationToken cancellationToken = default
-    )
+    [FromRoute] GetDecidedTimeByIdQuery query,
+    CancellationToken cancellationToken = default)
     {
         var result = await handler.HandleAsync(query, cancellationToken);
-
         return Ok(result);
     }
 }
