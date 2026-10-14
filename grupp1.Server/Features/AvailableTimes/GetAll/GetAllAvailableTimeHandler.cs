@@ -1,5 +1,3 @@
-using System;
-using grupp1.Server.Infrastructure;
 using Microsoft.EntityFrameworkCore;
 using Vicaria.Server.Features.AvailableTimes.GetAll.DTOs;
 using Vicaria.Server.Infrastructure;
