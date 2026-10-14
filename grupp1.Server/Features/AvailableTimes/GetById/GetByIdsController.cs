@@ -14,7 +14,7 @@ public class GetAvailableTimeByIdsController : ControllerBase
 
     #endregion
     #region Constructors
-    public GetByIdsController(IHandler<GetByIdQuery, GetByIdResponse?> handler, ILogger<GetByIdsController> logger)
+    public GetAvailableTimeByIdsController(IHandler<GetByIdQuery, GetByIdResponse?> handler, ILogger<GetAvailableTimeByIdsController> logger)
     {
         _handler = handler;
         _logger = logger;
