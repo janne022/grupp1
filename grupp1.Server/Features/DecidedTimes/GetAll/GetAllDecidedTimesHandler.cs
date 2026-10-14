@@ -19,7 +19,8 @@ public class GetAllDecidedTimesHandler(
                 dt.Id,
                 dt.StartTime,
                 dt.EndTime,
-                dt.KindergartenId
+                dt.KindergartenId,
+                dt.Kindergarten.Name
                 // TODO: Add the sub User here once we have authorisation
             ))
             .ToListAsync(cancellationToken);
