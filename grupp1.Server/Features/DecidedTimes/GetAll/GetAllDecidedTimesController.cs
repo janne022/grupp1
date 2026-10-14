@@ -5,7 +5,7 @@ using Vicaria.Server.Infrastructure;
 namespace Vicaria.Server.Features.DecidedTimes.GetAll
 {
     // TODO: Add Authorization tag when authorisation is up.
-    [Route("api/decidedtimes")]
+    [Route("api/decidedtime")]
     [ApiController]
     public class GetAllDecidedTimesController(
         IHandler<GetAllDecidedTimesQuery, GetAllDecidedTimesResponse> handler
