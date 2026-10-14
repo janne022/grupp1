@@ -1,3 +1,4 @@
+using Microsoft.EntityFrameworkCore;
 using Moq;
 using Vicaria.Server.Features.AvailableTimes.GetById;
 using Vicaria.Server.Infrastructure;
@@ -7,12 +8,27 @@ namespace Vicaria.Server.Tests.AvailableTime.GetById;
 
 public class GetByIdHandlerTests
 {
+    #region Fields
+
+    private readonly VicariaDbContext _db;
+    private readonly GetByIdHandler _handler;
+
+    #endregion
+    #region Constructors
+
+    public GetByIdHandlerTests()
+    {
+        _db = CreateInMemoryDbContext();
+        _handler = new GetByIdHandler(_db);
+    }
+
+    #endregion
+    #region Tests
+
     [Fact]
     public async Task HandleAsync_WhenAvailableTimeExists_ReturnsResponse()
     {
         // Arrange
-
-        var requestMock = new GetByIdQuery(Guid.Empty);
 
         var availableTimeMock = new Model.AvailableTime()
         {
@@ -24,22 +40,19 @@ public class GetByIdHandlerTests
             Kindergartens = []
         };
 
-        // TODO: ITERATE HERE
-        var dbContextMock = new Mock<VicariaDbContext>();
+        _db.AvailableTimes.Add(availableTimeMock);
 
-        dbContextMock.Setup(context => context.AvailableTimes.FindAsync(availableTimeMock.Id)) // This throws error!
-            .ReturnsAsync(availableTimeMock);
-
-        var handlerMock = new GetByIdHandler(dbContextMock.Object);
+        GetByIdQuery query = new(availableTimeMock.Id);
 
         // Act
 
-        var result = await handlerMock.HandleAsync(requestMock);
+        GetByIdResponse? result = await _handler.HandleAsync(query);
 
         // Assert
 
         Assert.NotNull(result);
-        Assert.IsType<GetByIdQuery>(result);
+        Assert.IsType<GetByIdResponse>(result);
+
     }
 
     [Fact]
@@ -61,4 +74,18 @@ public class GetByIdHandlerTests
 
         // Assert
     }
+
+    #endregion
+    #region Helper methods
+
+    private static VicariaDbContext CreateInMemoryDbContext()
+    {
+        var options = new DbContextOptionsBuilder<VicariaDbContext>()
+            .UseInMemoryDatabase(Guid.CreateVersion7().ToString())
+            .Options;
+
+        return new VicariaDbContext(options);
+    }
+
+    #endregion
 }
