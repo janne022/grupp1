@@ -9,6 +9,7 @@ import {
 import { Button } from "@/components/ui/button";
 import { createFileRoute } from "@tanstack/react-router";
 import React from "react";
+import { sv } from "date-fns/locale";
 
 export const Route = createFileRoute("/CalenderPage")({
   component: RouteComponent,
@@ -37,6 +38,7 @@ function RouteComponent() {
       </Button>
 
       <Calendar
+        locale={sv}
         mode="single"
         selected={date}
         onDayClick={openDialog}
