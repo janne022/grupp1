@@ -3,6 +3,7 @@
 import * as React from "react"
 import { format } from "date-fns"
 import { ChevronDownIcon } from "lucide-react"
+import { sv } from "date-fns/locale"
 
 import { Button } from "@/components/ui/button"
 import { Calendar } from "@/components/ui/calendar"
@@ -28,6 +29,8 @@ export function DatePickerTime({labelName} : {labelName : string}) {
             <Calendar
               mode="single"
               selected={date}
+              disabled={{ dayOfWeek: [0, 6] }}
+              locale={sv}
               captionLayout="dropdown"
               defaultMonth={date}
               onSelect={(date) => {
@@ -41,6 +44,8 @@ export function DatePickerTime({labelName} : {labelName : string}) {
       <Field className="w-32">
         <FieldLabel htmlFor="time-picker-optional">Tid</FieldLabel>
         <Input
+          min="06:00"
+          max="18:00"
           type="time"
           id="time-picker-optional"
           step="1"
