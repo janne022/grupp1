@@ -4,7 +4,7 @@ using Vicaria.Server.Infrastructure;
 
 namespace grupp1.Server.Features.AvailableTimes.Post
 {
-    [Route("api/[controller]")]
+    [Route("api/availabletimes")]
     [ApiController]
     public class PostAvailableTimeController(IHandler<PostAvailableTimeRequest, PostAvailableTimeResponse> handler) : ControllerBase
     {
@@ -20,7 +20,7 @@ namespace grupp1.Server.Features.AvailableTimes.Post
                 return BadRequest(response.ErrorMessage);
             }
 
-            return Created($"/api/availabletime/getbytimeid", response);
+            return Created($"/api/availabletimes/byid", response);
 
 
         }

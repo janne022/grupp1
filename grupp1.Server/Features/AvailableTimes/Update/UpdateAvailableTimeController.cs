@@ -1,6 +1,4 @@
-using Microsoft.AspNetCore.Http;
 using Microsoft.AspNetCore.Mvc;
-using Vicaria.Server.Features.AvailableTimes.Update;
 using Vicaria.Server.Features.AvailableTimes.Update.DTOs;
 
 namespace Vicaria.Server.Features.AvailableTimes.Update
@@ -10,7 +8,7 @@ namespace Vicaria.Server.Features.AvailableTimes.Update
     [ApiController]
     public class UpdateAvailableTimeController(UpdateAvailableTimeHandler handler) : ControllerBase
     {
-        [HttpPut("updatetime")]
+        [HttpPut()]
         public async Task<ActionResult<UpdateAvailableTimeResponse>> Update(
             [FromBody] UpdateAvailableTimeQuery query,
             CancellationToken ct,
