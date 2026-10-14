@@ -2,13 +2,14 @@ using Microsoft.AspNetCore.Http;
 using Microsoft.AspNetCore.Mvc;
 using Vicaria.Server.Features.AvailableTimes.Update;
 using Vicaria.Server.Features.AvailableTimes.Update.DTOs;
+using Vicaria.Server.Infrastructure;
 
 namespace Vicaria.Server.Features.AvailableTimes.Update
 {
     // TODO: Add Authorization tag when authorisation is up.
     [Route("api/availabletimes")]
     [ApiController]
-    public class UpdateAvailableTimeController(UpdateAvailableTimeHandler handler) : ControllerBase
+    public class UpdateAvailableTimeController(IHandler<UpdateAvailableTimeCommand, UpdateAvailableTimeResponse> handler) : ControllerBase
     {
         [HttpPut("updatetime")]
         public async Task<ActionResult<UpdateAvailableTimeResponse>> Update(
