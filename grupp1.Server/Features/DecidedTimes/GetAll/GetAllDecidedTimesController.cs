@@ -15,7 +15,6 @@ namespace Vicaria.Server.Features.DecidedTimes.GetAll
         public async Task<ActionResult<GetAllDecidedTimesResponse>> GetAll(CancellationToken ct)
         {
             var query = new GetAllDecidedTimesQuery();
-            // TODO: Add user to query when authorisation is up.
 
             var response = await handler.HandleAsync(query, ct);
 

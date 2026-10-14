@@ -20,10 +20,9 @@ public class GetAllDecidedTimesHandler(
                 dt.StartTime,
                 dt.EndTime,
                 dt.KindergartenId
+                // TODO: Add the sub User here once we have authorisation
             ))
             .ToListAsync(cancellationToken);
-
-        // TODO: Get UserId and filter by it, when authorisation is up.
 
         if (decidedTimes.Count == 0)
         {

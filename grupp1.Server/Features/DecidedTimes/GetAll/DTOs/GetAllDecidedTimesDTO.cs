@@ -8,4 +8,5 @@ public record class GetAllDecidedTimesDTO
     DateTime StartTime,
     DateTime EndTime,
     Guid KindergartenId
+    // TODO: Add the sub User to this when we have authorisation
 );

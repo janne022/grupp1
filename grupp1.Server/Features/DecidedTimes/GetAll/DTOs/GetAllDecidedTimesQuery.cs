@@ -4,4 +4,3 @@ public record class GetAllDecidedTimesQuery
 (
 
 );
-// TODO: Add user to query when authorisation is up.
