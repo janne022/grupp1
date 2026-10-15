@@ -182,6 +182,9 @@ namespace grupp1.Server.Migrations
                         .ValueGeneratedOnAdd()
                         .HasColumnType("uuid");
 
+                    b.Property<Guid>("AvailableTimeId")
+                        .HasColumnType("uuid");
+
                     b.Property<DateTime>("EndTime")
                         .HasColumnType("timestamp with time zone");
 
@@ -195,6 +198,8 @@ namespace grupp1.Server.Migrations
                         .HasColumnType("uuid");
 
                     b.HasKey("Id");
+
+                    b.HasIndex("AvailableTimeId");
 
                     b.HasIndex("KindergartenId");
 
@@ -390,6 +395,12 @@ namespace grupp1.Server.Migrations
 
             modelBuilder.Entity("Vicaria.Server.Domain.Models.DecidedTime", b =>
                 {
+                    b.HasOne("Vicaria.Server.Domain.Models.AvailableTime", "AvailableTime")
+                        .WithMany("DecidedTimes")
+                        .HasForeignKey("AvailableTimeId")
+                        .OnDelete(DeleteBehavior.Cascade)
+                        .IsRequired();
+
                     b.HasOne("Vicaria.Server.Domain.Models.Kindergarten", "Kindergarten")
                         .WithMany("DecidedTimes")
                         .HasForeignKey("KindergartenId")
@@ -401,6 +412,8 @@ namespace grupp1.Server.Migrations
                         .HasForeignKey("UserId")
                         .OnDelete(DeleteBehavior.Cascade)
                         .IsRequired();
+
+                    b.Navigation("AvailableTime");
 
                     b.Navigation("Kindergarten");
 
@@ -447,6 +460,8 @@ namespace grupp1.Server.Migrations
 
             modelBuilder.Entity("Vicaria.Server.Domain.Models.AvailableTime", b =>
                 {
+                    b.Navigation("DecidedTimes");
+
                     b.Navigation("Kindergartens");
                 });
 
