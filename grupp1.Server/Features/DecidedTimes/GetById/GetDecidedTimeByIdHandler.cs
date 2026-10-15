@@ -22,7 +22,7 @@ public class GetDecidedTimeByIdHandler(
 
         if (decidedTime == null)
         {
-            _logger.LogWarning($"DecidedTime id:{query.DecidedTimeGuid} not found");
+            _logger.LogWarning("DecidedTime id: {DecidedTimeId} not found", query.DecidedTimeGuid);
             throw new KeyNotFoundException($"DecidedTime time {query.DecidedTimeGuid} was not found.");
         }
 
