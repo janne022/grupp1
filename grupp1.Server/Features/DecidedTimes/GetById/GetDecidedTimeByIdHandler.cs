@@ -13,7 +13,7 @@ public class GetDecidedTimeByIdHandler(
         GetDecidedTimeByIdQuery query,
         CancellationToken cancellationToken = default)
     {   
-        _logger.LogInformation($"Starting to find DecidedTime ID: {query.DecidedTimeGuid}");
+        _logger.LogInformation("Starting to find DecidedTime {DecidedTimeId}", query.DecidedTimeGuid);
 
         var decidedTime = await dbContext.DecidedTimes
             .Include(at => at.User)
