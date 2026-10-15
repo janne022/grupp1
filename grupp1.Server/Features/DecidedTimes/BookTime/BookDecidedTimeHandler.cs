@@ -23,7 +23,6 @@ public class BookDecidedTimeHandler(
                 .Where(k => k.KindergartenId == query.KindergartenId))
             .ThenInclude(k => k.Kindergarten)
             .SingleOrDefaultAsync(at => at.Id == query.AvailableTimeGuid);
-
         if (availableTime == null)
         {
             _logger.LogWarning($"Availabletime id:{query.AvailableTimeGuid} not found");
