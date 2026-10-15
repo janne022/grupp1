@@ -12,6 +12,7 @@ import React from "react";
 import { sv } from "date-fns/locale";
 
 import { GetAllAvailableTimes } from "@/api/services/AvailableTimeService";
+import AddEditTimeModal from "@/components/addEditTimeModal";
 
 export const Route = createFileRoute("/CalenderPage")({
   component: RouteComponent,
@@ -33,7 +34,15 @@ function RouteComponent() {
     setOpen(true);
   }
 
-  const { isPending, data, error } = GetAllAvailableTimes()
+  const { isPending, data, error } = GetAllAvailableTimes();
+
+  if (isPending) {
+    return <div>Loading...</div>;
+  }
+
+  if (error) {
+    return <div>Error: {error.message}</div>;
+  }
 
   return (
     <div className="mx-auto max-w-3xl flex flex-col items-center gap-4 ">
@@ -50,27 +59,17 @@ function RouteComponent() {
         className="rounded-lg border [--cell-size:3rem] "
       />
 
-      <Dialog open={open} onOpenChange={setOpen}>
-        <DialogContent>
-          <DialogTitle>
-            {date
-              ? `Day ${date.getDate()}, 
-            month ${date.getMonth() + 1}, 
-            year ${date.getFullYear()}`
-              : "No date selected"}
-          </DialogTitle>
-          <div>
-            <h1>AAAAAAAAAAAAAA</h1>
-          </div>
-          <DialogDescription>
-            {date
-              ? `Day ${date.getDate()}, 
-            month ${date.getMonth() + 1}, 
-            year ${date.getFullYear()}`
-              : "No date selected"}
-          </DialogDescription>
-        </DialogContent>
-      </Dialog>
+      <AddEditTimeModal
+        open={open}
+        setOpen={setOpen}
+        deleteItem={function (): void {
+          throw new Error("Function not implemented.");
+        }}
+        addTime={function (): void {
+          throw new Error("Function not implemented.");
+        }}
+        kindergartens={[]}
+      />
     </div>
   );
 }
