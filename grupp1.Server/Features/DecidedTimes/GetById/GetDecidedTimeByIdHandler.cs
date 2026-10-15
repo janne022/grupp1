@@ -43,7 +43,7 @@ public class GetDecidedTimeByIdHandler(
             )
         );
 
-        _logger.LogInformation($"Successfully found DecidedTime ID: {query.DecidedTimeGuid}");
+        _logger.LogInformation("Successfully found DecidedTime ID: {DecidedTimeId}", query.DecidedTimeGuid);
 
         return response;
     }
