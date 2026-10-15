@@ -11,6 +11,8 @@ import { createFileRoute } from "@tanstack/react-router";
 import React from "react";
 import { sv } from "date-fns/locale";
 
+import { GetAllAvailableTimes } from "@/api/services/AvailableTimeService";
+
 export const Route = createFileRoute("/CalenderPage")({
   component: RouteComponent,
 });
@@ -30,6 +32,8 @@ function RouteComponent() {
     setDate(day);
     setOpen(true);
   }
+
+  const { isPending, data, error } = GetAllAvailableTimes()
 
   return (
     <div className="mx-auto max-w-3xl flex flex-col items-center gap-4 ">
