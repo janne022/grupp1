@@ -45,7 +45,7 @@ namespace grupp1.Server.Features.Kindergarten.GetAll
         List<KindergartenDto> Kindergartens
     );
 
-    public class GetAllKindergartensRequest(
+    public record GetAllKindergartensRequest(
     // Empty for interface
     );
 
