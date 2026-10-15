@@ -1,11 +1,4 @@
 import { Calendar } from "@/components/ui/calendar";
-import {
-  Dialog,
-  DialogContent,
-  DialogDescription,
-  DialogHeader,
-  DialogTitle,
-} from "@/components/ui/dialog";
 import { Button } from "@/components/ui/button";
 import { createFileRoute } from "@tanstack/react-router";
 import React from "react";
@@ -18,13 +11,6 @@ export const Route = createFileRoute("/CalenderPage")({
   component: RouteComponent,
 });
 
-interface AllDayInfo {
-  UserInfo: unknown;
-  StartTime: Date;
-  EndTime: Date;
-  SchoolsSelected: unknown;
-}
-
 function RouteComponent() {
   const [date, setDate] = React.useState<Date | undefined>(new Date());
   const [open, setOpen] = React.useState(false);
@@ -35,6 +21,8 @@ function RouteComponent() {
   }
 
   const { isPending, data, error } = GetAllAvailableTimes();
+
+  console.log("Available times data:", data);
 
   if (isPending) {
     return <div>Loading...</div>;
@@ -69,6 +57,7 @@ function RouteComponent() {
           throw new Error("Function not implemented.");
         }}
         kindergartens={[]}
+        selectedDate={date}
       />
     </div>
   );

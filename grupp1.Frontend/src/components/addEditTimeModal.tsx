@@ -28,7 +28,7 @@ export default function AddEditTimeModal({
   deleteItem: deleteTime,
   addTime: addTime,
   kindergartens: kindergartens,
-  selectedTime: selectedTime,
+  selectedDate: selectedDate,
   existingStartTime: existingStartTime,
   existingEndTime: existingEndTime,
 }: {
@@ -37,7 +37,7 @@ export default function AddEditTimeModal({
   deleteItem: () => void;
   addTime: () => void;
   kindergartens: KindergartenGroup[];
-  selectedTime?: string;
+  selectedDate?: Date | undefined;
   existingStartTime?: string;
   existingEndTime?: string;
 }) {
@@ -89,7 +89,8 @@ export default function AddEditTimeModal({
             <Field>
               <DatePickerTime
                 labelName="Startdag"
-                initialTime={existingStartTime || selectedTime}
+                initialTime={existingStartTime || "08:00"}
+                intialDate={selectedDate}
               />
             </Field>
             <Field>
