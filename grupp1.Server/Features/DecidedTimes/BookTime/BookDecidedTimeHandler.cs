@@ -23,13 +23,18 @@ public class BookDecidedTimeHandler(
                 .Where(k => k.KindergartenId == query.KindergartenId))
             .ThenInclude(k => k.Kindergarten)
             .SingleOrDefaultAsync(at => at.Id == query.AvailableTimeGuid);
+
         if (availableTime == null)
         {
             _logger.LogWarning($"Availabletime id:{query.AvailableTimeGuid} not found");
             throw new KeyNotFoundException($"Available time {query.AvailableTimeGuid} was not found.");
         }
 
-        var kindergarten = availableTime.Kindergartens.Single().Kindergarten; //little ugly but its a collection so idfk
+        if(availableTime.Kindergartens.Single().Kindergarten == null)
+        {
+            _logger.LogWarning($"Kindergarten id:{query.KindergartenId} not found");
+            throw new KeyNotFoundException($"Kindergarten id:{query.KindergartenId} was not found.");
+        }
 
         DecidedTime createdDecidedTime = new()
         {
@@ -37,14 +42,15 @@ public class BookDecidedTimeHandler(
             StartTime = availableTime.StartTime,
             EndTime = availableTime.EndTime,
             UserId = availableTime.UserId,
-            KindergartenId = query.KindergartenId
+            KindergartenId = query.KindergartenId,
+            AvailableTimeId = query.AvailableTimeGuid
         };
 
         BookDecidedTimeResponse response = new(
             Id: createdDecidedTime.Id,
             StartTime: createdDecidedTime.StartTime,
             EndTime: createdDecidedTime.EndTime,
-
+            
             SubstituteInfo: new SubstituteDTO(
                 Id: createdDecidedTime.UserId,
                 FirstName: availableTime.Substitute.FirstName,
@@ -52,15 +58,14 @@ public class BookDecidedTimeHandler(
             ),
             KindergartenInfo: new KindergartenDTO(
                 Id: createdDecidedTime.KindergartenId,
-                Name: kindergarten.Name,
-                Location: kindergarten.Location
+                Name: availableTime.Kindergartens.Single().Kindergarten.Name, //very ugly
+                Location: availableTime.Kindergartens.Single().Kindergarten.Location
             )
         );
 
-        dbContext.Remove(availableTime);
         await dbContext.AddAsync(createdDecidedTime);
         await dbContext.SaveChangesAsync();
-        
+
         _logger.LogInformation($"Successfully created booked time. ID: {query.AvailableTimeGuid}");
         return response;
     }
