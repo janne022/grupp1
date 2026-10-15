@@ -1,9 +1,9 @@
 "use client";
 
-import * as React from "react"
-import { format } from "date-fns"
-import { ChevronDownIcon } from "lucide-react"
-import { sv } from "date-fns/locale"
+import * as React from "react";
+import { format } from "date-fns";
+import { ChevronDownIcon } from "lucide-react";
+import { sv } from "date-fns/locale";
 
 import { Button } from "@/components/ui/button";
 import { Calendar } from "@/components/ui/calendar";
@@ -18,12 +18,14 @@ import {
 export function DatePickerTime({
   labelName,
   initialTime,
+  intialDate,
 }: {
   labelName: string;
   initialTime: string | undefined;
+  intialDate?: Date | undefined;
 }) {
   const [open, setOpen] = React.useState(false);
-  const [date, setDate] = React.useState<Date | undefined>(undefined);
+  const [date, setDate] = React.useState<Date | undefined>(intialDate);
   const [time, setTime] = React.useState<string>(initialTime || "08:00");
 
   return (
