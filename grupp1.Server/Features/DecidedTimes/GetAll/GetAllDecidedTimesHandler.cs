@@ -5,8 +5,10 @@ using Vicaria.Server.Infrastructure;
 namespace Vicaria.Server.Features.DecidedTimes.GetAll;
 
 public class GetAllDecidedTimesHandler(
-    VicariaDbContext DbContext,
-    ILogger<GetAllDecidedTimesHandler> _logger
+    VicariaDbContext DbContext//,
+    // ILogger<GetAllDecidedTimesHandler> _logger
+    //
+    // TODO: uncomment above when logging is necessary
 ) : IHandler<GetAllDecidedTimesQuery, GetAllDecidedTimesResponse>
 {
     public async Task<GetAllDecidedTimesResponse> HandleAsync(
@@ -24,11 +26,6 @@ public class GetAllDecidedTimesHandler(
                 // TODO: Add the sub User here once we have authorisation
             ))
             .ToListAsync(cancellationToken);
-
-        if (decidedTimes.Count == 0)
-        {
-            _logger.LogInformation("GetAllDecidedTimesHandler returned no DecidedTimes");
-        }
 
         return new GetAllDecidedTimesResponse(decidedTimes);
     }
