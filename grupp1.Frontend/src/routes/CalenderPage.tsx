@@ -7,6 +7,7 @@ import { sv } from "date-fns/locale";
 import { GetAllAvailableTimes } from "@/api/services/AvailableTimeService";
 import AddEditTimeModal from "@/components/addEditTimeModal";
 import { Dot } from "lucide-react";
+import type { GetAllAvailableTimesResponse } from "@/api/models";
 
 export const Route = createFileRoute("/CalenderPage")({
   component: RouteComponent,
@@ -22,6 +23,8 @@ function RouteComponent() {
   }
 
   const { isPending, data, error } = GetAllAvailableTimes();
+
+  const availableTimeData : GetAllAvailableTimesResponse = data
 
   console.log("Available times data:", data);
 
@@ -48,13 +51,18 @@ function RouteComponent() {
         className="rounded-lg border [--cell-size:3rem]"
         components={{
           DayButton: ({ children, modifiers, day, ...props }) => {
-            const isWeekend =
-                day.date.getDay() === 0 || day.date.getDay() === 6
+            const isWeekend = day.date.getDay() === 0 || day.date.getDay() === 6
+
+            const eventToday = availableTimeData.availableTimes.some(d => {
+              // This is the lacking logic to get a dynamic rendering of available times...
+            })
 
             return (
               <CalendarDayButton day={day} modifiers={modifiers} {...props}>
                 {children}
-                <span>{isWeekend ? "" : <Dot/>}</span>
+                <div>
+                  {eventToday ? <Dot/> : ""}
+                </div>
               </CalendarDayButton>
             )
           }
