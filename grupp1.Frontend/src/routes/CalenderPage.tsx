@@ -24,9 +24,7 @@ function RouteComponent() {
 
   const { isPending, data, error } = GetAllAvailableTimes();
 
-  const availableTimeData : GetAllAvailableTimesResponse = data
-
-  console.log("Available times data:", data);
+  const availableTimeData: GetAllAvailableTimesResponse = data
 
   if (isPending) {
     return <div>Loading...</div>;
@@ -35,6 +33,8 @@ function RouteComponent() {
   if (error) {
     return <div>Error: {error.message}</div>;
   }
+
+  const dateFormattedStartDates: string[] = availableTimeData.availableTimes.map(at => new Date(at.startTime).toDateString())
 
   return (
     <div className="mx-auto max-w-3xl flex flex-col items-center gap-4 ">
@@ -48,20 +48,19 @@ function RouteComponent() {
         selected={date}
         onDayClick={openDialog}
         disabled={{ dayOfWeek: [0, 6] }}
-        className="rounded-lg border [--cell-size:3rem]"
+        className="rounded-lg border [--cell-size:3rem] "
         components={{
           DayButton: ({ children, modifiers, day, ...props }) => {
-            const isWeekend = day.date.getDay() === 0 || day.date.getDay() === 6
 
-            const eventToday = availableTimeData.availableTimes.some(d => {
-              // This is the lacking logic to get a dynamic rendering of available times...
-            })
+            let eventToday = dateFormattedStartDates.filter(d => d === day.date.toDateString())
 
             return (
               <CalendarDayButton day={day} modifiers={modifiers} {...props}>
                 {children}
-                <div>
-                  {eventToday ? <Dot/> : ""}
+                <div className="flex">
+                  {eventToday.map(() => {
+                    return <Dot />
+                  })}
                 </div>
               </CalendarDayButton>
             )
