@@ -1,5 +1,3 @@
-
-using System.Security.Cryptography.X509Certificates;
 using NetTopologySuite.Geometries;
 
 namespace Vicaria.Server.Features.DecidedTimes.Book.DTOs;

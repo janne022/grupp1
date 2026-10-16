@@ -1,4 +1,3 @@
-
 namespace Vicaria.Server.Features.DecidedTimes.Book.DTOs;
 
 public record class SubstituteDTO(

@@ -15,7 +15,7 @@ public class BookDecidedTimeHandler(
         BookDecidedTimeQuery query,
         CancellationToken cancellationToken = default)
     {
-        _logger.LogInformation($"Starting to Create booked time. ID: {query.AvailableTimeGuid}");
+        _logger.LogInformation("Starting to Create booked time. ID: {query.AvailableTimeGuid}", query.AvailableTimeGuid);
 
         var availableTime = await dbContext.AvailableTimes
             .Include(at => at.Substitute)
@@ -25,13 +25,13 @@ public class BookDecidedTimeHandler(
             .SingleOrDefaultAsync(at => at.Id == query.AvailableTimeGuid);
         if (availableTime == null)
         {
-            _logger.LogWarning($"Availabletime id:{query.AvailableTimeGuid} not found");
+            _logger.LogWarning("Could not find Availabletime id:{AvailableTimeGuid}", query.AvailableTimeGuid);
             throw new KeyNotFoundException($"Available time {query.AvailableTimeGuid} was not found.");
         }
 
-        if(availableTime.Kindergartens.Single().Kindergarten == null)
+        if (availableTime.Kindergartens.Single().Kindergarten == null)
         {
-            _logger.LogWarning($"Kindergarten id:{query.KindergartenId} not found");
+            _logger.LogWarning("Could not fimd Kindergarten id:{KindergartenId}", query.AvailableTimeGuid);
             throw new KeyNotFoundException($"Kindergarten id:{query.KindergartenId} was not found.");
         }
 
@@ -49,7 +49,7 @@ public class BookDecidedTimeHandler(
             Id: createdDecidedTime.Id,
             StartTime: createdDecidedTime.StartTime,
             EndTime: createdDecidedTime.EndTime,
-            
+
             SubstituteInfo: new SubstituteDTO(
                 Id: createdDecidedTime.UserId,
                 FirstName: availableTime.Substitute.FirstName,
@@ -65,7 +65,7 @@ public class BookDecidedTimeHandler(
         await dbContext.AddAsync(createdDecidedTime);
         await dbContext.SaveChangesAsync();
 
-        _logger.LogInformation($"Successfully created booked time. ID: {query.AvailableTimeGuid}");
+        _logger.LogInformation("Successfully created booked time. ID: {AvailableTimeGuid}", query.AvailableTimeGuid);
         return response;
     }
 }
