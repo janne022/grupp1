@@ -11,7 +11,7 @@ namespace Vicaria.Server.Features.DecidedTimes.GetAll
         IHandler<GetAllDecidedTimesQuery, GetAllDecidedTimesResponse> handler
     ) : ControllerBase
     {
-        [HttpGet("getall")]
+        [HttpGet]
         public async Task<ActionResult<GetAllDecidedTimesResponse>> GetAll(CancellationToken ct)
         {
             var query = new GetAllDecidedTimesQuery();
