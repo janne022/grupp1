@@ -8,7 +8,7 @@ namespace Vicaria.Server.Features.DecidedTimes.Book;
 
 public class BookDecidedTimeHandler(
     VicariaDbContext dbContext,
-    ILogger<BookDecidedTimeController> _logger
+    ILogger<BookDecidedTimeHandler> _logger
 ) : IHandler<BookDecidedTimeQuery, BookDecidedTimeResponse>
 {
     public async Task<BookDecidedTimeResponse> HandleAsync(
