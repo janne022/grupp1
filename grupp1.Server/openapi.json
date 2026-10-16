@@ -349,6 +349,18 @@
         }
       }
     },
+    "/api/kindergartens": {
+      "get": {
+        "tags": [
+          "GetAllKindergartens"
+        ],
+        "responses": {
+          "200": {
+            "description": "OK"
+          }
+        }
+      }
+    },
     "/api/availabletimes": {
       "post": {
         "tags": [
@@ -1650,6 +1662,9 @@
   "tags": [
     {
       "name": "grupp1.Server"
+    },
+    {
+      "name": "GetAllKindergartens"
     },
     {
       "name": "PostAvailableTime"
