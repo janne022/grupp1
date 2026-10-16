@@ -11,7 +11,7 @@ namespace Vicaria.Server.Features.DecidedTimes.UnbookDecidedTime
     {
         // TODO: Add Authorization tag when authorisation is up.
         [HttpDelete("{id:guid}")]
-        public async Task<IActionResult> DeleteDecidedTime([FromRoute] Guid id, CancellationToken cancellationToken)
+        public async Task<IActionResult> UnbookDecidedTime(Guid id, CancellationToken cancellationToken)
         {
             var command = new UnbookDecidedTimeCommand(id);
 
