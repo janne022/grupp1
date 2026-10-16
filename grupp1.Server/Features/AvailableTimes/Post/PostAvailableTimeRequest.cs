@@ -7,5 +7,5 @@ namespace grupp1.Server.Features.AvailableTimes.Post
         DateTime StartTime,
         DateTime EndTime,
         HashSet<Guid> Kindergartens);
-    
+
 }
