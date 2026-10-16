@@ -10,10 +10,10 @@ namespace grupp1.Server.Features.AvailableTimes.Post
         public async Task<PostAvailableTimeResponse> HandleAsync(PostAvailableTimeRequest request, CancellationToken cancellationToken = default)
         {
 
-            if(request.EndTime <= request.StartTime)
+            if (request.EndTime <= request.StartTime)
             {
                 _logger.LogInformation("Failed to create available time: EndTime must be later than StartTime");
-                
+
                 return new PostAvailableTimeResponse
 
                 {
@@ -44,7 +44,7 @@ namespace grupp1.Server.Features.AvailableTimes.Post
             };
 
 
-            foreach (var kindergartenId in request.Kindergartens) 
+            foreach (var kindergartenId in request.Kindergartens)
             {
                 var kindergartenExist = await context.Kindergartens.AnyAsync(k => k.Id == kindergartenId, cancellationToken);
 
@@ -57,7 +57,7 @@ namespace grupp1.Server.Features.AvailableTimes.Post
                         Success = false,
                         ErrorMessage = $"Kindergarten with Id {kindergartenId} does not exist"
                     };
-                        
+
                 }
 
                 availableTime.Kindergartens.Add(new KindergartenAvailableTime
@@ -82,8 +82,8 @@ namespace grupp1.Server.Features.AvailableTimes.Post
                 Id = availableTime.Id,
                 Success = true
             };
-                
-           
+
+
         }
     }
 

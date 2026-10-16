@@ -1,26 +1,17 @@
-import { Calendar } from "@/components/ui/calendar";
-import {
-  Dialog,
-  DialogContent,
-  DialogDescription,
-  DialogHeader,
-  DialogTitle,
-} from "@/components/ui/dialog";
+import { Calendar, CalendarDayButton } from "@/components/ui/calendar";
 import { Button } from "@/components/ui/button";
 import { createFileRoute } from "@tanstack/react-router";
 import React from "react";
 import { sv } from "date-fns/locale";
 
+import { GetAllAvailableTimes } from "@/api/services/AvailableTimeService";
+import AddEditTimeModal from "@/components/addEditTimeModal";
+import { Dot } from "lucide-react";
+import type { GetAllAvailableTimesResponse } from "@/api/models";
+
 export const Route = createFileRoute("/CalenderPage")({
   component: RouteComponent,
 });
-
-interface AllDayInfo {
-  UserInfo: unknown;
-  StartTime: Date;
-  EndTime: Date;
-  SchoolsSelected: unknown;
-}
 
 function RouteComponent() {
   const [date, setDate] = React.useState<Date | undefined>(new Date());
@@ -30,6 +21,20 @@ function RouteComponent() {
     setDate(day);
     setOpen(true);
   }
+
+  const { isPending, data, error } = GetAllAvailableTimes();
+
+  const availableTimeData: GetAllAvailableTimesResponse = data
+
+  if (isPending) {
+    return <div>Loading...</div>;
+  }
+
+  if (error) {
+    return <div>Error: {error.message}</div>;
+  }
+
+  const dateFormattedStartDates: string[] = availableTimeData.availableTimes.map(at => new Date(at.startTime).toDateString())
 
   return (
     <div className="mx-auto max-w-3xl flex flex-col items-center gap-4 ">
@@ -44,29 +49,37 @@ function RouteComponent() {
         onDayClick={openDialog}
         disabled={{ dayOfWeek: [0, 6] }}
         className="rounded-lg border [--cell-size:3rem] "
+        components={{
+          DayButton: ({ children, modifiers, day, ...props }) => {
+
+            let eventToday = dateFormattedStartDates.filter(d => d === day.date.toDateString())
+
+            return (
+              <CalendarDayButton day={day} modifiers={modifiers} {...props}>
+                {children}
+                <div className="flex">
+                  {eventToday.map(() => {
+                    return <Dot />
+                  })}
+                </div>
+              </CalendarDayButton>
+            )
+          }
+        }}
       />
 
-      <Dialog open={open} onOpenChange={setOpen}>
-        <DialogContent>
-          <DialogTitle>
-            {date
-              ? `Day ${date.getDate()}, 
-            month ${date.getMonth() + 1}, 
-            year ${date.getFullYear()}`
-              : "No date selected"}
-          </DialogTitle>
-          <div>
-            <h1>AAAAAAAAAAAAAA</h1>
-          </div>
-          <DialogDescription>
-            {date
-              ? `Day ${date.getDate()}, 
-            month ${date.getMonth() + 1}, 
-            year ${date.getFullYear()}`
-              : "No date selected"}
-          </DialogDescription>
-        </DialogContent>
-      </Dialog>
+      <AddEditTimeModal
+        open={open}
+        setOpen={setOpen}
+        deleteItem={function (): void {
+          throw new Error("Function not implemented.");
+        }}
+        addTime={function (): void {
+          throw new Error("Function not implemented.");
+        }}
+        kindergartens={[]}
+        selectedDate={date}
+      />
     </div>
   );
 }
