@@ -3,18 +3,18 @@ using Microsoft.AspNetCore.Mvc; // To inherit from ControllerBase
 
 namespace Vicaria.Server.Features.AvailableTimes.GetById;
 
-[Route("api/availabletime")]
+[Route("api/availabletimes")]
 [ApiController]
-public class GetByIdsController : ControllerBase
+public class GetAvailableTimeByIdsController : ControllerBase
 {
     #region Fields
 
     private readonly IHandler<GetByIdQuery, GetByIdResponse?> _handler;
-    private readonly ILogger<GetByIdsController> _logger;
+    private readonly ILogger<GetAvailableTimeByIdsController> _logger;
 
     #endregion
     #region Constructors
-    public GetByIdsController(IHandler<GetByIdQuery, GetByIdResponse?> handler, ILogger<GetByIdsController> logger)
+    public GetAvailableTimeByIdsController(IHandler<GetByIdQuery, GetByIdResponse?> handler, ILogger<GetAvailableTimeByIdsController> logger)
     {
         _handler = handler;
         _logger = logger;
@@ -24,7 +24,7 @@ public class GetByIdsController : ControllerBase
     #region Endpoints
 
     [HttpGet]
-    [Route("getbytimeid")]
+    [Route("byid")]
     public async Task<ActionResult<GetByIdResponse>> GetById([FromBody] GetByIdQuery request, CancellationToken ct)
     {
 

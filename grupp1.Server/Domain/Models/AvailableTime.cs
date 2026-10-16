@@ -8,4 +8,5 @@ public class AvailableTime
     public Guid UserId { get; set; }
     public User Substitute { get; set; } = null!;
     public HashSet<KindergartenAvailableTime> Kindergartens { get; set; } = [];
+    public HashSet<DecidedTime> DecidedTimes { get; set; } = [];
 }
