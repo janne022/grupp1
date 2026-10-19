@@ -76,6 +76,10 @@ function RouteComponent() {
       </header>
       <div className="min-h-0 flex-1">
         <Calendar
+          formatters={{
+            formatWeekdayName: (date) =>
+              format(date, "EEE", { locale: sv }).toUpperCase(),
+          }}
           locale={sv}
           mode="single"
           month={month}
