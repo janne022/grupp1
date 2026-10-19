@@ -6,7 +6,7 @@ import { sv } from "date-fns/locale";
 
 import { GetAllAvailableTimes } from "@/api/services/AvailableTimeService";
 import AddEditTimeModal from "@/components/addEditTimeModal";
-import { ChevronLeft, ChevronRight, Dot } from "lucide-react";
+import { ChevronLeft, ChevronRight, Dot, Plus } from "lucide-react";
 import type { GetAllAvailableTimesResponse } from "@/api/models";
 import { addMonths, format } from "date-fns";
 
@@ -43,35 +43,37 @@ function RouteComponent() {
 
   return (
     <div className="flex h-dvh w-full flex-col overflow-hidden">
-      <header className="flex h-16 shrink-0 items-center gap-4 border-b px-4">
-        <Button variant="outline" onClick={() => setMonth(new Date())}>
-          Idag
-        </Button>
-
-        <div className="flex items-center">
-          <Button
-            variant="ghost"
-            size="icon"
-            onClick={() => setMonth(addMonths(month, -1))}
-          >
-            <ChevronLeft />
+      <header className="flex justify-between h-16 shrink-0 items-center gap-4 border-b px-4">
+        <div className="flex items-center gap-4">
+          <Button variant="outline" onClick={() => setMonth(new Date())}>
+            Idag
           </Button>
 
-          <Button
-            variant="ghost"
-            size="icon"
-            onClick={() => setMonth(addMonths(month, 1))}
-          >
-            <ChevronRight />
-          </Button>
+          <div className="flex items-center">
+            <Button
+              variant="ghost"
+              size="icon"
+              onClick={() => setMonth(addMonths(month, -1))}
+            >
+              <ChevronLeft />
+            </Button>
+
+            <Button
+              variant="ghost"
+              size="icon"
+              onClick={() => setMonth(addMonths(month, 1))}
+            >
+              <ChevronRight />
+            </Button>
+          </div>
+          <h1 className="text-2xl font-medium capitalize">
+            {format(month, "MMMM yyyy", { locale: sv })}
+          </h1>
         </div>
 
-        <h1 className="text-2xl font-medium capitalize">
-          {format(month, "MMMM yyyy", { locale: sv })}
-        </h1>
-
-        <Button variant="outline" onClick={() => openDialog()}>
-          New Time
+        <Button variant="default" onClick={() => openDialog()}>
+          <Plus />
+          Ny Tid
         </Button>
       </header>
       <div className="min-h-0 flex-1">
