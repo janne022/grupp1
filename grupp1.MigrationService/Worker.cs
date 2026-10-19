@@ -77,11 +77,11 @@ namespace grupp1.MigrationService
             #endregion
             #region kindergarten seed data
 
-            List<Kindergarten> kindergartens = new List<Kindergarten>
+            HashSet<Kindergarten> kindergartens = new HashSet<Kindergarten>
             {
-                new Kindergarten { Name = "Solrosen", Location = new Point(39.0292426, 125.6597113) { SRID = 4326 } },
-                new Kindergarten { Name = "Korven", Location = new Point(18.0763706, 59.2919783) { SRID = 4326 } },
-                new Kindergarten { Name = "Chas Academy", Location = new Point(18.0788231, 59.293051) { SRID = 4326 } }
+                new() { Name = "Solrosen", Location = new Point(39.0292426, 125.6597113) { SRID = 4326 } },
+                new() { Name = "Korven", Location = new Point(18.0763706, 59.2919783) { SRID = 4326 } },
+                new() { Name = "Chas Academy", Location = new Point(18.0788231, 59.293051) { SRID = 4326 } }
             };
 
             var existingKindergartens = (await dbContext.Kindergartens.Select(k => k.Name)
@@ -116,7 +116,7 @@ namespace grupp1.MigrationService
                 .ToList();
 
             #endregion
-
+            # region DB table updates
 
             var strategy = dbContext.Database.CreateExecutionStrategy();
             await strategy.ExecuteAsync(async () =>
@@ -130,6 +130,8 @@ namespace grupp1.MigrationService
                 await dbContext.SaveChangesAsync(cancellationToken);
                 await transaction.CommitAsync(cancellationToken);
             });
+
+            #endregion
         }
     }
 }
