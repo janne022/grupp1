@@ -19,8 +19,8 @@ import {
   DropdownMenuItem,
 } from "./ui/dropdown-menu";
 
-import type { KindergartenGroup } from "@/api/types/types";
 import React, { type Dispatch } from "react";
+import type { KindergartenDto } from "@/api/models";
 
 export default function AddEditTimeModal({
   open: open,
@@ -36,7 +36,7 @@ export default function AddEditTimeModal({
   setOpen: Dispatch<React.SetStateAction<boolean>>;
   deleteItem: () => void;
   addTime: () => void;
-  kindergartens: KindergartenGroup[];
+  kindergartens: KindergartenDto[];
   selectedDate?: Date | undefined;
   existingStartTime?: string;
   existingEndTime?: string;
@@ -102,7 +102,7 @@ export default function AddEditTimeModal({
           </FieldGroup>
           <FieldGroup>
             <Field className="flex flex-col items-center">
-              <SelectGroups KindergartenGroups={kindergartens} />
+              <SelectGroups KindergartenDto={kindergartens} />
             </Field>
           </FieldGroup>
           <DialogFooter className="flex flex-row justify-between">
