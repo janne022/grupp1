@@ -8,7 +8,7 @@ public class Kindergarten
     public Guid Id { get; set; }
     [MaxLength(200)]
     public string Name { get; set; } = null!;
-    public Point? Location { get; set; } 
+    public Point? Location { get; set; }
     public HashSet<UserKinderGarten> Managers { get; set; } = null!;
     public HashSet<DecidedTime> DecidedTimes { get; set; } = [];
     public HashSet<KindergartenAvailableTime> AvailableSubs { get; set; } = [];
