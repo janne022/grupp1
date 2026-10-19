@@ -37,18 +37,17 @@ function RouteComponent() {
   const dateFormattedStartDates: string[] = availableTimeData.availableTimes.map(at => new Date(at.startTime).toDateString())
 
   return (
-    <div className="mx-auto max-w-3xl flex flex-col items-center gap-4 ">
-      <Button variant="outline" onClick={() => openDialog()}>
-        New Time
-      </Button>
-
+    <div className="border-4 w-full h-screen border-amber-900">
       <Calendar
         locale={sv}
         mode="single"
         selected={date}
         onDayClick={openDialog}
         disabled={{ dayOfWeek: [0, 6] }}
-        className="rounded-lg border [--cell-size:3rem] "
+        className="rounded-lg border [--cell-size:6rem] w-300 h-fit [&_.rdp-weekday:nth-child(n+6)]:hidden
+    [&_.rdp-week>.rdp-day:nth-child(n+6)]:hidden     [&_.rdp-day]:!w-24
+    [&_.rdp-day_button]:!w-full
+[&_.rdp-weekday]:!w-24"
         components={{
           DayButton: ({ children, modifiers, day, ...props }) => {
 
@@ -67,7 +66,6 @@ function RouteComponent() {
           }
         }}
       />
-
       <AddEditTimeModal
         open={open}
         setOpen={setOpen}
@@ -81,5 +79,8 @@ function RouteComponent() {
         selectedDate={date}
       />
     </div>
+      // <Button variant="outline" onClick={() => openDialog()}>
+      //   New Time
+      // </Button>
   );
 }

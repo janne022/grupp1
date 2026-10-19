@@ -167,6 +167,16 @@
         "responses": {
           "200": {
             "description": "OK"
+          },
+          "400": {
+            "description": "Bad Request",
+            "content": {
+              "application/problem+json": {
+                "schema": {
+                  "$ref": "#/components/schemas/HttpValidationProblemDetails"
+                }
+              }
+            }
           }
         }
       }
@@ -484,6 +494,95 @@
         }
       }
     },
+    "/api/decidedtime/{Id}": {
+      "get": {
+        "tags": [
+          "GetDecidedTimeById"
+        ],
+        "parameters": [
+          {
+            "name": "Id",
+            "in": "path",
+            "required": true,
+            "schema": {
+              "type": "string",
+              "format": "uuid"
+            }
+          }
+        ],
+        "responses": {
+          "200": {
+            "description": "OK",
+            "content": {
+              "text/plain": {
+                "schema": {
+                  "$ref": "#/components/schemas/GetDecidedTimeByIdResponse"
+                }
+              },
+              "application/json": {
+                "schema": {
+                  "$ref": "#/components/schemas/GetDecidedTimeByIdResponse"
+                }
+              },
+              "text/json": {
+                "schema": {
+                  "$ref": "#/components/schemas/GetDecidedTimeByIdResponse"
+                }
+              }
+            }
+          }
+        }
+      }
+    },
+    "/api/decidedtime/book": {
+      "post": {
+        "tags": [
+          "BookDecidedTime"
+        ],
+        "requestBody": {
+          "content": {
+            "application/json": {
+              "schema": {
+                "$ref": "#/components/schemas/BookDecidedTimeQuery"
+              }
+            },
+            "text/json": {
+              "schema": {
+                "$ref": "#/components/schemas/BookDecidedTimeQuery"
+              }
+            },
+            "application/*+json": {
+              "schema": {
+                "$ref": "#/components/schemas/BookDecidedTimeQuery"
+              }
+            }
+          },
+          "required": true
+        },
+        "responses": {
+          "200": {
+            "description": "OK",
+            "content": {
+              "text/plain": {
+                "schema": {
+                  "$ref": "#/components/schemas/BookDecidedTimeResponse"
+                }
+              },
+              "application/json": {
+                "schema": {
+                  "$ref": "#/components/schemas/BookDecidedTimeResponse"
+                }
+              },
+              "text/json": {
+                "schema": {
+                  "$ref": "#/components/schemas/BookDecidedTimeResponse"
+                }
+              }
+            }
+          }
+        }
+      }
+    },
     "/api/availabletimes/byid": {
       "get": {
         "tags": [
@@ -585,6 +684,69 @@
           },
           "refreshToken": {
             "type": "string"
+          }
+        }
+      },
+      "BookDecidedTimeQuery": {
+        "required": [
+          "availableTimeGuid",
+          "startTime",
+          "endTime",
+          "kindergartenId"
+        ],
+        "type": "object",
+        "properties": {
+          "availableTimeGuid": {
+            "type": "string",
+            "format": "uuid"
+          },
+          "startTime": {
+            "type": "string",
+            "format": "date-time"
+          },
+          "endTime": {
+            "type": "string",
+            "format": "date-time"
+          },
+          "kindergartenId": {
+            "type": "string",
+            "format": "uuid"
+          }
+        }
+      },
+      "BookDecidedTimeResponse": {
+        "required": [
+          "id",
+          "startTime",
+          "endTime",
+          "substituteInfo",
+          "kindergartenInfo"
+        ],
+        "type": "object",
+        "properties": {
+          "id": {
+            "type": "string",
+            "format": "uuid"
+          },
+          "startTime": {
+            "type": [
+              "null",
+              "string"
+            ],
+            "format": "date-time"
+          },
+          "endTime": {
+            "type": [
+              "null",
+              "string"
+            ],
+            "format": "date-time"
+          },
+          "substituteInfo": {
+            "$ref": "#/components/schemas/SubstituteDTO"
+          },
+          "kindergartenInfo": {
+            "$ref": "#/components/schemas/KindergartenDTO"
           }
         }
       },
@@ -1074,6 +1236,42 @@
           }
         }
       },
+      "GetDecidedTimeByIdResponse": {
+        "required": [
+          "id",
+          "startTime",
+          "endTime",
+          "substituteInfo",
+          "kindergartenInfo"
+        ],
+        "type": "object",
+        "properties": {
+          "id": {
+            "type": "string",
+            "format": "uuid"
+          },
+          "startTime": {
+            "type": [
+              "null",
+              "string"
+            ],
+            "format": "date-time"
+          },
+          "endTime": {
+            "type": [
+              "null",
+              "string"
+            ],
+            "format": "date-time"
+          },
+          "substituteInfo": {
+            "$ref": "#/components/schemas/SubstituteDTO"
+          },
+          "kindergartenInfo": {
+            "$ref": "#/components/schemas/KindergartenDTO"
+          }
+        }
+      },
       "HttpValidationProblemDetails": {
         "type": "object",
         "properties": {
@@ -1173,6 +1371,33 @@
           "id": {
             "type": "string",
             "format": "uuid"
+          },
+          "location": {
+            "oneOf": [
+              {
+                "type": "null"
+              },
+              {
+                "$ref": "#/components/schemas/Point"
+              }
+            ]
+          }
+        }
+      },
+      "KindergartenDTO": {
+        "required": [
+          "id",
+          "name",
+          "location"
+        ],
+        "type": "object",
+        "properties": {
+          "id": {
+            "type": "string",
+            "format": "uuid"
+          },
+          "name": {
+            "type": "string"
           },
           "location": {
             "oneOf": [
@@ -1534,6 +1759,26 @@
           }
         }
       },
+      "SubstituteDTO": {
+        "required": [
+          "id",
+          "firstName",
+          "lastName"
+        ],
+        "type": "object",
+        "properties": {
+          "id": {
+            "type": "string",
+            "format": "uuid"
+          },
+          "firstName": {
+            "type": "string"
+          },
+          "lastName": {
+            "type": "string"
+          }
+        }
+      },
       "TwoFactorRequest": {
         "type": "object",
         "properties": {
@@ -1674,6 +1919,12 @@
     },
     {
       "name": "UpdateAvailableTime"
+    },
+    {
+      "name": "GetDecidedTimeById"
+    },
+    {
+      "name": "BookDecidedTime"
     },
     {
       "name": "GetAvailableTimeByIds"

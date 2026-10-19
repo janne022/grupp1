@@ -12,13 +12,8 @@ declare module "@tanstack/react-router" {
   }
 }
 
-function TailwindTest() {
-  return <h1 className="text-3xl font-bold underline">Tailwind test</h1>;
-}
-
 createRoot(document.getElementById("root")!).render(
   <StrictMode>
-    <TailwindTest/>
     <RouterProvider router={router} />
   </StrictMode>,
 );

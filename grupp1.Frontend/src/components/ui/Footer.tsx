@@ -1,7 +1,7 @@
 export default function Footer() {
 
     return (
-        <footer className="flex flex-col fixed bottom-0 w-full p-2 text-center gap-1 text-muted-foreground">
+        <footer className="flex flex-col relative bottom-0 w-full p-2 text-center gap-1 text-muted-foreground">
             <hr className="mx-9" />
             <div className="flex flex-col">
                 <div className="flex flex-col md:flex-row md:pl-8 gap-1 place-content-start ">

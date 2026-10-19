@@ -21,7 +21,7 @@ function RootComponent() {
       <QueryClientProvider client={queryClient}>
         <Layout>
           <Outlet />
-          <Footer />
+          {/* <Footer /> */}
         </Layout>
         <TanStackRouterDevtools />
       </QueryClientProvider>
