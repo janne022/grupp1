@@ -72,7 +72,7 @@ public class GetByIdHandlerTests
     }
 
     [Fact]
-    public async Task HandleAsync_WhenAvailablteTimeExists_CreatesResponseWithCorrectMembers()
+    public async Task HandleAsync_WhenAvailableTimeExists_CreatesResponseWithCorrectMembers()
     {
         // Arrange
 
