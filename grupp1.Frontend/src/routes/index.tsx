@@ -7,8 +7,9 @@ import { sv } from "date-fns/locale";
 import { GetAllAvailableTimes } from "@/api/services/AvailableTimeService";
 import AddEditTimeModal from "@/components/addEditTimeModal";
 import { ChevronLeft, ChevronRight, Dot, Plus } from "lucide-react";
-import type { GetAllAvailableTimesResponse } from "@/api/models";
+import type { GetAllAvailableTimesResponse, KindergartenDto } from "@/api/models";
 import { addMonths, format } from "date-fns";
+import { GetAllKindergartens } from "@/api/services/KindergartenService";
 
 export const Route = createFileRoute("/")({
   component: RouteComponent,
@@ -25,16 +26,18 @@ function RouteComponent() {
   }
 
   const AvailableTimeResponse = GetAllAvailableTimes();
+  const KindergartenResponse = GetAllKindergartens();
 
-  const availableTimeData: GetAllAvailableTimesResponse = AvailableTimeResponse.data;
-
-  if (AvailableTimeResponse.isPending) {
+  if (AvailableTimeResponse.isPending || KindergartenResponse.isPending) {
     return <div>Loading...</div>;
   }
 
-  if (AvailableTimeResponse.error) {
-    return <div>Error: {AvailableTimeResponse.error.message}</div>;
+  if (AvailableTimeResponse.error || KindergartenResponse.error) {
+    return <div>Error!</div>;
   }
+
+  const availableTimeData: GetAllAvailableTimesResponse = AvailableTimeResponse.data;
+  const KindergartenData: KindergartenDto[] = KindergartenResponse.data.kindergartens;
 
   const dateFormattedStartDates: string[] =
     availableTimeData.availableTimes.map((at) =>
@@ -151,7 +154,7 @@ function RouteComponent() {
           addTime={function (): void {
             throw new Error("Function not implemented.");
           }}
-          kindergartens={[]}
+          kindergartens={KindergartenData}
           selectedDate={date}
         />
       </div>
