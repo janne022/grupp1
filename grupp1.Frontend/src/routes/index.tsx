@@ -24,16 +24,16 @@ function RouteComponent() {
     setOpen(true);
   }
 
-  const { isPending, data, error } = GetAllAvailableTimes();
+  const AvailableTimeResponse = GetAllAvailableTimes();
 
-  const availableTimeData: GetAllAvailableTimesResponse = data;
+  const availableTimeData: GetAllAvailableTimesResponse = AvailableTimeResponse.data;
 
-  if (isPending) {
+  if (AvailableTimeResponse.isPending) {
     return <div>Loading...</div>;
   }
 
-  if (error) {
-    return <div>Error: {error.message}</div>;
+  if (AvailableTimeResponse.error) {
+    return <div>Error: {AvailableTimeResponse.error.message}</div>;
   }
 
   const dateFormattedStartDates: string[] =
