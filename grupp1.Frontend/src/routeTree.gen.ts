@@ -11,6 +11,7 @@
 import { Route as rootRouteImport } from './routes/__root'
 import { Route as IndexRouteImport } from './routes/index'
 import { Route as CalenderPageRouteImport } from './routes/CalenderPage'
+import { Route as ManagerPageRouteImport } from './routes/ManagerPage'
 
 const IndexRoute = IndexRouteImport.update({
   id: '/',
@@ -22,31 +23,40 @@ const CalenderPageRoute = CalenderPageRouteImport.update({
   path: '/CalenderPage',
   getParentRoute: () => rootRouteImport,
 } as any)
+const ManagerPageRoute = ManagerPageRouteImport.update({
+  id: '/ManagerPage',
+  path: '/ManagerPage',
+  getParentRoute: () => rootRouteImport,
+} as any)
 
 export interface FileRoutesByFullPath {
   '/': typeof IndexRoute
   '/CalenderPage': typeof CalenderPageRoute
+  '/ManagerPage': typeof ManagerPageRoute
 }
 export interface FileRoutesByTo {
   '/': typeof IndexRoute
   '/CalenderPage': typeof CalenderPageRoute
+  '/ManagerPage': typeof ManagerPageRoute
 }
 export interface FileRoutesById {
   __root__: typeof rootRouteImport
   '/': typeof IndexRoute
   '/CalenderPage': typeof CalenderPageRoute
+  '/ManagerPage': typeof ManagerPageRoute
 }
 export interface FileRouteTypes {
   fileRoutesByFullPath: FileRoutesByFullPath
-  fullPaths: '/' | '/CalenderPage'
+  fullPaths: '/' | '/CalenderPage' | '/ManagerPage'
   fileRoutesByTo: FileRoutesByTo
-  to: '/' | '/CalenderPage'
-  id: '__root__' | '/' | '/CalenderPage'
+  to: '/' | '/CalenderPage' | '/ManagerPage'
+  id: '__root__' | '/' | '/CalenderPage' | '/ManagerPage'
   fileRoutesById: FileRoutesById
 }
 export interface RootRouteChildren {
   IndexRoute: typeof IndexRoute
   CalenderPageRoute: typeof CalenderPageRoute
+  ManagerPageRoute: typeof ManagerPageRoute
 }
 
 declare module '@tanstack/react-router' {
@@ -65,12 +75,20 @@ declare module '@tanstack/react-router' {
       preLoaderRoute: typeof CalenderPageRouteImport
       parentRoute: typeof rootRouteImport
     }
+    '/ManagerPage': {
+      id: '/ManagerPage'
+      path: '/ManagerPage'
+      fullPath: '/ManagerPage'
+      preLoaderRoute: typeof ManagerPageRouteImport
+      parentRoute: typeof rootRouteImport
+    }
   }
 }
 
 const rootRouteChildren: RootRouteChildren = {
   IndexRoute: IndexRoute,
   CalenderPageRoute: CalenderPageRoute,
+  ManagerPageRoute: ManagerPageRoute,
 }
 export const routeTree = rootRouteImport
   ._addFileChildren(rootRouteChildren)
