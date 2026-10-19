@@ -167,6 +167,16 @@
         "responses": {
           "200": {
             "description": "OK"
+          },
+          "400": {
+            "description": "Bad Request",
+            "content": {
+              "application/problem+json": {
+                "schema": {
+                  "$ref": "#/components/schemas/HttpValidationProblemDetails"
+                }
+              }
+            }
           }
         }
       }
@@ -484,6 +494,29 @@
         }
       }
     },
+    "/api/decidedtime/delete/{id}": {
+      "delete": {
+        "tags": [
+          "UnbookDecidedTime"
+        ],
+        "parameters": [
+          {
+            "name": "id",
+            "in": "path",
+            "required": true,
+            "schema": {
+              "type": "string",
+              "format": "uuid"
+            }
+          }
+        ],
+        "responses": {
+          "200": {
+            "description": "OK"
+          }
+        }
+      }
+    },
     "/api/decidedtime/{Id}": {
       "get": {
         "tags": [
@@ -517,6 +550,35 @@
               "text/json": {
                 "schema": {
                   "$ref": "#/components/schemas/GetDecidedTimeByIdResponse"
+                }
+              }
+            }
+          }
+        }
+      }
+    },
+    "/api/decidedtime": {
+      "get": {
+        "tags": [
+          "GetAllDecidedTimes"
+        ],
+        "responses": {
+          "200": {
+            "description": "OK",
+            "content": {
+              "text/plain": {
+                "schema": {
+                  "$ref": "#/components/schemas/GetAllDecidedTimesResponse"
+                }
+              },
+              "application/json": {
+                "schema": {
+                  "$ref": "#/components/schemas/GetAllDecidedTimesResponse"
+                }
+              },
+              "text/json": {
+                "schema": {
+                  "$ref": "#/components/schemas/GetAllDecidedTimesResponse"
                 }
               }
             }
@@ -573,31 +635,22 @@
         }
       }
     },
-    "/api/availabletimes/byid": {
+    "/api/availabletimes/{id}": {
       "get": {
         "tags": [
           "GetAvailableTimeByIds"
         ],
-        "requestBody": {
-          "content": {
-            "application/json": {
-              "schema": {
-                "$ref": "#/components/schemas/GetByIdQuery"
-              }
-            },
-            "text/json": {
-              "schema": {
-                "$ref": "#/components/schemas/GetByIdQuery"
-              }
-            },
-            "application/*+json": {
-              "schema": {
-                "$ref": "#/components/schemas/GetByIdQuery"
-              }
+        "parameters": [
+          {
+            "name": "id",
+            "in": "path",
+            "required": true,
+            "schema": {
+              "type": "string",
+              "format": "uuid"
             }
-          },
-          "required": true
-        },
+          }
+        ],
         "responses": {
           "200": {
             "description": "OK",
@@ -1185,15 +1238,48 @@
           }
         }
       },
-      "GetByIdQuery": {
+      "GetAllDecidedTimesDTO": {
         "required": [
-          "availableTimeId"
+          "id",
+          "startTime",
+          "endTime",
+          "kindergartenId",
+          "kindergartenName"
         ],
         "type": "object",
         "properties": {
-          "availableTimeId": {
+          "id": {
             "type": "string",
             "format": "uuid"
+          },
+          "startTime": {
+            "type": "string",
+            "format": "date-time"
+          },
+          "endTime": {
+            "type": "string",
+            "format": "date-time"
+          },
+          "kindergartenId": {
+            "type": "string",
+            "format": "uuid"
+          },
+          "kindergartenName": {
+            "type": "string"
+          }
+        }
+      },
+      "GetAllDecidedTimesResponse": {
+        "required": [
+          "decidedTimes"
+        ],
+        "type": "object",
+        "properties": {
+          "decidedTimes": {
+            "type": "array",
+            "items": {
+              "$ref": "#/components/schemas/GetAllDecidedTimesDTO"
+            }
           }
         }
       },
@@ -1911,7 +1997,13 @@
       "name": "UpdateAvailableTime"
     },
     {
+      "name": "UnbookDecidedTime"
+    },
+    {
       "name": "GetDecidedTimeById"
+    },
+    {
+      "name": "GetAllDecidedTimes"
     },
     {
       "name": "BookDecidedTime"
