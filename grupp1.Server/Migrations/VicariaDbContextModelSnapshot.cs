@@ -173,7 +173,7 @@ namespace grupp1.Server.Migrations
 
                     b.HasIndex("UserId");
 
-                    b.ToTable("AvailableTimes");
+                    b.ToTable("AvailableTimes", (string)null);
                 });
 
             modelBuilder.Entity("Vicaria.Server.Domain.Models.DecidedTime", b =>
@@ -205,7 +205,7 @@ namespace grupp1.Server.Migrations
 
                     b.HasIndex("UserId");
 
-                    b.ToTable("DecidedTimes");
+                    b.ToTable("DecidedTimes", (string)null);
                 });
 
             modelBuilder.Entity("Vicaria.Server.Domain.Models.Kindergarten", b =>
@@ -224,7 +224,7 @@ namespace grupp1.Server.Migrations
 
                     b.HasKey("Id");
 
-                    b.ToTable("Kindergartens");
+                    b.ToTable("Kindergartens", (string)null);
                 });
 
             modelBuilder.Entity("Vicaria.Server.Domain.Models.KindergartenAvailableTime", b =>
@@ -239,7 +239,7 @@ namespace grupp1.Server.Migrations
 
                     b.HasIndex("AvailableTimeId");
 
-                    b.ToTable("KindergartenAvailableTimes");
+                    b.ToTable("KindergartenAvailableTimes", (string)null);
                 });
 
             modelBuilder.Entity("Vicaria.Server.Domain.Models.User", b =>
@@ -328,7 +328,7 @@ namespace grupp1.Server.Migrations
 
                     b.HasIndex("KindergartenId");
 
-                    b.ToTable("UserKinderGartens");
+                    b.ToTable("UserKinderGartens", (string)null);
                 });
 
             modelBuilder.Entity("Microsoft.AspNetCore.Identity.IdentityRoleClaim<System.Guid>", b =>

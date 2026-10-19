@@ -9,5 +9,6 @@ public class DecidedTime
     public User User { get; set; } = null!;
     public Guid KindergartenId { get; set; }
     public Kindergarten Kindergarten { get; set; } = null!;
+    public Guid AvailableTimeId { get; set; }
     public AvailableTime AvailableTime { get; set; } = null!;
 }
