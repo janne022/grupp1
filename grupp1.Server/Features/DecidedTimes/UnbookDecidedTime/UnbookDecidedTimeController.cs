@@ -5,12 +5,12 @@ using Vicaria.Server.Infrastructure;
 
 namespace Vicaria.Server.Features.DecidedTimes.UnbookDecidedTime
 {
-    [Route("api/[controller]")]
+    [Route("api/decidedtime")]
     [ApiController]
     public class UnbookDecidedTimeController (IHandler<UnbookDecidedTimeCommand, UnbookDecidedTimeResponse> handler) : ControllerBase
     {
         // TODO: Add Authorization tag when authorisation is up.
-        [HttpDelete("{id:guid}")]
+        [HttpDelete("delete/{id:guid}")]
         public async Task<IActionResult> UnbookDecidedTime(Guid id, CancellationToken cancellationToken)
         {
             var command = new UnbookDecidedTimeCommand(id);
