@@ -2,7 +2,7 @@ import { Link } from "@tanstack/react-router";
 
 const navLinks = [
   { label: "Hem", to: "/" },
-  { label: "Översikt", to: "/calendar" },
+  { label: "Översikt", to: "/managerdashboard" },
   { label: "länk 3", to: "/link3" },
   { label: "länk 4", to: "/link4" },
 ];
