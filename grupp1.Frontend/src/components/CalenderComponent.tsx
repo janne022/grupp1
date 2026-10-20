@@ -36,7 +36,7 @@ export default function CalendarComponent({
   }
 
   return (
-    <div className="mx-auto flex max-w-3xl flex-col items-center gap-4">
+    <div className="w-full flex flex-col items-center gap-4">
       <Button variant="outline" onClick={() => openDialog()}>
         New Time
       </Button>
