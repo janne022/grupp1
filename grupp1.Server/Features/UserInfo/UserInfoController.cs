@@ -19,7 +19,7 @@ namespace grupp1.Server.Features.UserInfo
             var userClaim = User.FindFirstValue(ClaimTypes.NameIdentifier);
 
             bool isGuid = Guid.TryParse(userClaim, out var userId);
-            if (isGuid == false)
+            if (!isGuid)
             {
                 _logger.LogWarning("userClaim {claim} was not a guid in UserInfoController", userClaim);
                 return Unauthorized();
