@@ -26,6 +26,7 @@ public class GetAllAvailableTimesHandler(
                         kinder.Kindergarten.Name,
                         kinder.Kindergarten.Location
                     ))
+                    .Select(at => at)
                     .ToList()
             ))
             .ToListAsync(cancellationToken);
