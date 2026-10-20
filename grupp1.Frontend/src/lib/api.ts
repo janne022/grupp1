@@ -16,14 +16,18 @@ export class ApiError extends Error {
 export const apiClient = {
   get: <T>(path: string, options?: ApiOptions) =>
     apiFetch<T>(path, { ...options, method: "GET" }),
-  post: <T>(path: string, options?: ApiOptions) =>
-    apiFetch<T>(path, { ...options, method: "POST" }),
-  put: <T>(path: string, options?: ApiOptions) =>
-    apiFetch<T>(path, { ...options, method: "PUT" }),
-  patch: <T>(path: string, options?: ApiOptions) =>
-    apiFetch<T>(path, { ...options, method: "PATCH" }),
+
+  post: <T>(path: string, data?: unknown, options?: ApiOptions) =>
+    apiFetch<T>(path, { ...options, method: "POST", json: data }),
+
+  put: <T>(path: string, data?: unknown, options?: ApiOptions) =>
+    apiFetch<T>(path, { ...options, method: "PUT", json: data }),
+
   delete: <T>(path: string, options?: ApiOptions) =>
     apiFetch<T>(path, { ...options, method: "DELETE" }),
+
+  patch: <T>(path: string, data?: unknown, options?: ApiOptions) =>
+    apiFetch<T>(path, { ...options, method: "PATCH", json: data }),
 };
 
 // Generic options for apiFetch. Includes stuff like method and headers inside RequestInit
