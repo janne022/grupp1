@@ -9,5 +9,6 @@ public record class GetAllAvailableTimesDTO
     Guid Id,
     DateTime StartTime,
     DateTime EndTime,
-    IReadOnlyList<GetAllAvailableTimesKindergartensDTO> Kindergartens
+    IReadOnlyList<GetAllAvailableTimesKindergartensDTO> Kindergartens,
+    Guid UserId
 );
