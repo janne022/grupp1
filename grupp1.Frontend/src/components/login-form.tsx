@@ -69,7 +69,7 @@ export function LoginForm({
                       {...field}
                       id="email"
                       type="email"
-                      placeholder="m@example.com"
+                      placeholder="john.doe@example.com"
                       required
                     />
                   </Field>
