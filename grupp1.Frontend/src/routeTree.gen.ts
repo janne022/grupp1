@@ -11,7 +11,7 @@
 import { Route as rootRouteImport } from './routes/__root'
 import { Route as IndexRouteImport } from './routes/index'
 import { Route as CalenderPageRouteImport } from './routes/CalenderPage'
-import { Route as TestPageRouteImport } from './routes/TestPage'
+import { Route as LoginPageRouteImport } from './routes/loginPage'
 
 const IndexRoute = IndexRouteImport.update({
   id: '/',
@@ -23,40 +23,40 @@ const CalenderPageRoute = CalenderPageRouteImport.update({
   path: '/CalenderPage',
   getParentRoute: () => rootRouteImport,
 } as any)
-const TestPageRoute = TestPageRouteImport.update({
-  id: '/TestPage',
-  path: '/TestPage',
+const LoginPageRoute = LoginPageRouteImport.update({
+  id: '/loginPage',
+  path: '/loginPage',
   getParentRoute: () => rootRouteImport,
 } as any)
 
 export interface FileRoutesByFullPath {
   '/': typeof IndexRoute
   '/CalenderPage': typeof CalenderPageRoute
-  '/TestPage': typeof TestPageRoute
+  '/loginPage': typeof LoginPageRoute
 }
 export interface FileRoutesByTo {
   '/': typeof IndexRoute
   '/CalenderPage': typeof CalenderPageRoute
-  '/TestPage': typeof TestPageRoute
+  '/loginPage': typeof LoginPageRoute
 }
 export interface FileRoutesById {
   __root__: typeof rootRouteImport
   '/': typeof IndexRoute
   '/CalenderPage': typeof CalenderPageRoute
-  '/TestPage': typeof TestPageRoute
+  '/loginPage': typeof LoginPageRoute
 }
 export interface FileRouteTypes {
   fileRoutesByFullPath: FileRoutesByFullPath
-  fullPaths: '/' | '/CalenderPage' | '/TestPage'
+  fullPaths: '/' | '/CalenderPage' | '/loginPage'
   fileRoutesByTo: FileRoutesByTo
-  to: '/' | '/CalenderPage' | '/TestPage'
-  id: '__root__' | '/' | '/CalenderPage' | '/TestPage'
+  to: '/' | '/CalenderPage' | '/loginPage'
+  id: '__root__' | '/' | '/CalenderPage' | '/loginPage'
   fileRoutesById: FileRoutesById
 }
 export interface RootRouteChildren {
   IndexRoute: typeof IndexRoute
   CalenderPageRoute: typeof CalenderPageRoute
-  TestPageRoute: typeof TestPageRoute
+  LoginPageRoute: typeof LoginPageRoute
 }
 
 declare module '@tanstack/react-router' {
@@ -75,11 +75,11 @@ declare module '@tanstack/react-router' {
       preLoaderRoute: typeof CalenderPageRouteImport
       parentRoute: typeof rootRouteImport
     }
-    '/TestPage': {
-      id: '/TestPage'
-      path: '/TestPage'
-      fullPath: '/TestPage'
-      preLoaderRoute: typeof TestPageRouteImport
+    '/loginPage': {
+      id: '/loginPage'
+      path: '/loginPage'
+      fullPath: '/loginPage'
+      preLoaderRoute: typeof LoginPageRouteImport
       parentRoute: typeof rootRouteImport
     }
   }
@@ -88,7 +88,7 @@ declare module '@tanstack/react-router' {
 const rootRouteChildren: RootRouteChildren = {
   IndexRoute: IndexRoute,
   CalenderPageRoute: CalenderPageRoute,
-  TestPageRoute: TestPageRoute,
+  LoginPageRoute: LoginPageRoute,
 }
 export const routeTree = rootRouteImport
   ._addFileChildren(rootRouteChildren)
