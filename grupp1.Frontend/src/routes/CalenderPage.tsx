@@ -50,8 +50,8 @@ function RouteComponent() {
         <DialogContent>
           <DialogTitle>
             {date
-              ? `Day ${date.getDate()}, 
-            month ${date.getMonth() + 1}, 
+              ? `Day ${date.getDate()},
+            month ${date.getMonth() + 1},
             year ${date.getFullYear()}`
               : "No date selected"}
           </DialogTitle>
@@ -60,8 +60,8 @@ function RouteComponent() {
           </div>
           <DialogDescription>
             {date
-              ? `Day ${date.getDate()}, 
-            month ${date.getMonth() + 1}, 
+              ? `Day ${date.getDate()},
+            month ${date.getMonth() + 1},
             year ${date.getFullYear()}`
               : "No date selected"}
           </DialogDescription>
