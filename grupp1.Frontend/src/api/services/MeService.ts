@@ -25,5 +25,7 @@ export function useCurrentUser() {
 
       }
     },
+
+    staleTime : 1337420
   });
 }
