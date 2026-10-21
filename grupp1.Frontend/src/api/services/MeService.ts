@@ -7,9 +7,9 @@ export function useCurrentUser() {
 
     queryFn: async({ signal }) => {
         try {
-            
+
         } catch (error) {
-            
+
         }
     },
   });
