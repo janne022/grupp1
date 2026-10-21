@@ -12,29 +12,13 @@ export const Route = createRootRoute({
   component: RootComponent,
 });
 
-function LoginTest() {
-  const login = useLogin();
 
-  return (
-    <button
-      onClick={() =>
-        login.mutate({
-          email: "elvira.mariesdotter@chasacademy.se",
-          password: "FuckingHack!123",
-        })
-      }
-    >
-      Test login
-    </button>
-  );
-}
 
 function RootComponent() {
   return (
     <React.Fragment>
       <QueryClientProvider client={queryClient}>
         <Layout>
-          <LoginTest />
           <Outlet />
         </Layout>
         <TanStackRouterDevtools />
