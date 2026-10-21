@@ -23,10 +23,11 @@ public class GetMyAvailableTimesHandler(
                 at.Id,
                 at.StartTime,
                 at.EndTime,
-                at.Kindergartens.Select(kinder => new GetMyAvailableTimesKindergartensDTO(
-                        kinder.Kindergarten.Id,
-                        kinder.Kindergarten.Name,
-                        kinder.Kindergarten.Location
+                at.Kindergartens.Select(link => new GetMyAvailableTimesKindergartensDTO(
+                        link.Kindergarten.Id,
+                        link.Kindergarten.Name,
+                        link.Kindergarten.Location != null ? link.Kindergarten.Location.Y : null,
+                        link.Kindergarten.Location != null ? link.Kindergarten.Location.X : null
                     ))
                     .ToList()
             ))
