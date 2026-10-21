@@ -7,16 +7,15 @@ export function useLogout() {
   const query = useQueryClient();
 
   return useMutation({
-    mutationFn: () => apiClient.post<void>("/api/logout?useCookies=true"),
+    mutationFn: () => apiClient.post<void>("/api/logout"),
 
-    onSuccess : async () => {
+    onSuccess: async () => {
+      await query.cancelQueries();
 
-        await query.cancelQueries();
+      query.clear();
 
-        query.clear()
-
-        await query.query(currentUserQuery)
-        query.setQueryData<UserInfoResponse | null>(["currentUser"], null)
-    }
+      await query.query(currentUserQuery);
+      query.setQueryData<UserInfoResponse | null>(["currentUser"], null);
+    },
   });
 }

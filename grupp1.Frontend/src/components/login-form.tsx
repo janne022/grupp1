@@ -19,6 +19,7 @@ import {
 import { Input } from "@/components/ui/input";
 import { useLogin } from "@/api/services/LoginService";
 import { Controller, useForm } from "react-hook-form";
+import { Link } from "@tanstack/react-router";
 
 const formSchema = z.object({
   email: z.email(),
@@ -97,7 +98,7 @@ export function LoginForm({
                   Login
                 </Button>
                 <FieldDescription className="text-center">
-                  Don&apos;t have an account? <a href="#">Sign up</a>
+                  Don&apos;t have an account? <Link to="/signup">Sign up</Link>
                 </FieldDescription>
               </Field>
             </FieldGroup>
