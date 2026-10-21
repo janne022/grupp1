@@ -21,7 +21,6 @@ function formatDate(time: Date) {
 }
 function formatTime(time: Date) {
   return time.toLocaleTimeString("sv-SE", {
-    day: undefined,
     hour: "2-digit",
     minute: "2-digit",
   });
@@ -47,7 +46,7 @@ export function Booking({ booking, onDelete }: BookingProps) {
             onSelect={() => onDelete(booking.id)}
           >
             <Trash2 />
-            Delete
+            Radera
           </DropdownMenuItem>
         </DropdownMenuContent>
       </DropdownMenu>
