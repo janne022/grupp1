@@ -23,10 +23,10 @@ public class GetAvailableTimeByIdsController : ControllerBase
     #endregion
     #region Endpoints
 
-    [HttpGet]
-    [Route("byid")]
-    public async Task<ActionResult<GetByIdResponse>> GetById([FromBody] GetByIdQuery request, CancellationToken ct)
+    [HttpGet("{id}")]
+    public async Task<ActionResult<GetByIdResponse>> GetById([FromRoute(Name = "id")] Guid id, CancellationToken ct)
     {
+        GetByIdQuery request = new(id);
 
         _logger.LogInformation($"Starting to fetch AvailableTime by id with  ID: {request.AvailableTimeId}");
 
