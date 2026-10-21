@@ -26,6 +26,7 @@ export const currentUserQuery = {
   },
 };
 
+// Hook to get the current user info. Returns null if not logged in. Stale time: 5 minutes
 export function useCurrentUser() {
-  return useQuery({ ...currentUserQuery, retry: false, staleTime: 13376969 });
+  return useQuery({ ...currentUserQuery, retry: false, staleTime: 300_000 });
 }
