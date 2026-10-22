@@ -35,11 +35,12 @@ namespace grupp1.Server.Features.AvailableTimes.Post
             }
 
 
-            var availableTime = new AvailableTime // TODO: Add UserId once authorization is set up
+            var availableTime = new AvailableTime 
             {
                 Id = Guid.NewGuid(),
                 StartTime = request.StartTime,
                 EndTime = request.EndTime,
+                UserId = request.UserId
 
             };
 
