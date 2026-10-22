@@ -11,9 +11,7 @@
 import { Route as rootRouteImport } from './routes/__root'
 import { Route as IndexRouteImport } from './routes/index'
 import { Route as CalenderPageRouteImport } from './routes/CalenderPage'
-import { Route as ManagerPageRouteImport } from './routes/ManagerPage'
-import { Route as LoginRouteImport } from './routes/login'
-import { Route as SignupRouteImport } from './routes/signup'
+import { Route as TestPageRouteImport } from './routes/TestPage'
 
 const IndexRoute = IndexRouteImport.update({
   id: '/',
@@ -25,58 +23,40 @@ const CalenderPageRoute = CalenderPageRouteImport.update({
   path: '/CalenderPage',
   getParentRoute: () => rootRouteImport,
 } as any)
-const ManagerPageRoute = ManagerPageRouteImport.update({
-  id: '/ManagerPage',
-  path: '/ManagerPage',
-  getParentRoute: () => rootRouteImport,
-} as any)
-const LoginRoute = LoginRouteImport.update({
-  id: '/login',
-  path: '/login',
-  getParentRoute: () => rootRouteImport,
-} as any)
-const SignupRoute = SignupRouteImport.update({
-  id: '/signup',
-  path: '/signup',
+const TestPageRoute = TestPageRouteImport.update({
+  id: '/TestPage',
+  path: '/TestPage',
   getParentRoute: () => rootRouteImport,
 } as any)
 
 export interface FileRoutesByFullPath {
   '/': typeof IndexRoute
   '/CalenderPage': typeof CalenderPageRoute
-  '/ManagerPage': typeof ManagerPageRoute
-  '/login': typeof LoginRoute
-  '/signup': typeof SignupRoute
+  '/TestPage': typeof TestPageRoute
 }
 export interface FileRoutesByTo {
   '/': typeof IndexRoute
   '/CalenderPage': typeof CalenderPageRoute
-  '/ManagerPage': typeof ManagerPageRoute
-  '/login': typeof LoginRoute
-  '/signup': typeof SignupRoute
+  '/TestPage': typeof TestPageRoute
 }
 export interface FileRoutesById {
   __root__: typeof rootRouteImport
   '/': typeof IndexRoute
   '/CalenderPage': typeof CalenderPageRoute
-  '/ManagerPage': typeof ManagerPageRoute
-  '/login': typeof LoginRoute
-  '/signup': typeof SignupRoute
+  '/TestPage': typeof TestPageRoute
 }
 export interface FileRouteTypes {
   fileRoutesByFullPath: FileRoutesByFullPath
-  fullPaths: '/' | '/CalenderPage' | '/ManagerPage' | '/login' | '/signup'
+  fullPaths: '/' | '/CalenderPage' | '/TestPage'
   fileRoutesByTo: FileRoutesByTo
-  to: '/' | '/CalenderPage' | '/ManagerPage' | '/login' | '/signup'
-  id: '__root__' | '/' | '/CalenderPage' | '/ManagerPage' | '/login' | '/signup'
+  to: '/' | '/CalenderPage' | '/TestPage'
+  id: '__root__' | '/' | '/CalenderPage' | '/TestPage'
   fileRoutesById: FileRoutesById
 }
 export interface RootRouteChildren {
   IndexRoute: typeof IndexRoute
   CalenderPageRoute: typeof CalenderPageRoute
-  ManagerPageRoute: typeof ManagerPageRoute
-  LoginRoute: typeof LoginRoute
-  SignupRoute: typeof SignupRoute
+  TestPageRoute: typeof TestPageRoute
 }
 
 declare module '@tanstack/react-router' {
@@ -95,25 +75,11 @@ declare module '@tanstack/react-router' {
       preLoaderRoute: typeof CalenderPageRouteImport
       parentRoute: typeof rootRouteImport
     }
-    '/ManagerPage': {
-      id: '/ManagerPage'
-      path: '/ManagerPage'
-      fullPath: '/ManagerPage'
-      preLoaderRoute: typeof ManagerPageRouteImport
-      parentRoute: typeof rootRouteImport
-    }
-    '/login': {
-      id: '/login'
-      path: '/login'
-      fullPath: '/login'
-      preLoaderRoute: typeof LoginRouteImport
-      parentRoute: typeof rootRouteImport
-    }
-    '/signup': {
-      id: '/signup'
-      path: '/signup'
-      fullPath: '/signup'
-      preLoaderRoute: typeof SignupRouteImport
+    '/TestPage': {
+      id: '/TestPage'
+      path: '/TestPage'
+      fullPath: '/TestPage'
+      preLoaderRoute: typeof TestPageRouteImport
       parentRoute: typeof rootRouteImport
     }
   }
@@ -122,9 +88,7 @@ declare module '@tanstack/react-router' {
 const rootRouteChildren: RootRouteChildren = {
   IndexRoute: IndexRoute,
   CalenderPageRoute: CalenderPageRoute,
-  ManagerPageRoute: ManagerPageRoute,
-  LoginRoute: LoginRoute,
-  SignupRoute: SignupRoute,
+  TestPageRoute: TestPageRoute,
 }
 export const routeTree = rootRouteImport
   ._addFileChildren(rootRouteChildren)
