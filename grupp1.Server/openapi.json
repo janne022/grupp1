@@ -747,6 +747,18 @@
           }
         }
       }
+    },
+    "/api/auth/logout": {
+      "post": {
+        "tags": [
+          "LogOut"
+        ],
+        "responses": {
+          "200": {
+            "description": "OK"
+          }
+        }
+      }
     }
   },
   "components": {
@@ -2140,6 +2152,9 @@
     },
     {
       "name": "DeleteAvailableTime"
+    },
+    {
+      "name": "LogOut"
     }
   ]
 }
