@@ -438,33 +438,6 @@
           }
         }
       },
-      "get": {
-        "tags": [
-          "GetAllAvailableTimes"
-        ],
-        "responses": {
-          "200": {
-            "description": "OK",
-            "content": {
-              "text/plain": {
-                "schema": {
-                  "$ref": "#/components/schemas/GetAllAvailableTimesResponse"
-                }
-              },
-              "application/json": {
-                "schema": {
-                  "$ref": "#/components/schemas/GetAllAvailableTimesResponse"
-                }
-              },
-              "text/json": {
-                "schema": {
-                  "$ref": "#/components/schemas/GetAllAvailableTimesResponse"
-                }
-              }
-            }
-          }
-        }
-      },
       "put": {
         "tags": [
           "UpdateAvailableTime"
@@ -506,6 +479,33 @@
               "text/json": {
                 "schema": {
                   "$ref": "#/components/schemas/UpdateAvailableTimeResponse"
+                }
+              }
+            }
+          }
+        }
+      },
+      "get": {
+        "tags": [
+          "GetMyAvailableTimes"
+        ],
+        "responses": {
+          "200": {
+            "description": "OK",
+            "content": {
+              "text/plain": {
+                "schema": {
+                  "$ref": "#/components/schemas/GetMyAvailableTimesResponse"
+                }
+              },
+              "application/json": {
+                "schema": {
+                  "$ref": "#/components/schemas/GetMyAvailableTimesResponse"
+                }
+              },
+              "text/json": {
+                "schema": {
+                  "$ref": "#/components/schemas/GetMyAvailableTimesResponse"
                 }
               }
             }
@@ -1219,76 +1219,6 @@
       "GeometryRelate": {
         "type": "object"
       },
-      "GetAllAvailableTimesDTO": {
-        "required": [
-          "id",
-          "startTime",
-          "endTime",
-          "kindergartens"
-        ],
-        "type": "object",
-        "properties": {
-          "id": {
-            "type": "string",
-            "format": "uuid"
-          },
-          "startTime": {
-            "type": "string",
-            "format": "date-time"
-          },
-          "endTime": {
-            "type": "string",
-            "format": "date-time"
-          },
-          "kindergartens": {
-            "type": "array",
-            "items": {
-              "$ref": "#/components/schemas/GetAllAvailableTimesKindergartensDTO"
-            }
-          }
-        }
-      },
-      "GetAllAvailableTimesKindergartensDTO": {
-        "required": [
-          "id",
-          "name",
-          "location"
-        ],
-        "type": "object",
-        "properties": {
-          "id": {
-            "type": "string",
-            "format": "uuid"
-          },
-          "name": {
-            "type": "string"
-          },
-          "location": {
-            "oneOf": [
-              {
-                "type": "null"
-              },
-              {
-                "$ref": "#/components/schemas/Point"
-              }
-            ]
-          }
-        }
-      },
-      "GetAllAvailableTimesResponse": {
-        "required": [
-          "availableTimes"
-        ],
-        "type": "object",
-        "properties": {
-          "availableTimes": {
-            "type": "array",
-            "items": {
-              "$ref": "#/components/schemas/GetAllAvailableTimesDTO"
-            }
-          }
-        }
-      },
       "GetAllDecidedTimesDTO": {
         "required": [
           "id",
@@ -1396,6 +1326,85 @@
           },
           "kindergartenInfo": {
             "$ref": "#/components/schemas/KindergartenDTO"
+          }
+        }
+      },
+      "GetMyAvailableTimesDTO": {
+        "required": [
+          "id",
+          "startTime",
+          "endTime",
+          "kindergartens"
+        ],
+        "type": "object",
+        "properties": {
+          "id": {
+            "type": "string",
+            "format": "uuid"
+          },
+          "startTime": {
+            "type": "string",
+            "format": "date-time"
+          },
+          "endTime": {
+            "type": "string",
+            "format": "date-time"
+          },
+          "kindergartens": {
+            "type": "array",
+            "items": {
+              "$ref": "#/components/schemas/GetMyAvailableTimesKindergartensDTO"
+            }
+          }
+        }
+      },
+      "GetMyAvailableTimesKindergartensDTO": {
+        "required": [
+          "id",
+          "name",
+          "latitude",
+          "longitude"
+        ],
+        "type": "object",
+        "properties": {
+          "id": {
+            "type": "string",
+            "format": "uuid"
+          },
+          "name": {
+            "type": "string"
+          },
+          "latitude": {
+            "pattern": "^-?(?:0|[1-9]\\d*)(?:\\.\\d+)?(?:[eE][+-]?\\d+)?$",
+            "type": [
+              "null",
+              "number",
+              "string"
+            ],
+            "format": "double"
+          },
+          "longitude": {
+            "pattern": "^-?(?:0|[1-9]\\d*)(?:\\.\\d+)?(?:[eE][+-]?\\d+)?$",
+            "type": [
+              "null",
+              "number",
+              "string"
+            ],
+            "format": "double"
+          }
+        }
+      },
+      "GetMyAvailableTimesResponse": {
+        "required": [
+          "availableTimes"
+        ],
+        "type": "object",
+        "properties": {
+          "availableTimes": {
+            "type": "array",
+            "items": {
+              "$ref": "#/components/schemas/GetMyAvailableTimesDTO"
+            }
           }
         }
       },
@@ -2106,10 +2115,10 @@
       "name": "PostAvailableTime"
     },
     {
-      "name": "GetAllAvailableTimes"
+      "name": "UpdateAvailableTime"
     },
     {
-      "name": "UpdateAvailableTime"
+      "name": "GetMyAvailableTimes"
     },
     {
       "name": "Register"
