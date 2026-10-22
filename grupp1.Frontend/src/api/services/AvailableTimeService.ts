@@ -1,6 +1,10 @@
-import { useQuery } from "@tanstack/react-query";
+import { useMutation, useQuery, useQueryClient } from "@tanstack/react-query";
 import { apiClient, ApiError } from "@/lib/api";
-import type { GetMyAvailableTimesResponse } from "../models";
+import type {
+  GetMyAvailableTimesResponse,
+  PostAvailableTimeRequest,
+  PostAvailableTimeResponse,
+} from "../models";
 
 function GetAllAvailableTimes() {
   return useQuery({
@@ -28,4 +32,19 @@ function GetAllAvailableTimes() {
     },
   });
 }
-export { GetAllAvailableTimes };
+
+function AddAvailableTime() {
+  const query = useQueryClient();
+  return useMutation({
+    mutationFn: (req: PostAvailableTimeRequest) =>
+      apiClient.post<PostAvailableTimeResponse>("/api/availabletimes", req),
+
+    onSuccess: async () => {
+      await query.invalidateQueries({
+        queryKey: ["availableTimesData"],
+      });
+    },
+  });
+}
+
+export { GetAllAvailableTimes, AddAvailableTime };
