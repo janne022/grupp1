@@ -5,22 +5,22 @@
  * OpenAPI spec version: 1.0.0
  */
 import type {
-  GetAllAvailableTimesResponse
+  GetMyAvailableTimesResponse
 } from '../../models';
 
 
 export type getApiAvailabletimesResponse200TextPlain = {
-  data: GetAllAvailableTimesResponse
+  data: GetMyAvailableTimesResponse
   status: 200
 }
 
 export type getApiAvailabletimesResponse200ApplicationJson = {
-  data: GetAllAvailableTimesResponse
+  data: GetMyAvailableTimesResponse
   status: 200
 }
 
 export type getApiAvailabletimesResponse200TextJson = {
-  data: GetAllAvailableTimesResponse
+  data: GetMyAvailableTimesResponse
   status: 200
 }
 
