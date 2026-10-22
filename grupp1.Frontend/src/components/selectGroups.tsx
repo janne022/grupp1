@@ -1,10 +1,7 @@
 import {
   Select,
   SelectContent,
-  SelectGroup,
   SelectItem,
-  SelectLabel,
-  SelectSeparator,
   SelectTrigger,
   SelectValue,
 } from "@/components/ui/select";
@@ -16,13 +13,12 @@ export function SelectGroups({
 }: {
   KindergartenDto: KindergartenDto[];
 }) {
-
   return (
     <Select
       multiple={true}
       items={KindergartenDto.map((dto) => ({
         label: dto.name,
-        value: dto.id
+        value: dto.id,
       }))}
     >
       <SelectTrigger className="w-full max-w-48">
@@ -30,8 +26,10 @@ export function SelectGroups({
       </SelectTrigger>
       <SelectContent>
         {KindergartenDto.map((dto) => (
-          <SelectItem key={dto.id} value={dto.id}>{dto.name}</SelectItem>
-          ))}
+          <SelectItem key={dto.id} value={dto.id}>
+            {dto.name}
+          </SelectItem>
+        ))}
       </SelectContent>
     </Select>
   );
