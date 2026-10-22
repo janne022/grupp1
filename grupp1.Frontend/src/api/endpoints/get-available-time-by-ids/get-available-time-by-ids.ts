@@ -5,71 +5,56 @@
  * OpenAPI spec version: 1.0.0
  */
 import type {
-  GetByIdQuery,
   GetByIdResponse
 } from '../../models';
 
 
-export type getApiAvailabletimesByidResponse200TextPlain = {
+export type getApiAvailabletimesIdResponse200TextPlain = {
   data: GetByIdResponse
   status: 200
 }
 
-export type getApiAvailabletimesByidResponse200ApplicationJson = {
+export type getApiAvailabletimesIdResponse200ApplicationJson = {
   data: GetByIdResponse
   status: 200
 }
 
-export type getApiAvailabletimesByidResponse200TextJson = {
+export type getApiAvailabletimesIdResponse200TextJson = {
   data: GetByIdResponse
   status: 200
 }
 
-export type getApiAvailabletimesByidResponseSuccess = (getApiAvailabletimesByidResponse200TextPlain | getApiAvailabletimesByidResponse200ApplicationJson | getApiAvailabletimesByidResponse200TextJson) & {
+export type getApiAvailabletimesIdResponseSuccess = (getApiAvailabletimesIdResponse200TextPlain | getApiAvailabletimesIdResponse200ApplicationJson | getApiAvailabletimesIdResponse200TextJson) & {
   headers: Headers;
 };
 ;
 
-export type getApiAvailabletimesByidResponse = (getApiAvailabletimesByidResponseSuccess)
+export type getApiAvailabletimesIdResponse = (getApiAvailabletimesIdResponseSuccess)
 
-export const getGetApiAvailabletimesByidUrl = () => {
-
-
+export const getGetApiAvailabletimesIdUrl = (id: string,) => {
 
 
-  return `/api/availabletimes/byid`
+
+
+  return `/api/availabletimes/${id}`
 }
 
-export const getApiAvailabletimesByid = async (getByIdQuery: GetByIdQuery, options?: RequestInit): Promise<getApiAvailabletimesByidResponse> => {
+export const getApiAvailabletimesId = async (id: string, options?: RequestInit): Promise<getApiAvailabletimesIdResponse> => {
 
-    const getHeaders = (h?: NonNullable<RequestInit['headers']>): Record<string, string | readonly string[]> => {
-    if (!h) return {};
-    if (h instanceof Headers) return Object.fromEntries(h.entries());
-    if (Symbol.iterator in h) {
-      return Object.fromEntries(
-        Array.from(h as Iterable<Iterable<string>>, (entry) => Array.from(entry) as [string, string]),
-      );
-    }
-    const headers: Record<string, string | readonly string[]> = {};
-    for (const [name, value] of Object.entries<string | readonly string[] | undefined>(h)) {
-      if (value !== undefined) headers[name] = value;
-    }
-    return headers;
-  };
-const res = await fetch(getGetApiAvailabletimesByidUrl(),
+  const res = await fetch(getGetApiAvailabletimesIdUrl(id),
   {
     ...options,
-    method: 'GET',
-    headers: { 'Content-Type': 'application/json', ...getHeaders(options?.headers) },
-    body: JSON.stringify(getByIdQuery)
+    method: 'GET'
+
+
   }
 )
 
   const contentType = (res.headers.get('content-type') ?? '').toLowerCase();
   const body = [204, 205, 304].includes(res.status) ? null : await res.text();
 
-  const data: getApiAvailabletimesByidResponse['data'] = body ? (contentType.includes('json') ? JSON.parse(body) : body) : {}
-  return { data, status: res.status, headers: res.headers } as getApiAvailabletimesByidResponse
+  const data: getApiAvailabletimesIdResponse['data'] = body ? (contentType.includes('json') ? JSON.parse(body) : body) : {}
+  return { data, status: res.status, headers: res.headers } as getApiAvailabletimesIdResponse
 }
 
 

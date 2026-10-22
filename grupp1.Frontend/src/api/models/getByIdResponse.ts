@@ -4,7 +4,7 @@
  * grupp1.Server | v1
  * OpenAPI spec version: 1.0.0
  */
-import type { KindergartenDto } from './kindergartenDto';
+import type { KindergartenDto } from './kindergartenDTO';
 
 export interface GetByIdResponse {
   id: string;
