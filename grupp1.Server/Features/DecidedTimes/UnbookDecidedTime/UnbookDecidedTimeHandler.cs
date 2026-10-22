@@ -9,7 +9,8 @@ namespace Vicaria.Server.Features.DecidedTimes.UnbookDecidedTime
     {
         public async Task<UnbookDecidedTimeResponse> HandleAsync(UnbookDecidedTimeCommand command, CancellationToken cancellationToken = default)
         {
-            var decidedTime = await context.DecidedTimes.FirstOrDefaultAsync(dt => dt.Id == command.DecidedTimeId, cancellationToken);
+            var decidedTime = await context.DecidedTimes.Where(dt => dt.UserId == command.UserId)
+                                                        .FirstOrDefaultAsync(dt => dt.Id == command.DecidedTimeId,  cancellationToken);
 
             if (decidedTime is null)
             {
