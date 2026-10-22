@@ -9,11 +9,11 @@ namespace grupp1.Server.Features.AvailableTimes.Post
     [Authorize(Roles = "Substitute")]
     [Route("api/availabletimes")]
     [ApiController]
-    public class PostAvailableTimeController(IHandler<PostAvailableTimeRequest, PostAvailableTimeResponse> handler) : ControllerBase
+    public class PostAvailableTimeController(IHandler<PostAvailableTimeCommand, PostAvailableTimeResponse> handler) : ControllerBase
     {
 
         [HttpPost]
-        public async Task<ActionResult<PostAvailableTimeResponse>> PostAvailableTime(PostAvailableTimeRequest request, CancellationToken cancellationToken)
+        public async Task<ActionResult<PostAvailableTimeResponse>> PostAvailableTime([FromBody] PostAvailableTimeRequest request, CancellationToken cancellationToken)
         {
             var userId = User.FindFirstValue(ClaimTypes.NameIdentifier);
 
@@ -22,7 +22,7 @@ namespace grupp1.Server.Features.AvailableTimes.Post
                 return Unauthorized();
             }
 
-            var newRequest = new PostAvailableTimeRequest
+            var command = new PostAvailableTimeCommand
             {
                 StartTime = request.StartTime,
                 EndTime = request.EndTime,
@@ -30,7 +30,7 @@ namespace grupp1.Server.Features.AvailableTimes.Post
                 UserId = userGuidId
             };
 
-            var response = await handler.HandleAsync(newRequest, cancellationToken);
+            var response = await handler.HandleAsync(command, cancellationToken);
 
             if (!response.Success)
             {
