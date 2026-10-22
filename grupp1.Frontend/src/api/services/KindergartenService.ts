@@ -9,14 +9,15 @@ function GetAllKindergartens() {
       signal,
     }: {
       signal: AbortSignal;
-    }): Promise<KindergartenDto[] | null> => {
+    }): Promise<KindergartenDto | null> => {
       try {
-        const response = await apiClient.get<KindergartenDto[]>(
+        const response = await apiClient.get<KindergartenDto>(
           "/api/kindergartens",
           {
             signal,
           },
         );
+        console.log("Kindergarten response:", response.kindergartens);
         return response;
       } catch (error) {
         if (error instanceof ApiError && error.status === 401) {

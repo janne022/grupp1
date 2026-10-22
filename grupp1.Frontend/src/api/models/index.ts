@@ -22,6 +22,7 @@ export * from './geometryOverlay';
 export * from './geometryRelate';
 export * from './getAllDecidedTimesDTO';
 export * from './getAllDecidedTimesResponse';
+export * from './getAllKindergartensResponse';
 export * from './getByIdResponse';
 export * from './getDecidedTimeByIdResponse';
 export * from './getMyAvailableTimesDTO';
