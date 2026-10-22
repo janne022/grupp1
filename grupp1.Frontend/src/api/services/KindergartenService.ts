@@ -1,17 +1,32 @@
 import { useQuery } from "@tanstack/react-query";
-
-const baseUrl = import.meta.env.VITE_API_BASE_URL;
+import { apiClient, ApiError } from "@/lib/api";
+import type { KindergartenDto } from "../models";
 
 function GetAllKindergartens() {
-    const { isPending, error, data } = useQuery({
-        queryKey: ["kindergartensdata"],
-        queryFn: () =>
-            fetch(`${baseUrl}/api/kindergartens`, {
-                method: "GET",
-            }).then(response => response.json())
-    })
+  return useQuery({
+    queryKey: ["kindergartensData"],
+    queryFn: async ({
+      signal,
+    }: {
+      signal: AbortSignal;
+    }): Promise<KindergartenDto[] | null> => {
+      try {
+        const response = await apiClient.get<KindergartenDto[]>(
+          "/api/kindergartens",
+          {
+            signal,
+          },
+        );
+        return response;
+      } catch (error) {
+        if (error instanceof ApiError && error.status === 401) {
+          return null;
+        }
 
-    return { isPending, error, data }
+        throw error;
+      }
+    },
+  });
 }
 
-export { GetAllKindergartens }
+export { GetAllKindergartens };

@@ -1,16 +1,31 @@
 import { useQuery } from "@tanstack/react-query";
-
-const baseUrl = import.meta.env.VITE_API_BASE_URL;
+import { apiClient, ApiError } from "@/lib/api";
+import type { GetMyAvailableTimesResponse } from "../models";
 
 function GetAllAvailableTimes() {
-  const { isPending, error, data } = useQuery({
-    queryKey: ["availableTimesdata"],
-    queryFn: () =>
-      fetch(`${baseUrl}/api/availabletimes`, {
-        method: "GET",
-      }).then((response) => response.json()),
-  });
+  return useQuery({
+    queryKey: ["availableTimesData"],
+    queryFn: async ({
+      signal,
+    }: {
+      signal: AbortSignal;
+    }): Promise<GetMyAvailableTimesResponse | null> => {
+      try {
+        const response = await apiClient.get<GetMyAvailableTimesResponse>(
+          "/api/availabletimes",
+          {
+            signal,
+          },
+        );
+        return response;
+      } catch (error) {
+        if (error instanceof ApiError && error.status === 401) {
+          return null;
+        }
 
-  return { isPending, error, data };
+        throw error;
+      }
+    },
+  });
 }
 export { GetAllAvailableTimes };
