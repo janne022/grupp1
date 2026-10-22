@@ -4,7 +4,14 @@
  * grupp1.Server | v1
  * OpenAPI spec version: 1.0.0
  */
-import type { Point } from "./point";
+import type { Point } from './point';
+
+export interface KindergartenDTO {
+  id: string;
+  name: string;
+  location: null | Point;
+}
+
 export interface KindergartenDto {
   name: string;
   id: string;
