@@ -7,7 +7,10 @@ import { sv } from "date-fns/locale";
 import { GetAllAvailableTimes } from "@/api/services/AvailableTimeService";
 import AddEditTimeModal from "@/components/addEditTimeModal";
 import { ChevronLeft, ChevronRight, Dot, Plus } from "lucide-react";
-import type { GetAllAvailableTimesResponse, KindergartenDto } from "@/api/models";
+import type {
+  GetMyAvailableTimesResponse,
+  KindergartenDto,
+} from "@/api/models";
 import { addMonths, format } from "date-fns";
 import { GetAllKindergartens } from "@/api/services/KindergartenService";
 
@@ -36,8 +39,10 @@ function RouteComponent() {
     return <div>Error!</div>;
   }
 
-  const availableTimeData: GetAllAvailableTimesResponse = AvailableTimeResponse.data;
-  const KindergartenData: KindergartenDto[] = KindergartenResponse.data.kindergartens;
+  const availableTimeData: GetMyAvailableTimesResponse =
+    AvailableTimeResponse.data;
+  const KindergartenData: KindergartenDto[] =
+    KindergartenResponse.data.kindergartens;
 
   const dateFormattedStartDates: string[] =
     availableTimeData.availableTimes.map((at) =>

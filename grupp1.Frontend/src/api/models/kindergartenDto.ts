@@ -6,6 +6,12 @@
  */
 import type { Point } from './point';
 
+export interface KindergartenDTO {
+  id: string;
+  name: string;
+  location: null | Point;
+}
+
 export interface KindergartenDto {
   name: string;
   id: string;
