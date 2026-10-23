@@ -36,8 +36,12 @@ function GetAllAvailableTimes() {
 function AddAvailableTime() {
   const query = useQueryClient();
   return useMutation({
-    mutationFn: (req: PostAvailableTimeRequest) =>
-      apiClient.post<PostAvailableTimeResponse>("/api/availabletimes", req),
+    mutationFn: (req: PostAvailableTimeRequest) => {
+
+      console.log("INSIDE THE POST CALL IN FRONTEND SERVICE: ", req)
+
+     return apiClient.post<PostAvailableTimeResponse>("/api/availabletimes", req)
+    },
 
     onSuccess: async () => {
       await query.invalidateQueries({
