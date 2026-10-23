@@ -15,6 +15,8 @@ public class BookDecidedTimeHandler(
         BookDecidedTimeCommand command,
         CancellationToken cancellationToken = default)
     {
+        //TODO: Consider replacing Exceptions with StatusEnums that we can handle in the controller
+
         _logger.LogInformation("Starting to Create booked time. ID: {command.AvailableTimeGuid}", command.AvailableTimeGuid);
 
         var hasAccess = await dbContext.Kindergartens.AnyAsync(k => k.Id == command.KindergartenId && k.Managers.Any(m => m.UserId == command.ManagerId), cancellationToken);
