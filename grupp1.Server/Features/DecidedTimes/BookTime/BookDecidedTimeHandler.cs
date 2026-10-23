@@ -16,6 +16,8 @@ public class BookDecidedTimeHandler(
         CancellationToken cancellationToken = default)
     {
         //TODO: Consider replacing Exceptions with StatusEnums that we can handle in the controller
+        //TODO: Add a time-validation for the DecidedTime (StartTime cannot be bigger than EndTime etc.)
+        //TODO: Check for overlapping bookings to prevent double-booking
 
         _logger.LogInformation("Starting to Create booked time. ID: {command.AvailableTimeGuid}", command.AvailableTimeGuid);
 
@@ -60,22 +62,11 @@ public class BookDecidedTimeHandler(
         }
 
 
-
-        var alreadyBooked = await dbContext.DecidedTimes.AnyAsync(dt => dt.AvailableTimeId == command.AvailableTimeGuid, cancellationToken);
-
-        if (alreadyBooked) 
-        {
-            _logger.LogWarning("AvailableTime {AvailableTimeGuid} has already been booked", command.AvailableTimeGuid);
-            throw new InvalidOperationException($"AvailableTime {command.AvailableTimeGuid} has already been booked");
-        };
-
-
-
         DecidedTime createdDecidedTime = new()
         {
             Id = Guid.CreateVersion7(),
-            StartTime = availableTime.StartTime,
-            EndTime = availableTime.EndTime,
+            StartTime = command.StartTime,
+            EndTime = command.EndTime,
             UserId = availableTime.UserId,
             KindergartenId = command.KindergartenId,
             AvailableTimeId = command.AvailableTimeGuid

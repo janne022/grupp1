@@ -31,6 +31,8 @@ public class BookDecidedTimeController(
         var command = new BookDecidedTimeCommand
         {
             AvailableTimeGuid = query.AvailableTimeGuid,
+            StartTime = query.StartTime,
+            EndTime = query.EndTime,
             KindergartenId = query.KindergartenId,
             ManagerId = managerId
         };
