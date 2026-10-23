@@ -5,12 +5,12 @@ using Microsoft.EntityFrameworkCore;
 
 namespace grupp1.Server.Features.AvailableTimes.Post
 {
-    public sealed class PostAvailableTimeHandler(VicariaDbContext context, ILogger<PostAvailableTimeHandler> _logger) : IHandler<PostAvailableTimeRequest, PostAvailableTimeResponse>
+    public sealed class PostAvailableTimeHandler(VicariaDbContext context, ILogger<PostAvailableTimeHandler> _logger) : IHandler<PostAvailableTimeCommand, PostAvailableTimeResponse>
     {
-        public async Task<PostAvailableTimeResponse> HandleAsync(PostAvailableTimeRequest request, CancellationToken cancellationToken = default)
+        public async Task<PostAvailableTimeResponse> HandleAsync(PostAvailableTimeCommand command, CancellationToken cancellationToken = default)
         {
 
-            if (request.EndTime <= request.StartTime)
+            if (command.EndTime <= command.StartTime)
             {
                 _logger.LogInformation("Failed to create available time: EndTime must be later than StartTime");
 
@@ -23,7 +23,7 @@ namespace grupp1.Server.Features.AvailableTimes.Post
             }
 
 
-            if (request.Kindergartens is null || request.Kindergartens.Count is 0)
+            if (command.Kindergartens is null || command.Kindergartens.Count is 0)
             {
                 _logger.LogInformation("Failed to create available time: No kindergartens provided");
 
@@ -35,16 +35,17 @@ namespace grupp1.Server.Features.AvailableTimes.Post
             }
 
 
-            var availableTime = new AvailableTime // TODO: Add UserId once authorization is set up
+            var availableTime = new AvailableTime
             {
                 Id = Guid.NewGuid(),
-                StartTime = request.StartTime,
-                EndTime = request.EndTime,
+                StartTime = command.StartTime,
+                EndTime = command.EndTime,
+                UserId = command.UserId
 
             };
 
 
-            foreach (var kindergartenId in request.Kindergartens)
+            foreach (var kindergartenId in command.Kindergartens)
             {
                 var kindergartenExist = await context.Kindergartens.AnyAsync(k => k.Id == kindergartenId, cancellationToken);
 
@@ -82,10 +83,6 @@ namespace grupp1.Server.Features.AvailableTimes.Post
                 Id = availableTime.Id,
                 Success = true
             };
-
-
         }
     }
-
-
 }
