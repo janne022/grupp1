@@ -6,5 +6,10 @@ public record UserInfoResponse
     string FirstName,
     string LastName,
     string? Email,
-    IReadOnlyList<string> Roles
+    IReadOnlyList<string> Roles,
+    string? PhoneNumber
 );
+// PhoneNumber is nullable since it is nullable on IdentityUser,
+// but it should never end up null due to registration requiring
+// phone numbers as of PR #137.
+// (ie this squelches compiler complaints)

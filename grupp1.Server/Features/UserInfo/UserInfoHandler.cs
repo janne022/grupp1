@@ -28,7 +28,8 @@ public async Task<UserInfoResponse?> HandleAsync(UserInfoQuery query, Cancellati
             user.FirstName,
             user.LastName,
             user.Email,
-            roles.ToList()
+            roles.ToList(),
+            user.PhoneNumber
         );
 
         return response;
