@@ -16,6 +16,7 @@ public class BookDecidedTimeHandler(
         CancellationToken cancellationToken = default)
     {
         //TODO: Consider replacing Exceptions with StatusEnums that we can handle in the controller
+        //TODO: Replace StartTime and EndTime with command.StartTime/EndTime when creating the DecidedTime
         //TODO: Add a time-validation for the DecidedTime (StartTime cannot be bigger than EndTime etc.)
         //TODO: Check for overlapping bookings to prevent double-booking
 
@@ -65,8 +66,8 @@ public class BookDecidedTimeHandler(
         DecidedTime createdDecidedTime = new()
         {
             Id = Guid.CreateVersion7(),
-            StartTime = command.StartTime,
-            EndTime = command.EndTime,
+            StartTime = availableTime.StartTime,
+            EndTime = availableTime.EndTime,
             UserId = availableTime.UserId,
             KindergartenId = command.KindergartenId,
             AvailableTimeId = command.AvailableTimeGuid
