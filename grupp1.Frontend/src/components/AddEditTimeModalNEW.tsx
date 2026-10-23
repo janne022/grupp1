@@ -2,11 +2,11 @@ import type { KindergartenGroup } from "@/api/types/types";
 
 import { Field } from "./ui/field";
 import { SelectGroups } from "./selectGroups";
-import { TimeModal, type TimeModalProps } from "./TimeModal";
+import { GeneralBooking, type GeneralBookingProps } from "./generalBookingModal";
 
 
 interface AddEditTimeModalProps extends Omit<
-  TimeModalProps,
+  GeneralBookingProps,
   "title" | "submitLabel" | "onDelete" | "children" | "startTime" | "endTime"
 > {
   deleteItem: () => void;
@@ -16,7 +16,7 @@ interface AddEditTimeModalProps extends Omit<
   existingEndTime?: string;
 }
 
-export default function AddEditTimeModalTest({
+export default function AddEditTimeModalNew({
   deleteItem,
   kindergartens,
   selectedTime,
@@ -27,7 +27,7 @@ export default function AddEditTimeModalTest({
   const isEdit = Boolean(existingStartTime && existingEndTime);
 
   return (
-    <TimeModal
+    <GeneralBooking
       {...rest}
       title={isEdit ? "Ändra din tid" : "Lägg till en tillgänglig tid!"}
       submitLabel={isEdit ? "Ändra" : "Bekräfta"}
@@ -38,6 +38,6 @@ export default function AddEditTimeModalTest({
       <Field className="flex flex-col items-center">
         <SelectGroups KindergartenGroups={kindergartens} />
       </Field>
-    </TimeModal>
+    </GeneralBooking>
   );
 }
