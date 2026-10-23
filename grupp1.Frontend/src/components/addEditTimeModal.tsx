@@ -2,6 +2,9 @@ import { EllipsisVertical, TrashIcon, XIcon } from "lucide-react";
 import { DatePickerTime } from "./date-picker";
 import { SelectGroups } from "./selectGroups";
 import { Button } from "./ui/button";
+import * as z from "zod";
+import { zodResolver } from "@hookform/resolvers/zod";
+import { Controller, useForm } from "react-hook-form";
 import {
   Dialog,
   DialogClose,
@@ -22,11 +25,16 @@ import {
 import React, { type Dispatch } from "react";
 import type { KindergartenDto } from "@/api/models";
 
+const formSchema = z.object({
+  startDate: z.date(),
+  endDate: z.date(),
+  kindergartens: z.array(z.string()),
+});
+
 export default function AddEditTimeModal({
   open: open,
   setOpen: setOpen,
   deleteItem: deleteTime,
-  addTime: addTime,
   kindergartens: kindergartens,
   selectedDate: selectedDate,
   existingStartTime: existingStartTime,
@@ -35,13 +43,28 @@ export default function AddEditTimeModal({
   open: boolean;
   setOpen: Dispatch<React.SetStateAction<boolean>>;
   deleteItem: () => void;
-  addTime: () => void;
   kindergartens: KindergartenDto[];
   selectedDate?: Date | undefined;
   existingStartTime?: string;
   existingEndTime?: string;
 }) {
   // TODO: Extract Selectgroups to children
+
+  const form = useForm<z.infer<typeof formSchema>>({
+    resolver: zodResolver(formSchema),
+    defaultValues: {
+      startDate: undefined,
+      endDate: undefined,
+      kindergartens: [],
+    },
+  });
+
+  function onSubmit(data: z.infer<typeof formSchema>) {
+    login.mutate({
+      email: data.email,
+      password: data.password,
+    });
+  }
 
   let isEdit = false;
 
@@ -51,7 +74,7 @@ export default function AddEditTimeModal({
 
   return (
     <Dialog open={open} onOpenChange={(e) => setOpen(e.valueOf())}>
-      <form>
+      <form id="add-availabletime-form" onSubmit={form.handleSubmit(onSubmit)}>
         <DialogContent showCloseButton={false} className="sm:max-w-sm">
           <DialogHeader className="flex flex-row justify-between items-center">
             <DialogClose
@@ -86,30 +109,51 @@ export default function AddEditTimeModal({
             )}
           </DialogHeader>
           <FieldGroup>
-            <Field>
-              <DatePickerTime
-                labelName="Startdag"
-                initialTime={existingStartTime || "08:00"}
-                intialDate={selectedDate}
-              />
-            </Field>
-            <Field>
-              <DatePickerTime
-                labelName="Slutdag"
-                initialTime={existingEndTime || "16:00"}
-              />
-            </Field>
+            <Controller
+              name="startDate"
+              control={form.control}
+              render={({ field, fieldState }) => (
+                <Field data-invalid={fieldState.invalid}>
+                  <DatePickerTime
+                    {...field}
+                    labelName="Startdag"
+                    initialTime={existingStartTime || "08:00"}
+                    intialDate={selectedDate}
+                  />
+                </Field>
+              )}
+            />
+            <Controller
+              name="endDate"
+              control={form.control}
+              render={({ field, fieldState }) => (
+                <Field data-invalid={fieldState.invalid}>
+                  <DatePickerTime
+                    {...field}
+                    labelName="Slutdag"
+                    initialTime={existingEndTime || "16:00"}
+                  />
+                </Field>
+              )}
+            />
           </FieldGroup>
           <FieldGroup>
-            <Field className="flex flex-col items-center">
-              <SelectGroups KindergartenDto={kindergartens} />
-            </Field>
+            <Controller
+              name="kindergartens"
+              control={form.control}
+              render={({ field, fieldState }) => (
+                <Field
+                  data-invalid={fieldState.invalid}
+                  className="flex flex-col items-center"
+                >
+                  <SelectGroups {...field} KindergartenDto={kindergartens} />
+                </Field>
+              )}
+            />
           </FieldGroup>
           <DialogFooter className="flex flex-row justify-between">
             <DialogClose render={<Button variant="outline">Avbryt</Button>} />
-            <Button onClick={addTime} type="submit">
-              {isEdit ? "Ändra" : "Bekräfta"}
-            </Button>
+            <Button type="submit">{isEdit ? "Ändra" : "Bekräfta"}</Button>
           </DialogFooter>
         </DialogContent>
       </form>
