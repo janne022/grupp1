@@ -24,12 +24,7 @@ import {
 
 import React, { type Dispatch } from "react";
 import type { KindergartenDto } from "@/api/models";
-
-const formSchema = z.object({
-  startDate: z.date(),
-  endDate: z.date(),
-  kindergartens: z.array(z.string()),
-});
+import { AddAvailableTime } from "@/api/services/AvailableTimeService";
 
 export default function AddEditTimeModal({
   open: open,
@@ -50,19 +45,45 @@ export default function AddEditTimeModal({
 }) {
   // TODO: Extract Selectgroups to children
 
+  const dateTime = z.object({ date: z.date(), time: z.string() });
+
+  const formSchema = z.object({
+    StartDateTime: dateTime,
+    EndDateTime: dateTime,
+    kindergartens: z.array(z.string()),
+  });
+
   const form = useForm<z.infer<typeof formSchema>>({
     resolver: zodResolver(formSchema),
     defaultValues: {
-      startDate: undefined,
-      endDate: undefined,
+      StartDateTime: {
+        date: new Date(),
+        time: "08:00",
+      },
+      EndDateTime: {
+        date: new Date(),
+        time: "16:00",
+      },
       kindergartens: [],
     },
   });
 
+  const postService = AddAvailableTime();
+
   function onSubmit(data: z.infer<typeof formSchema>) {
-    login.mutate({
-      email: data.email,
-      password: data.password,
+    console.log(
+      "startDate",
+      `${data.StartDateTime.date.toLocaleDateString("sv-SE")}T${data.StartDateTime.time}:00`,
+      "EndDate",
+      `${data.EndDateTime.date.toLocaleDateString("sv-SE")}T${data.EndDateTime.time}:00`,
+      "kindergartens",
+      data.kindergartens,
+    );
+
+    postService.mutate({
+      startTime: new Date(`${data.StartDateTime.date.toLocaleDateString("sv-SE")}T${data.StartDateTime.time}:00`).toISOString(),
+      endTime: new Date(`${data.EndDateTime.date.toLocaleDateString("sv-SE")}T${data.EndDateTime.time}:00`).toISOString(),
+      kindergartens: ["01a143ce-6815-7024-81e7-cca5af36be5e"],
     });
   }
 
@@ -110,29 +131,35 @@ export default function AddEditTimeModal({
           </DialogHeader>
           <FieldGroup>
             <Controller
-              name="startDate"
+              name="StartDateTime"
               control={form.control}
-              render={({ field, fieldState }) => (
-                <Field data-invalid={fieldState.invalid}>
-                  <DatePickerTime
-                    {...field}
-                    labelName="Startdag"
-                    initialTime={existingStartTime || "08:00"}
-                    intialDate={selectedDate}
-                  />
-                </Field>
-              )}
+              render={({ field, fieldState }) => {
+                console.log("inside of Controller: ", field.value);
+
+                return (
+                  <Field data-invalid={fieldState.invalid}>
+                    <DatePickerTime
+                      {...field}
+                      labelName="Startdag"
+                      onChange={(x) => {
+                        console.log(
+                          "inside of controller, inside the DatePickTime OnCHANGE: ",
+                          x,
+                        );
+
+                        field.onChange(x);
+                      }}
+                    />
+                  </Field>
+                );
+              }}
             />
             <Controller
-              name="endDate"
+              name="EndDateTime"
               control={form.control}
               render={({ field, fieldState }) => (
                 <Field data-invalid={fieldState.invalid}>
-                  <DatePickerTime
-                    {...field}
-                    labelName="Slutdag"
-                    initialTime={existingEndTime || "16:00"}
-                  />
+                  <DatePickerTime {...field} labelName="Slutdag" />
                 </Field>
               )}
             />
@@ -153,7 +180,9 @@ export default function AddEditTimeModal({
           </FieldGroup>
           <DialogFooter className="flex flex-row justify-between">
             <DialogClose render={<Button variant="outline">Avbryt</Button>} />
-            <Button type="submit">{isEdit ? "Ändra" : "Bekräfta"}</Button>
+            <Button form="add-availabletime-form" type="submit">
+              {isEdit ? "Ändra" : "Bekräfta"}
+            </Button>
           </DialogFooter>
         </DialogContent>
       </form>

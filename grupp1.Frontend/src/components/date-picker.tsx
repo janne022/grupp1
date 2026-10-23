@@ -15,18 +15,24 @@ import {
   PopoverTrigger,
 } from "@/components/ui/popover";
 
+type dateTime = {
+  date: Date;
+  time: string;
+};
+
+type stateProps = {
+  value: dateTime;
+  onChange: (value: dateTime) => void;
+};
+
 export function DatePickerTime({
   labelName,
-  initialTime,
-  intialDate,
+  value,
+  onChange,
 }: {
   labelName: string;
-  initialTime: string | undefined;
-  intialDate?: Date | undefined;
-}) {
+} & stateProps) {
   const [open, setOpen] = React.useState(false);
-  const [date, setDate] = React.useState<Date | undefined>(intialDate);
-  const [time, setTime] = React.useState<string>(initialTime || "08:00");
 
   return (
     <FieldGroup className="mx-auto max-w-xs flex-row">
@@ -40,7 +46,7 @@ export function DatePickerTime({
                 id="date-picker-optional"
                 className="w-32 justify-between font-normal"
               >
-                {date ? format(date, "PPP") : "Välj datum"}
+                { value?.date ? format(value.date, "PPP") : "Välj datum"}
                 <ChevronDownIcon data-icon="inline-end" />
               </Button>
             }
@@ -48,13 +54,21 @@ export function DatePickerTime({
           <PopoverContent className="w-auto overflow-hidden p-0" align="start">
             <Calendar
               mode="single"
-              selected={date}
+              selected={value.date}
               disabled={{ dayOfWeek: [0, 6] }}
               locale={sv}
               captionLayout="dropdown"
-              defaultMonth={date}
+              defaultMonth={value.date}
               onSelect={(date) => {
-                setDate(date);
+
+                console.log("Date inside of ONSELECT!!!!",date)
+
+                if (!date) {
+                  return;
+                }
+
+                console.log("after iF statement: ", date)
+                onChange({...value, date});
                 setOpen(false);
               }}
             />
@@ -69,10 +83,8 @@ export function DatePickerTime({
           type="time"
           id="time-picker-optional"
           step="60"
-          onChange={(e) => {
-            setTime(e.target.value);
-          }}
-          value={time}
+          onChange={(time) => {onChange({...value, time: time.target.value})}}
+          value={value.time}
           className="appearance-none bg-background [&::-webkit-calendar-picker-indicator]:hidden [&::-webkit-calendar-picker-indicator]:appearance-none"
         />
       </Field>
