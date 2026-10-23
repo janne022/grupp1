@@ -1,15 +1,19 @@
 
 
+using grupp1.Server.Features.DecidedTimes.BookTime.DTOs;
+using Microsoft.AspNetCore.Authorization;
 using Microsoft.AspNetCore.Mvc;
+using System.Security.Claims;
 using Vicaria.Server.Features.DecidedTimes.Book.DTOs;
 using Vicaria.Server.Infrastructure;
 
 namespace Vicaria.Server.Features.DecidedTimes.Book;
 
+[Authorize(Roles = "Manager")]
 [Route("api/decidedtime")]
 [ApiController]
 public class BookDecidedTimeController(
-    IHandler<BookDecidedTimeQuery, BookDecidedTimeResponse> handler) : Controller
+    IHandler<BookDecidedTimeCommand, BookDecidedTimeResponse> handler) : Controller
 {
     [HttpPost("book")]
     public async Task<ActionResult<BookDecidedTimeResponse>> BookTime(
@@ -17,7 +21,21 @@ public class BookDecidedTimeController(
         CancellationToken cancellationToken = default
     )
     {
-        var createdResult = await handler.HandleAsync(query, cancellationToken);
+        var userId = User.FindFirstValue(ClaimTypes.NameIdentifier);
+
+        if (!Guid.TryParse(userId, out var managerId))
+        {
+            return Unauthorized();
+        }
+
+        var command = new BookDecidedTimeCommand
+        {
+            AvailableTimeGuid = query.AvailableTimeGuid,
+            KindergartenId = query.KindergartenId,
+            ManagerId = managerId
+        };
+
+        var createdResult = await handler.HandleAsync(command, cancellationToken);
 
         return Created("", createdResult); //TODO: add get api path here when we have it
     }
