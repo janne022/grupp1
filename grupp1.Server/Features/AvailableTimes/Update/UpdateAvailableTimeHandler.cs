@@ -21,11 +21,6 @@ public class UpdateAvailableTimeHandler(
                 command.EndTime,
                 command.StartTime
             );
-            // Is this log necessary on the backend, I wonder?
-            // Normally a user would get validation error on frontend.
-            //
-            // I suppose the fact that a user somehow got past the
-            // frontend validator has value in itself, too...
 
             return new UpdateAvailableTimeResponse(
                 null,
