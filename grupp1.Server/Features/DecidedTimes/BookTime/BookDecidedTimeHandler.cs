@@ -17,7 +17,7 @@ public class BookDecidedTimeHandler(
     {
         _logger.LogInformation("Starting to Create booked time. ID: {command.AvailableTimeGuid}", command.AvailableTimeGuid);
 
-        var hasAccess = await dbContext.Kindergartens.AnyAsync(k => k.Id == command.KindergartenId && k.Managers.Any(m => m.UserId == command.ManagerId));
+        var hasAccess = await dbContext.Kindergartens.AnyAsync(k => k.Id == command.KindergartenId && k.Managers.Any(m => m.UserId == command.ManagerId), cancellationToken);
 
         if (!hasAccess)
         {
@@ -53,8 +53,21 @@ public class BookDecidedTimeHandler(
 
         if(kindergartenInfo is null)
         {
+            _logger.LogWarning("Could not fimd Kindergarten id:{KindergartenId}", command.AvailableTimeGuid);
             throw new KeyNotFoundException($"Kindergarten {command.KindergartenId} was not found");
         }
+
+
+
+        var alreadyBooked = await dbContext.DecidedTimes.AnyAsync(dt => dt.AvailableTimeId == command.AvailableTimeGuid, cancellationToken);
+
+        if (alreadyBooked) 
+        {
+            _logger.LogWarning("AvailableTime {AvailableTimeGuid} has already been booked", command.AvailableTimeGuid);
+            throw new InvalidOperationException($"AvailableTime {command.AvailableTimeGuid} has already been booked");
+        };
+
+
 
         DecidedTime createdDecidedTime = new()
         {
