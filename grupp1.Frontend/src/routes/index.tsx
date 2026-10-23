@@ -147,7 +147,7 @@ function RouteComponent() {
           deleteItem={function (): void {
             throw new Error("Function not implemented.");
           }}
-          kindergartens={KindergartenResponse.data ?? []}
+          kindergartens={KindergartenResponse.data?.kindergartens ?? []}
           selectedDate={date}
         />
       </div>
