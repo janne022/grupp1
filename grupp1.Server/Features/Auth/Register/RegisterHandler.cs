@@ -31,7 +31,8 @@ public class RegisterHandler(
             UserName = request.Email,
             Email = request.Email,
             FirstName = request.FirstName,
-            LastName = request.LastName
+            LastName = request.LastName,
+            PhoneNumber = request.PhoneNumber
         };
 
         var createResult = await userManager.CreateAsync(user, request.Password);

@@ -1,3 +1,4 @@
+using System.ComponentModel.DataAnnotations;
 using Vicaria.Server.Domain;
 
 public record RegisterQuery(
@@ -5,5 +6,6 @@ public record RegisterQuery(
     string Password,
     string FirstName,
     string LastName,
-    string Role
+    string Role,
+    [Phone] string PhoneNumber
 );
