@@ -2,6 +2,9 @@ import { EllipsisVertical, TrashIcon, XIcon } from "lucide-react";
 import { DatePickerTime } from "./date-picker";
 import { SelectGroups } from "./selectGroups";
 import { Button } from "./ui/button";
+import * as z from "zod";
+import { zodResolver } from "@hookform/resolvers/zod";
+import { Controller, useForm } from "react-hook-form";
 import {
   Dialog,
   DialogClose,
@@ -19,29 +22,70 @@ import {
   DropdownMenuItem,
 } from "./ui/dropdown-menu";
 
-import type { KindergartenGroup } from "@/api/types/types";
 import React, { type Dispatch } from "react";
+import type { KindergartenDto } from "@/api/models";
+import { AddAvailableTime } from "@/api/services/AvailableTimeService";
 
 export default function AddEditTimeModal({
   open: open,
   setOpen: setOpen,
   deleteItem: deleteTime,
-  addTime: addTime,
   kindergartens: kindergartens,
-  selectedTime: selectedTime,
+  selectedDate: selectedDate,
   existingStartTime: existingStartTime,
   existingEndTime: existingEndTime,
 }: {
   open: boolean;
   setOpen: Dispatch<React.SetStateAction<boolean>>;
   deleteItem: () => void;
-  addTime: () => void;
-  kindergartens: KindergartenGroup[];
-  selectedTime?: string;
+  kindergartens: KindergartenDto[];
+  selectedDate?: Date | undefined;
   existingStartTime?: string;
   existingEndTime?: string;
 }) {
   // TODO: Extract Selectgroups to children
+
+  const dateTime = z.object({ date: z.date(), time: z.string() });
+
+  const formSchema = z.object({
+    StartDateTime: dateTime,
+    EndDateTime: dateTime,
+    kindergartens: z.array(z.string()),
+  });
+
+  const form = useForm<z.infer<typeof formSchema>>({
+    resolver: zodResolver(formSchema),
+    defaultValues: {
+      StartDateTime: {
+        date: new Date(),
+        time: "08:00",
+      },
+      EndDateTime: {
+        date: new Date(),
+        time: "16:00",
+      },
+      kindergartens: [],
+    },
+  });
+
+  const postService = AddAvailableTime();
+
+  function onSubmit(data: z.infer<typeof formSchema>) {
+    console.log(
+      "startDate",
+      `${data.StartDateTime.date.toLocaleDateString("sv-SE")}T${data.StartDateTime.time}:00`,
+      "EndDate",
+      `${data.EndDateTime.date.toLocaleDateString("sv-SE")}T${data.EndDateTime.time}:00`,
+      "kindergartens",
+      data.kindergartens,
+    );
+
+    postService.mutate({
+      startTime: new Date(`${data.StartDateTime.date.toLocaleDateString("sv-SE")}T${data.StartDateTime.time}:00`).toISOString(),
+      endTime: new Date(`${data.EndDateTime.date.toLocaleDateString("sv-SE")}T${data.EndDateTime.time}:00`).toISOString(),
+      kindergartens: ["01a143ce-6815-7024-81e7-cca5af36be5e"],
+    });
+  }
 
   let isEdit = false;
 
@@ -51,7 +95,7 @@ export default function AddEditTimeModal({
 
   return (
     <Dialog open={open} onOpenChange={(e) => setOpen(e.valueOf())}>
-      <form>
+      <form id="add-availabletime-form" onSubmit={form.handleSubmit(onSubmit)}>
         <DialogContent showCloseButton={false} className="sm:max-w-sm">
           <DialogHeader className="flex flex-row justify-between items-center">
             <DialogClose
@@ -86,27 +130,57 @@ export default function AddEditTimeModal({
             )}
           </DialogHeader>
           <FieldGroup>
-            <Field>
-              <DatePickerTime
-                labelName="Startdag"
-                initialTime={existingStartTime || selectedTime}
-              />
-            </Field>
-            <Field>
-              <DatePickerTime
-                labelName="Slutdag"
-                initialTime={existingEndTime || "16:00"}
-              />
-            </Field>
+            <Controller
+              name="StartDateTime"
+              control={form.control}
+              render={({ field, fieldState }) => {
+                console.log("inside of Controller: ", field.value);
+
+                return (
+                  <Field data-invalid={fieldState.invalid}>
+                    <DatePickerTime
+                      {...field}
+                      labelName="Startdag"
+                      onChange={(x) => {
+                        console.log(
+                          "inside of controller, inside the DatePickTime OnCHANGE: ",
+                          x,
+                        );
+
+                        field.onChange(x);
+                      }}
+                    />
+                  </Field>
+                );
+              }}
+            />
+            <Controller
+              name="EndDateTime"
+              control={form.control}
+              render={({ field, fieldState }) => (
+                <Field data-invalid={fieldState.invalid}>
+                  <DatePickerTime {...field} labelName="Slutdag" />
+                </Field>
+              )}
+            />
           </FieldGroup>
           <FieldGroup>
-            <Field className="flex flex-col items-center">
-              <SelectGroups KindergartenGroups={kindergartens} />
-            </Field>
+            <Controller
+              name="kindergartens"
+              control={form.control}
+              render={({ field, fieldState }) => (
+                <Field
+                  data-invalid={fieldState.invalid}
+                  className="flex flex-col items-center"
+                >
+                  <SelectGroups {...field} KindergartenDto={kindergartens} />
+                </Field>
+              )}
+            />
           </FieldGroup>
           <DialogFooter className="flex flex-row justify-between">
             <DialogClose render={<Button variant="outline">Avbryt</Button>} />
-            <Button onClick={addTime} type="submit">
+            <Button form="add-availabletime-form" type="submit">
               {isEdit ? "Ändra" : "Bekräfta"}
             </Button>
           </DialogFooter>

@@ -167,6 +167,16 @@
         "responses": {
           "200": {
             "description": "OK"
+          },
+          "400": {
+            "description": "Bad Request",
+            "content": {
+              "application/problem+json": {
+                "schema": {
+                  "$ref": "#/components/schemas/HttpValidationProblemDetails"
+                }
+              }
+            }
           }
         }
       }
@@ -385,7 +395,24 @@
         ],
         "responses": {
           "200": {
-            "description": "OK"
+            "description": "OK",
+            "content": {
+              "text/plain": {
+                "schema": {
+                  "$ref": "#/components/schemas/GetAllKindergartensResponse"
+                }
+              },
+              "application/json": {
+                "schema": {
+                  "$ref": "#/components/schemas/GetAllKindergartensResponse"
+                }
+              },
+              "text/json": {
+                "schema": {
+                  "$ref": "#/components/schemas/GetAllKindergartensResponse"
+                }
+              }
+            }
           }
         }
       }
@@ -1264,6 +1291,20 @@
           }
         }
       },
+      "GetAllKindergartensResponse": {
+        "required": [
+          "kindergartens"
+        ],
+        "type": "object",
+        "properties": {
+          "kindergartens": {
+            "type": "array",
+            "items": {
+              "$ref": "#/components/schemas/KindergartenDto"
+            }
+          }
+        }
+      },
       "GetByIdResponse": {
         "required": [
           "id",
@@ -1495,28 +1536,37 @@
       },
       "KindergartenDto": {
         "required": [
-          "name",
           "id",
-          "location"
+          "name",
+          "latitude",
+          "longitude"
         ],
         "type": "object",
         "properties": {
-          "name": {
-            "type": "string"
-          },
           "id": {
             "type": "string",
             "format": "uuid"
           },
-          "location": {
-            "oneOf": [
-              {
-                "type": "null"
-              },
-              {
-                "$ref": "#/components/schemas/Point"
-              }
-            ]
+          "name": {
+            "type": "string"
+          },
+          "latitude": {
+            "pattern": "^-?(?:0|[1-9]\\d*)(?:\\.\\d+)?(?:[eE][+-]?\\d+)?$",
+            "type": [
+              "null",
+              "number",
+              "string"
+            ],
+            "format": "double"
+          },
+          "longitude": {
+            "pattern": "^-?(?:0|[1-9]\\d*)(?:\\.\\d+)?(?:[eE][+-]?\\d+)?$",
+            "type": [
+              "null",
+              "number",
+              "string"
+            ],
+            "format": "double"
           }
         }
       },
@@ -1756,11 +1806,6 @@
         }
       },
       "PostAvailableTimeRequest": {
-        "required": [
-          "startTime",
-          "endTime",
-          "kindergartens"
-        ],
         "type": "object",
         "properties": {
           "startTime": {
