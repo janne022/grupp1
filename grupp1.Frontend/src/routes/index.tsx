@@ -35,10 +35,7 @@ function RouteComponent() {
     return <div>Error!</div>;
   }
 
-  const dateFormattedStartDates: string[] =
-    AvailableTimeResponse.data?.availableTimes.map((at) =>
-      new Date(at.startTime).toDateString(),
-    ) || [];
+  console.log("early map of DTOs: ")
 
   return (
     <div className="flex h-dvh w-full flex-col overflow-hidden">
@@ -110,10 +107,6 @@ function RouteComponent() {
           }}
           components={{
             DayButton: ({ children, modifiers, day, ...props }) => {
-              const eventToday = dateFormattedStartDates.filter(
-                (d) => d === day.date.toDateString(),
-              );
-
               return (
                 <CalendarDayButton
                   day={day}
@@ -123,18 +116,43 @@ function RouteComponent() {
                 >
                   {children}
                   <div className="flex flex-col gap-1">
-                    {eventToday.map((_, index) => (
-                      <div
-                        className="flex flex-row gap-1 items-center"
-                        key={index}
-                      >
-                        <Dot
-                          key={index}
-                          className="size-1.5 rounded-full bg-blue-600"
-                        />
-                        <p>{_}</p>
-                      </div>
-                    ))}
+                    {AvailableTimeResponse.data?.availableTimes.map(
+                      (item, index) => {
+                        console.log(
+                          "inside the fucking hack map!! day:",
+                          day.isoDate,
+                          "also here is the ITEM starttime! :",
+                          new Date(item.startTime).toLocaleDateString("sv-SE"),
+                        );
+
+                        return new Date(item.startTime).toLocaleDateString("sv-SE") ==
+                          day.isoDate ? (
+                          <div
+                            className="flex flex-row gap-1 items-center"
+                            key={index}
+                          >
+                            <Dot
+                              key={index}
+                              className="size-1.5 rounded-full bg-blue-600"
+                            />
+                            <p>
+                              Tillgänglig mellan{" "}
+                              {new Date(item.startTime).toLocaleTimeString(
+                                "sv-SE",
+                                { hour: "2-digit", minute: "2-digit" },
+                              )}{" "}
+                              och{" "}
+                              {new Date(item.endTime).toLocaleTimeString(
+                                "sv-SE",
+                                { hour: "2-digit", minute: "2-digit" },
+                              )}
+                            </p>
+                          </div>
+                        ) : (
+                          ""
+                        );
+                      },
+                    )}
                   </div>
                 </CalendarDayButton>
               );
