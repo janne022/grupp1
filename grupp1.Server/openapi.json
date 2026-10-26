@@ -1756,11 +1756,6 @@
         }
       },
       "PostAvailableTimeRequest": {
-        "required": [
-          "startTime",
-          "endTime",
-          "kindergartens"
-        ],
         "type": "object",
         "properties": {
           "startTime": {
@@ -1856,7 +1851,8 @@
           "password",
           "firstName",
           "lastName",
-          "role"
+          "role",
+          "phoneNumber"
         ],
         "type": "object",
         "properties": {
@@ -1873,6 +1869,9 @@
             "type": "string"
           },
           "role": {
+            "type": "string"
+          },
+          "phoneNumber": {
             "type": "string"
           }
         }
@@ -2071,8 +2070,7 @@
           "firstName",
           "lastName",
           "email",
-          "roles",
-          "phoneNumber"
+          "roles"
         ],
         "type": "object",
         "properties": {
@@ -2097,12 +2095,6 @@
             "items": {
               "type": "string"
             }
-          },
-          "phoneNumber": {
-            "type": [
-              "null",
-              "string"
-            ]
           }
         }
       }
