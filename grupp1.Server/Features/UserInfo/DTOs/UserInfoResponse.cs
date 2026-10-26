@@ -1,6 +1,6 @@
 namespace Vicaria.Server.Features.UserInfo.DTOs;
 
-public record UserInfoResponse
+public record class UserInfoResponse
 (
     Guid Id,
     string FirstName,
