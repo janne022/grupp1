@@ -22,8 +22,7 @@ namespace Vicaria.Server.Features.AvailableTimes.Update
         )
         {
             var userClaim = User.FindFirstValue(ClaimTypes.NameIdentifier);
-            bool isGuid = Guid.TryParse(userClaim, out var userId);
-            if (!isGuid)
+            if (!Guid.TryParse(userClaim, out var userId))
             {
                 return Unauthorized();
             }
