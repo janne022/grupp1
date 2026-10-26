@@ -37,7 +37,10 @@ function AddAvailableTime() {
   const query = useQueryClient();
   return useMutation({
     mutationFn: (req: PostAvailableTimeRequest) => {
-     return apiClient.post<PostAvailableTimeResponse>("/api/availabletimes", req)
+      return apiClient.post<PostAvailableTimeResponse>(
+        "/api/availabletimes",
+        req,
+      );
     },
 
     onSuccess: async () => {
@@ -48,4 +51,19 @@ function AddAvailableTime() {
   });
 }
 
-export { GetAllAvailableTimes, AddAvailableTime };
+function DeleteAvailableTime() {
+  const query = useQueryClient();
+  return useMutation({
+    mutationFn: (id: string) => {
+      return apiClient.delete<void>(`/api/availabletimes/${id}`);
+    },
+
+    onSuccess: async () => {
+      await query.invalidateQueries({
+        queryKey: ["availableTimesData"],
+      });
+    },
+  });
+}
+
+export { GetAllAvailableTimes, AddAvailableTime, DeleteAvailableTime };
