@@ -1,5 +1,6 @@
 export * from './book-decided-time/book-decided-time';
 export * from './delete-available-time/delete-available-time';
+export * from './get-all-available-time-by-manager/get-all-available-time-by-manager';
 export * from './get-all-decided-times/get-all-decided-times';
 export * from './get-all-kindergartens/get-all-kindergartens';
 export * from './get-available-time-by-ids/get-available-time-by-ids';
