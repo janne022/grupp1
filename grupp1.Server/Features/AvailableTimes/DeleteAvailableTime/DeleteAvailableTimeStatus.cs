@@ -1,4 +1,4 @@
-﻿namespace Vicaria.Server.Features.AvailableTimes.DeleteAvailableTime
+﻿namespace Vicaria.Server.Features.AvailableTimes.Delete
 {
     public enum DeleteAvailableTimeStatus
     {

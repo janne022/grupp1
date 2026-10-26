@@ -3,7 +3,6 @@ using Microsoft.AspNetCore.Mvc;
 using Microsoft.AspNetCore.Authorization;
 using Vicaria.Server.Domain;
 using System.Security.Claims;
-using Vicaria.Server.Features.AvailableTimes.DeleteAvailableTime;
 
 namespace Vicaria.Server.Features.AvailableTimes.Delete;
 

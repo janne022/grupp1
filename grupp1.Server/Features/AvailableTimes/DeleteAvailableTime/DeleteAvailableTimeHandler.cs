@@ -1,4 +1,3 @@
-using Vicaria.Server.Features.AvailableTimes.DeleteAvailableTime;
 using Microsoft.EntityFrameworkCore;
 using Vicaria.Server.Infrastructure;
 namespace Vicaria.Server.Features.AvailableTimes.Delete;
@@ -13,17 +12,13 @@ public class DeleteAvailableTimeHandler(
         CancellationToken cancellationToken = default)
     {
 
-        var availableTime = await dbContext.AvailableTimes.Where(at => at.Id == command.AvailableTimeId && at.UserId == command.SubstituteId, cancellationToken);
+        var deletedTime = await dbContext.AvailableTimes.Where(at => at.Id == command.AvailableTimeId && at.UserId == command.SubstituteId).ExecuteDeleteAsync(cancellationToken);
 
-        if(availableTime is null)
+        if(deletedTime == 0) //nothing to delete / not found
         {
             _logger.LogWarning("The availableTime {AvailableTimeId} could not be found", command.AvailableTimeId);
             return DeleteAvailableTimeStatus.NotFound;
         }
-
-
-        dbContext.AvailableTimes.Remove(availableTime);
-        await dbContext.SaveChangesAsync(cancellationToken);
 
         return DeleteAvailableTimeStatus.Success;
 
