@@ -2129,10 +2129,7 @@
             }
           },
           "phoneNumber": {
-            "type": [
-              "null",
-              "string"
-            ]
+            "type": "string"
           }
         }
       }
