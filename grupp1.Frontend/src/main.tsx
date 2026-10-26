@@ -18,7 +18,7 @@ function TailwindTest() {
 
 createRoot(document.getElementById("root")!).render(
   <StrictMode>
-    <TailwindTest/>
+    <TailwindTest />
     <RouterProvider router={router} />
   </StrictMode>,
 );

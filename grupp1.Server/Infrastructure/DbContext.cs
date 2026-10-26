@@ -38,6 +38,7 @@ public class VicariaDbContext : IdentityDbContext<User, IdentityRole<Guid>, Guid
         builder.HasPostgresExtension("postgis");
 
         builder.Entity<User>().Property(u => u.Id).ValueGeneratedNever();
+        builder.Entity<User>().Property(u => u.PhoneNumber).IsRequired();
 
         builder
             .Entity<IdentityRole<Guid>>()
