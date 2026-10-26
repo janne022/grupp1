@@ -765,6 +765,18 @@
           }
         }
       }
+    },
+    "/api/auth/logout": {
+      "post": {
+        "tags": [
+          "LogOut"
+        ],
+        "responses": {
+          "200": {
+            "description": "OK"
+          }
+        }
+      }
     }
   },
   "components": {
@@ -2102,10 +2114,7 @@
             }
           },
           "phoneNumber": {
-            "type": [
-              "null",
-              "string"
-            ]
+            "type": "string"
           }
         }
       }
@@ -2150,6 +2159,9 @@
     },
     {
       "name": "DeleteAvailableTime"
+    },
+    {
+      "name": "LogOut"
     }
   ]
 }
