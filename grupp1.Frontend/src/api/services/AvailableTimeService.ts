@@ -37,9 +37,6 @@ function AddAvailableTime() {
   const query = useQueryClient();
   return useMutation({
     mutationFn: (req: PostAvailableTimeRequest) => {
-
-      console.log("INSIDE THE POST CALL IN FRONTEND SERVICE: ", req)
-
      return apiClient.post<PostAvailableTimeResponse>("/api/availabletimes", req)
     },
 

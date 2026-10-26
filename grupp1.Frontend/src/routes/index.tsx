@@ -35,8 +35,6 @@ function RouteComponent() {
     return <div>Error!</div>;
   }
 
-  console.log("early map of DTOs: ")
-
   return (
     <div className="flex h-dvh w-full flex-col overflow-hidden">
       <header className="flex justify-between h-16 shrink-0 items-center gap-4 border-b px-4">
@@ -118,15 +116,9 @@ function RouteComponent() {
                   <div className="flex flex-col gap-1">
                     {AvailableTimeResponse.data?.availableTimes.map(
                       (item, index) => {
-                        console.log(
-                          "inside the fucking hack map!! day:",
-                          day.isoDate,
-                          "also here is the ITEM starttime! :",
-                          new Date(item.startTime).toLocaleDateString("sv-SE"),
-                        );
-
-                        return new Date(item.startTime).toLocaleDateString("sv-SE") ==
-                          day.isoDate ? (
+                        return new Date(item.startTime).toLocaleDateString(
+                          "sv-SE",
+                        ) == day.isoDate ? (
                           <div
                             className="flex flex-row gap-1 items-center"
                             key={index}

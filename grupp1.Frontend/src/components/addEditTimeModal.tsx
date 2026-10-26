@@ -71,15 +71,6 @@ export default function AddEditTimeModal({
   const postService = AddAvailableTime();
 
   function onSubmit(data: z.infer<typeof formSchema>) {
-    console.log(
-      "startDate",
-      `${data.StartDateTime.date.toLocaleDateString("sv-SE")}T${data.StartDateTime.time}:00`,
-      "EndDate",
-      `${data.EndDateTime.date.toLocaleDateString("sv-SE")}T${data.EndDateTime.time}:00`,
-      "kindergartens",
-      data.kindergartens,
-    );
-
     postService.mutate({
       startTime: new Date(`${data.StartDateTime.date.toLocaleDateString("sv-SE")}T${data.StartDateTime.time}:00`).toISOString(),
       endTime: new Date(`${data.EndDateTime.date.toLocaleDateString("sv-SE")}T${data.EndDateTime.time}:00`).toISOString(),
@@ -134,19 +125,12 @@ export default function AddEditTimeModal({
               name="StartDateTime"
               control={form.control}
               render={({ field, fieldState }) => {
-                console.log("inside of Controller: ", field.value);
-
                 return (
                   <Field data-invalid={fieldState.invalid}>
                     <DatePickerTime
                       {...field}
                       labelName="Startdag"
                       onChange={(x) => {
-                        console.log(
-                          "inside of controller, inside the DatePickTime OnCHANGE: ",
-                          x,
-                        );
-
                         field.onChange(x);
                       }}
                     />

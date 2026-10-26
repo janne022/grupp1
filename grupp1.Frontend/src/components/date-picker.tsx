@@ -60,14 +60,10 @@ export function DatePickerTime({
               captionLayout="dropdown"
               defaultMonth={value.date}
               onSelect={(date) => {
-
-                console.log("Date inside of ONSELECT!!!!",date)
-
                 if (!date) {
                   return;
                 }
 
-                console.log("after iF statement: ", date)
                 onChange({...value, date});
                 setOpen(false);
               }}

@@ -5,6 +5,11 @@ import type { GetAllKindergartensResponse } from "../models";
 function GetAllKindergartens() {
   return useQuery({
     queryKey: ["kindergartensData"],
+    staleTime: 1000 * 60 * 60,
+    gcTime: 1000 * 60 * 60,
+
+    refetchOnWindowFocus: true,
+
     queryFn: async ({
       signal,
     }: {
