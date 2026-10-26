@@ -1,6 +1,6 @@
-using Vicaria.Server.Infrastructure;
 using Microsoft.EntityFrameworkCore;
 using Vicaria.Server.Features.AvailableTimes.Update.DTOs;
+using Vicaria.Server.Infrastructure;
 
 namespace Vicaria.Server.Features.AvailableTimes.Update;
 
@@ -14,18 +14,14 @@ public class UpdateAvailableTimeHandler(
         CancellationToken ct = default
     )
     {
-        if (command.StartTime > command.EndTime || command.StartTime == command.EndTime)
+        if (command.StartTime >= command.EndTime)
         {
             _logger.LogWarning(
-                "{EndTime} was not after {StartTime}",
+                "{EndTime} was not after {StartTime} in UpdateAvailableTimeHandler for TimeId {timeId}",
                 command.EndTime,
-                command.StartTime
+                command.StartTime,
+                command.TimeId
             );
-            // Is this log necessary on the backend, I wonder?
-            // Normally a user would get validation error on frontend.
-            //
-            // I suppose the fact that a user somehow got past the
-            // frontend validator has value in itself, too...
 
             return new UpdateAvailableTimeResponse(
                 null,
@@ -36,13 +32,13 @@ public class UpdateAvailableTimeHandler(
         }
 
         var availableTime = await DbContext.AvailableTimes.FirstOrDefaultAsync(
-            at => at.Id == command.TimeId,
+            at => at.Id == command.TimeId && at.UserId == command.UserId,
             ct
         );
 
         if (availableTime is null)
         {
-            _logger.LogWarning("AvailableTiem {TimeId} was returned null.", command.TimeId);
+            _logger.LogWarning("AvailableTime {TimeId} was returned null.", command.TimeId);
             return new UpdateAvailableTimeResponse(
                 null,
                 command.StartTime,
@@ -51,7 +47,20 @@ public class UpdateAvailableTimeHandler(
             );
         }
 
-        // TODO: We should check if the user who updates this time owns their AT object
+        if (availableTime.UserId != command.UserId)
+        {
+            _logger.LogWarning(
+                "User {id} not recognised as owner of AvailableTime {availTimeId} in UpdateAvailableHandler",
+                command.UserId,
+                availableTime.Id
+            );
+            return new UpdateAvailableTimeResponse(
+                null,
+                null,
+                null,
+                UpdateAvailableTimeStatus.NotOwner
+            );
+        }
 
         availableTime.StartTime = command.StartTime;
         availableTime.EndTime = command.EndTime;
