@@ -2,6 +2,7 @@ using Vicaria.Server.Infrastructure;
 using Microsoft.AspNetCore.Identity;
 using Vicaria.Server.Domain.Models;
 using Microsoft.EntityFrameworkCore;
+using Microsoft.AspNetCore.Authentication.Cookies;
 
 namespace Vicaria.Server;
 
@@ -23,7 +24,14 @@ public class Program
 
         builder.Services.AddControllers();
         builder.Services.AddAuthorization();
-        builder.Services.AddAuthentication();
+        builder.Services.AddAuthentication(CookieAuthenticationDefaults.AuthenticationScheme)
+            .AddCookie(options =>
+            {
+                options.Cookie.Name = "VicariaCookie";
+                options.Cookie.HttpOnly = true;
+                options.Cookie.SameSite = SameSiteMode.Strict;
+                options.Cookie.SecurePolicy = CookieSecurePolicy.Always;
+            });
         builder.Services.AddHttpContextAccessor(); // Pre-setup to be able to access HTTP request/responses, e.g. see the cookies for current user
 
         builder.AddNpgsqlDbContext<VicariaDbContext>("database", configureDbContextOptions: options =>
