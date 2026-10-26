@@ -176,7 +176,6 @@ function RouteComponent() {
                             className="w-80 p-4 shadow-2xl border rounded-lg bg-popover text-popover-foreground"
                             side="right"
                             align="center"
-                            sideOffset={8}
                           >
                             <div className="grid gap-4">
                               <div className="space-y-5">
@@ -189,8 +188,12 @@ function RouteComponent() {
                                     <Button variant="ghost" size="icon-sm">
                                       <PenLine />
                                     </Button>
-                                    <Button variant="ghost" size="icon-sm">
-                                      <Trash />
+                                    <Button
+                                      variant="ghost"
+                                      size="icon-sm"
+                                      className="hover:bg-destructive/10"
+                                    >
+                                      <Trash className="text-destructive" />
                                     </Button>
                                     <div className="mx-1 h-5 w-px bg-gray-400 translate-y-1" />
                                     <Button variant="ghost" size="icon-sm">
