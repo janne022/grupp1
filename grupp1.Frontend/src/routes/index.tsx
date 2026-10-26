@@ -185,18 +185,34 @@ function RouteComponent() {
                                     Tillgänglig Tid
                                   </h3>
                                   <div className="flex flex-row">
-                                    <Button variant="ghost" size="icon-sm">
-                                      <PenLine />
+                                    <Button
+                                      onClick={(e) => {
+                                        e.stopPropagation();
+                                        setOpen(true);
+                                      }}
+                                      variant="ghost"
+                                      size="icon-sm"
+                                    >
+                                      <PenLine className="text-primary/70" />
                                     </Button>
                                     <Button
                                       variant="ghost"
                                       size="icon-sm"
+                                      onClick={(e) => {
+                                        e.stopPropagation();
+                                      }}
                                       className="hover:bg-destructive/10"
                                     >
                                       <Trash className="text-destructive" />
                                     </Button>
                                     <div className="mx-1 h-5 w-px bg-gray-400 translate-y-1" />
-                                    <Button variant="ghost" size="icon-sm">
+                                    <Button
+                                      onClick={(e) => {
+                                        e.stopPropagation();
+                                      }}
+                                      variant="ghost"
+                                      size="icon-sm"
+                                    >
                                       <X />
                                     </Button>
                                   </div>
