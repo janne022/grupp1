@@ -4,6 +4,6 @@ public record class AvailableTimesByManagerDTO(
     Guid Id,
     DateTime StartTime,
     DateTime EndTime,
-    string FirstName,
-    string LastName
+    string SubstituteFirstName,
+    string SubstituteLastName
 );
