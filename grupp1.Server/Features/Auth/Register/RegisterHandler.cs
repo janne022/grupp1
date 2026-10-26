@@ -7,23 +7,24 @@ using Vicaria.Server.Infrastructure;
 
 namespace grupp1.Server.Features.Auth.Register;
 
-public class RegisterHandler(
-    UserManager<User> userManager,
-    ILogger<RegisterHandler> _logger
-) : IHandler<RegisterQuery, RegisterResponse>
+public class RegisterHandler(UserManager<User> userManager, ILogger<RegisterHandler> _logger)
+    : IHandler<RegisterQuery, RegisterResponse>
 {
     public async Task<RegisterResponse> HandleAsync(
         RegisterQuery request,
-        CancellationToken cancellationToken = default)
+        CancellationToken cancellationToken = default
+    )
     {
         if (request.Role != VicariaUserRoles.Manager && request.Role != VicariaUserRoles.Substitute)
         {
             _logger.LogWarning("Failed to determine user Role: {Role}", request.Role);
-            return RegisterResponse.Failure([new IdentityError
-            {
-                Code = "InvalidRole",
-                Description = "Role must be either Manager or Substitute"
-            }]);
+            return RegisterResponse.Failure([
+                new IdentityError
+                {
+                    Code = "InvalidRole",
+                    Description = "Role must be either Manager or Substitute",
+                },
+            ]);
         }
 
         var user = new User
@@ -31,13 +32,17 @@ public class RegisterHandler(
             UserName = request.Email,
             Email = request.Email,
             FirstName = request.FirstName,
-            LastName = request.LastName
+            LastName = request.LastName,
+            PhoneNumber = request.PhoneNumber
         };
 
         var createResult = await userManager.CreateAsync(user, request.Password);
         if (!createResult.Succeeded)
         {
-            _logger.LogWarning("Failed to register user: {Errors}", createResult.Errors.ToList().ToString());
+            _logger.LogWarning(
+                "Failed to register user: {Errors}",
+                string.Join(", ", createResult.Errors.Select(error => error.Code))
+            );
             return RegisterResponse.Failure(createResult.Errors);
         }
 
@@ -45,11 +50,14 @@ public class RegisterHandler(
         if (!roleResult.Succeeded)
         {
             await userManager.DeleteAsync(user);
-            _logger.LogWarning("Failed to register user role: {Errors}", createResult.Errors.ToList().ToString());
+            _logger.LogWarning(
+                "Failed to register user role: {Errors}",
+                roleResult.Errors.ToList().ToString()
+            );
+
+            return RegisterResponse.Failure(roleResult.Errors);
         }
 
-
         return RegisterResponse.Success();
-
     }
 }
