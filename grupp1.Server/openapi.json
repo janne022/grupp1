@@ -489,6 +489,24 @@
         "tags": [
           "GetMyAvailableTimes"
         ],
+        "parameters": [
+          {
+            "name": "fromTime",
+            "in": "query",
+            "schema": {
+              "type": "string",
+              "format": "date-time"
+            }
+          },
+          {
+            "name": "toTime",
+            "in": "query",
+            "schema": {
+              "type": "string",
+              "format": "date-time"
+            }
+          }
+        ],
         "responses": {
           "200": {
             "description": "OK",
@@ -2083,7 +2101,8 @@
           "firstName",
           "lastName",
           "email",
-          "roles"
+          "roles",
+          "phoneNumber"
         ],
         "type": "object",
         "properties": {
@@ -2108,6 +2127,12 @@
             "items": {
               "type": "string"
             }
+          },
+          "phoneNumber": {
+            "type": [
+              "null",
+              "string"
+            ]
           }
         }
       }
