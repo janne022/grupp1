@@ -14,7 +14,7 @@ public class GetAllAvailableTimeByManagerHandler(
     {
         var kindergartens = await dbContext.Kindergartens
             .Where(k => k.Managers.Any(m => m.UserId == query.ManagerId))
-            .Select(k => new KindergartenByManagerDTO(
+            .Select(k => new AvailableTimesByKindergartenDTO(
                 k.Id,
                 k.Name,
                 k.AvailableSubs

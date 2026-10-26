@@ -1,6 +1,6 @@
 namespace Vicaria.Server.Features.AvailableTimes.GetByManager;
-public record class KindergartenByManagerDTO(
+public record class AvailableTimesByKindergartenDTO(
     Guid KindergartenId,
-    string Name,
+    string KindergartenName,
     AvailableTimesByManagerDTO[] AvailableTimes
 );
