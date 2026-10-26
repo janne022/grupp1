@@ -1,17 +1,14 @@
-import type { AvailableTimeInfo } from "@/routes/TestPage";
 import {
   GeneralBooking,
   type GeneralBookingProps,
 } from "./generalBookingModal";
 import { Field } from "./field";
-import {
-  SubstituteDisplay,
-  filterAvailableTimes,
-} from "./substituteDisplay";
+import { SubstituteDisplay, filterAvailableTimes } from "./substituteDisplay";
 import { useState } from "react";
+import type { AvailableTimesByManagerDTO } from "@/api/models";
 
 export interface BookingSubmitData {
-  substitutes?: AvailableTimeInfo[];
+  availableTimes?: AvailableTimesByManagerDTO[];
   date: Date | undefined;
   startTime: string;
   endTime: string;
@@ -21,7 +18,7 @@ interface BookTimeProps extends Omit<
   GeneralBookingProps,
   "onDelete" | "onSubmit" | "children" | "onStartTimeChange" | "onEndTimeChange"
 > {
-  availableTimes: AvailableTimeInfo[];
+  availableTimes: AvailableTimesByManagerDTO[];
   Loading: boolean;
 }
 
@@ -46,13 +43,12 @@ export default function ManagerBooking({
 
   const from = convertToDate(selectedDate, start);
   const to = convertToDate(selectedDate, end);
-  
+
   function ConfirmBooking(data: BookingSubmitData) {
     console.log(data); // TODO: add the booking api shit here. not for the mvp tho
   }
 
   const filtered = filterAvailableTimes(availableTimes, from, to);
-  
 
   return (
     <GeneralBooking
@@ -64,7 +60,7 @@ export default function ManagerBooking({
       onEndTimeChange={setEnd}
       onSubmit={() =>
         ConfirmBooking({
-          substitutes: filtered,
+          availableTimes: filtered,
           date: selectedDate,
           startTime: start,
           endTime: end,

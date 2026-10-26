@@ -33,7 +33,7 @@ export interface GeneralBookingProps {
   children?: ReactNode;
   showOnlyTime?: boolean;
   selectedDate: Date;
-  selectedKindergarten?: string;
+  selectedKindergarten?: string | null;
   onStartTimeChange?: (value: string) => void;
   onEndTimeChange?: (value: string) => void;
 }
@@ -101,9 +101,15 @@ export function GeneralBooking({
                     month: "short",
                   })}
                 </h2>
-                <p className="text-sm text-muted-foreground">
-                  {selectedKindergarten}
-                </p>
+                {selectedKindergarten ? (
+                  <p className="text-sm text-muted-foreground">
+                    {selectedKindergarten}
+                  </p>
+                ) : (
+                  <span className="text-destructive font-medium">
+                    ingen förskola vald
+                  </span>
+                )}
               </div>
               <section className="flex justify-around">
                 <TimePicker

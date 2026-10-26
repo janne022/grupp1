@@ -704,6 +704,35 @@
         }
       }
     },
+    "/api/availabletimes/bymanager": {
+      "get": {
+        "tags": [
+          "GetAllAvailableTimeByManager"
+        ],
+        "responses": {
+          "200": {
+            "description": "OK",
+            "content": {
+              "text/plain": {
+                "schema": {
+                  "$ref": "#/components/schemas/GetAllAvailableTimeByManagerResponse"
+                }
+              },
+              "application/json": {
+                "schema": {
+                  "$ref": "#/components/schemas/GetAllAvailableTimeByManagerResponse"
+                }
+              },
+              "text/json": {
+                "schema": {
+                  "$ref": "#/components/schemas/GetAllAvailableTimeByManagerResponse"
+                }
+              }
+            }
+          }
+        }
+      }
+    },
     "/api/availabletimes/{id}": {
       "get": {
         "tags": [
@@ -795,6 +824,59 @@
             "format": "int64"
           },
           "refreshToken": {
+            "type": "string"
+          }
+        }
+      },
+      "AvailableTimesByKindergartenDTO": {
+        "required": [
+          "kindergartenId",
+          "kindergartenName",
+          "availableTimes"
+        ],
+        "type": "object",
+        "properties": {
+          "kindergartenId": {
+            "type": "string",
+            "format": "uuid"
+          },
+          "kindergartenName": {
+            "type": "string"
+          },
+          "availableTimes": {
+            "type": "array",
+            "items": {
+              "$ref": "#/components/schemas/AvailableTimesByManagerDTO"
+            }
+          }
+        }
+      },
+      "AvailableTimesByManagerDTO": {
+        "required": [
+          "id",
+          "startTime",
+          "endTime",
+          "substituteFirstName",
+          "substituteLastName"
+        ],
+        "type": "object",
+        "properties": {
+          "id": {
+            "type": "string",
+            "format": "uuid"
+          },
+          "startTime": {
+            "type": "string",
+            "format": "date-time"
+          },
+          "endTime": {
+            "type": "string",
+            "format": "date-time"
+          },
+          "substituteFirstName": {
+            "type": "string"
+          },
+          "substituteLastName": {
             "type": "string"
           }
         }
@@ -1236,6 +1318,20 @@
       },
       "GeometryRelate": {
         "type": "object"
+      },
+      "GetAllAvailableTimeByManagerResponse": {
+        "required": [
+          "availableTimesByKindergarten"
+        ],
+        "type": "object",
+        "properties": {
+          "availableTimesByKindergarten": {
+            "type": "array",
+            "items": {
+              "$ref": "#/components/schemas/AvailableTimesByKindergartenDTO"
+            }
+          }
+        }
       },
       "GetAllDecidedTimesDTO": {
         "required": [
@@ -1869,7 +1965,8 @@
           "password",
           "firstName",
           "lastName",
-          "role"
+          "role",
+          "phoneNumber"
         ],
         "type": "object",
         "properties": {
@@ -1886,6 +1983,9 @@
             "type": "string"
           },
           "role": {
+            "type": "string"
+          },
+          "phoneNumber": {
             "type": "string"
           }
         }
@@ -2084,8 +2184,7 @@
           "firstName",
           "lastName",
           "email",
-          "roles",
-          "phoneNumber"
+          "roles"
         ],
         "type": "object",
         "properties": {
@@ -2110,12 +2209,6 @@
             "items": {
               "type": "string"
             }
-          },
-          "phoneNumber": {
-            "type": [
-              "null",
-              "string"
-            ]
           }
         }
       }
@@ -2154,6 +2247,9 @@
     },
     {
       "name": "BookDecidedTime"
+    },
+    {
+      "name": "GetAllAvailableTimeByManager"
     },
     {
       "name": "GetAvailableTimeByIds"

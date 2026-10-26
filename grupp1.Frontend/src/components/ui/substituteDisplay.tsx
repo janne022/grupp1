@@ -1,4 +1,4 @@
-import type { AvailableTimeInfo } from "@/routes/TestPage";
+import type { AvailableTimesByManagerDTO } from "@/api/models";
 import type {} from "./managerBooking";
 import {
   Table,
@@ -10,12 +10,12 @@ import {
 } from "./table";
 
 interface SubstituteDisplayProps {
-  FilteredAvailableTime?: AvailableTimeInfo[];
+  FilteredAvailableTime?: AvailableTimesByManagerDTO[];
   Loading: boolean;
 }
 
 export function filterAvailableTimes(
-  times: AvailableTimeInfo[],
+  times: AvailableTimesByManagerDTO[],
   from: Date,
   to: Date,
 ) {
@@ -53,7 +53,7 @@ export function SubstituteDisplay({
                   {FilteredAvailableTime.map((b, index) => (
                     <TableRow key={index}>
                       <TableCell className="truncate">
-                        {b.firstName + " " + b.lastName}
+                        {b.substituteFirstName + " " + b.substituteLastName}
                       </TableCell>
                       <TableCell>07020022210</TableCell>
 
