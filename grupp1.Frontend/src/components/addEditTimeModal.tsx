@@ -72,9 +72,13 @@ export default function AddEditTimeModal({
 
   function onSubmit(data: z.infer<typeof formSchema>) {
     postService.mutate({
-      startTime: new Date(`${data.StartDateTime.date.toLocaleDateString("sv-SE")}T${data.StartDateTime.time}:00`).toISOString(),
-      endTime: new Date(`${data.EndDateTime.date.toLocaleDateString("sv-SE")}T${data.EndDateTime.time}:00`).toISOString(),
-      kindergartens: ["01a143ce-6815-7024-81e7-cca5af36be5e"],
+      startTime: new Date(
+        `${data.StartDateTime.date.toLocaleDateString("sv-SE")}T${data.StartDateTime.time}:00`,
+      ).toISOString(),
+      endTime: new Date(
+        `${data.EndDateTime.date.toLocaleDateString("sv-SE")}T${data.EndDateTime.time}:00`,
+      ).toISOString(),
+      kindergartens: data.kindergartens,
     });
   }
 

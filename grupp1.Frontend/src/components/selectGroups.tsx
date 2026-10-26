@@ -10,8 +10,12 @@ import type { KindergartenDto } from "@/api/models";
 
 export function SelectGroups({
   KindergartenDto,
+  value,
+  onChange,
 }: {
   KindergartenDto: KindergartenDto[];
+  value?: string[];
+  onChange?: (value: string[]) => void;
 }) {
   return (
     <Select
@@ -20,6 +24,12 @@ export function SelectGroups({
         label: dto.name,
         value: dto.id,
       }))}
+      value={value}
+      onValueChange={(newValue) => {
+        if (onChange) {
+          onChange(newValue);
+        }
+      }}
     >
       <SelectTrigger className="w-full max-w-48">
         <SelectValue placeholder="Välj Förskola" />
