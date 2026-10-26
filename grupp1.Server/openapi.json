@@ -814,8 +814,6 @@
       "BookDecidedTimeQuery": {
         "required": [
           "availableTimeGuid",
-          "startTime",
-          "endTime",
           "kindergartenId"
         ],
         "type": "object",
@@ -823,14 +821,6 @@
           "availableTimeGuid": {
             "type": "string",
             "format": "uuid"
-          },
-          "startTime": {
-            "type": "string",
-            "format": "date-time"
-          },
-          "endTime": {
-            "type": "string",
-            "format": "date-time"
           },
           "kindergartenId": {
             "type": "string",
@@ -1786,11 +1776,6 @@
         }
       },
       "PostAvailableTimeRequest": {
-        "required": [
-          "startTime",
-          "endTime",
-          "kindergartens"
-        ],
         "type": "object",
         "properties": {
           "startTime": {
