@@ -6,9 +6,24 @@ import { sv } from "date-fns/locale";
 
 import { GetAllAvailableTimes } from "@/api/services/AvailableTimeService";
 import AddEditTimeModal from "@/components/addEditTimeModal";
-import { ChevronLeft, ChevronRight, Dot, Plus } from "lucide-react";
+import {
+  ChevronLeft,
+  ChevronRight,
+  Clock,
+  Dot,
+  PenLine,
+  Plus,
+  Trash,
+  X,
+} from "lucide-react";
 import { addMonths, format } from "date-fns";
 import { GetAllKindergartens } from "@/api/services/KindergartenService";
+
+import {
+  Popover,
+  PopoverContent,
+  PopoverTrigger,
+} from "@/components/ui/popover";
 
 export const Route = createFileRoute("/")({
   component: RouteComponent,
@@ -119,40 +134,113 @@ function RouteComponent() {
                 >
                   {children}
                   <div className="flex w-full min-w-0 flex-col gap-1">
-                    {AvailableTimeResponse.data?.availableTimes.map(
-                      (item, index) => {
-                        return new Date(item.startTime).toLocaleDateString(
-                          "sv-SE",
-                        ) == day.isoDate ? (
-                          <span
-                            onClick={(e) => {
-                              e.stopPropagation();
-                            }}
-                            className="flex w-full min-w-0 flex-row gap-1 items-center hover:cursor-pointer hover:text-white hover:bg-primary p-1"
-                            key={index}
+                    {AvailableTimeResponse.data?.availableTimes
+                      .filter(
+                        (item) =>
+                          new Date(item.startTime).toLocaleDateString(
+                            "sv-SE",
+                          ) === day.isoDate,
+                      )
+                      .map((item, index) => (
+                        <Popover key={index}>
+                          <PopoverTrigger
+                            render={
+                              <button
+                                type="button"
+                                onClick={(e) => {
+                                  e.stopPropagation();
+                                }}
+                                className="flex w-full min-w-0 flex-row gap-1 items-center hover:cursor-pointer hover:text-white hover:bg-primary p-1"
+                                key={index}
+                              >
+                                <Dot
+                                  key={index}
+                                  className="size-1.5 rounded-full bg-blue-600"
+                                />
+                                <span className="min-w-0 truncate leading-normal">
+                                  Tillgänglig mellan{" "}
+                                  {new Date(item.startTime).toLocaleTimeString(
+                                    "sv-SE",
+                                    { hour: "2-digit", minute: "2-digit" },
+                                  )}{" "}
+                                  och{" "}
+                                  {new Date(item.endTime).toLocaleTimeString(
+                                    "sv-SE",
+                                    { hour: "2-digit", minute: "2-digit" },
+                                  )}
+                                </span>
+                              </button>
+                            }
+                          ></PopoverTrigger>
+                          <PopoverContent
+                            className="w-80 p-4 shadow-2xl border rounded-lg bg-popover text-popover-foreground"
+                            side="right"
+                            align="center"
+                            sideOffset={8}
                           >
-                            <Dot
-                              key={index}
-                              className="size-1.5 rounded-full bg-blue-600"
-                            />
-                            <p className="min-w-0 truncate leading-normal">
-                              Tillgänglig mellan{" "}
-                              {new Date(item.startTime).toLocaleTimeString(
-                                "sv-SE",
-                                { hour: "2-digit", minute: "2-digit" },
-                              )}{" "}
-                              och{" "}
-                              {new Date(item.endTime).toLocaleTimeString(
-                                "sv-SE",
-                                { hour: "2-digit", minute: "2-digit" },
-                              )}
-                            </p>
-                          </span>
-                        ) : (
-                          ""
-                        );
-                      },
-                    )}
+                            <div className="grid gap-4">
+                              <div className="space-y-5">
+                                <div className="flex flex-row justify-between items-center">
+                                  <h3 className="leading-none font-medium text-lg">
+                                    <Clock className="size-4 mr-2 inline-block" />
+                                    Tillgänglig Tid
+                                  </h3>
+                                  <div className="flex flex-row">
+                                    <Button variant="ghost" size="icon-sm">
+                                      <PenLine />
+                                    </Button>
+                                    <Button variant="ghost" size="icon-sm">
+                                      <Trash />
+                                    </Button>
+                                    <div className="mx-1 h-5 w-px bg-gray-400 translate-y-1" />
+                                    <Button variant="ghost" size="icon-sm">
+                                      <X />
+                                    </Button>
+                                  </div>
+                                </div>
+                                <div className="flex flex-col gap-2">
+                                  <p className="text-sm">
+                                    {new Date(
+                                      item.startTime,
+                                    ).toLocaleDateString("sv-SE", {
+                                      weekday: "long",
+                                    })}
+                                    {" den "}
+                                    {new Date(
+                                      item.startTime,
+                                    ).toLocaleDateString("sv-SE", {
+                                      day: "numeric",
+                                      month: "long",
+                                    })}
+                                    {" ⋅ "}
+                                    {new Date(
+                                      item.startTime,
+                                    ).toLocaleTimeString("sv-SE", {
+                                      hour: "2-digit",
+                                      minute: "2-digit",
+                                    })}{" "}
+                                    -{" "}
+                                    {new Date(item.endTime).toLocaleTimeString(
+                                      "sv-SE",
+                                      { hour: "2-digit", minute: "2-digit" },
+                                    )}
+                                  </p>
+                                  <div>
+                                    <p className="text-sm">Förskolor</p>
+                                    <p className="text-sm text-muted-foreground">
+                                      {item.kindergartens
+                                        .map(
+                                          (kindergarten) => kindergarten.name,
+                                        )
+                                        .join(", ")}
+                                    </p>
+                                  </div>
+                                </div>
+                              </div>
+                            </div>
+                          </PopoverContent>
+                        </Popover>
+                      ))}
                   </div>
                 </CalendarDayButton>
               );
