@@ -14,6 +14,7 @@ import {
   PenLine,
   Plus,
   Trash,
+  Trash2Icon,
   X,
 } from "lucide-react";
 import { addMonths, format } from "date-fns";
@@ -25,6 +26,18 @@ import {
   PopoverTrigger,
 } from "@/components/ui/popover";
 
+import {
+  AlertDialog,
+  AlertDialogAction,
+  AlertDialogCancel,
+  AlertDialogContent,
+  AlertDialogDescription,
+  AlertDialogFooter,
+  AlertDialogHeader,
+  AlertDialogMedia,
+  AlertDialogTitle,
+} from "@/components/ui/alert-dialog";
+
 export const Route = createFileRoute("/")({
   component: RouteComponent,
 });
@@ -33,6 +46,8 @@ function RouteComponent() {
   const [date, setDate] = React.useState<Date | undefined>(new Date());
   const [open, setOpen] = React.useState(false);
   const [month, setMonth] = React.useState(new Date());
+  const [deleteTime, setDeleteTime] = React.useState(false);
+  const [popoverOpen, setPopoverOpen] = React.useState(false);
 
   function openDialog(day?: Date) {
     setDate(day);
@@ -142,7 +157,11 @@ function RouteComponent() {
                           ) === day.isoDate,
                       )
                       .map((item, index) => (
-                        <Popover key={index}>
+                        <Popover
+                          key={index}
+                          open={popoverOpen}
+                          onOpenChange={setPopoverOpen}
+                        >
                           <PopoverTrigger
                             render={
                               <button
@@ -171,7 +190,7 @@ function RouteComponent() {
                                 </span>
                               </button>
                             }
-                          ></PopoverTrigger>
+                          />
                           <PopoverContent
                             className="w-80 p-4 shadow-2xl border rounded-lg bg-popover text-popover-foreground"
                             side="right"
@@ -200,6 +219,7 @@ function RouteComponent() {
                                       size="icon-sm"
                                       onClick={(e) => {
                                         e.stopPropagation();
+                                        setDeleteTime(true);
                                       }}
                                       className="hover:bg-destructive/10"
                                     >
@@ -209,6 +229,7 @@ function RouteComponent() {
                                     <Button
                                       onClick={(e) => {
                                         e.stopPropagation();
+                                        setPopoverOpen(false);
                                       }}
                                       variant="ghost"
                                       size="icon-sm"
@@ -275,6 +296,27 @@ function RouteComponent() {
           kindergartens={KindergartenResponse.data?.kindergartens ?? []}
           selectedDate={date}
         />
+
+        <AlertDialog open={deleteTime} onOpenChange={setDeleteTime}>
+          <AlertDialogContent size="sm">
+            <AlertDialogHeader>
+              <AlertDialogMedia className="bg-destructive/10 text-destructive dark:bg-destructive/20 dark:text-destructive">
+                <Trash2Icon />
+              </AlertDialogMedia>
+              <AlertDialogTitle>Radera Tillgänlig tid?</AlertDialogTitle>
+              <AlertDialogDescription>
+                Det här kommer att radera den tillgängliga tiden. Detta går inte
+                att ångra.
+              </AlertDialogDescription>
+            </AlertDialogHeader>
+            <AlertDialogFooter>
+              <AlertDialogCancel variant="outline">Avbryt</AlertDialogCancel>
+              <AlertDialogAction variant="destructive">
+                Radera
+              </AlertDialogAction>
+            </AlertDialogFooter>
+          </AlertDialogContent>
+        </AlertDialog>
       </div>
     </div>
   );
