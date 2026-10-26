@@ -4,13 +4,14 @@ using Microsoft.AspNetCore.Mvc;
 using Vicaria.Server.Infrastructure;
 using System.Security.Claims;
 using Microsoft.AspNetCore.Authorization;
+using Vicaria.Server.Domain;
 
 namespace Vicaria.Server.Features.DecidedTimes.UnbookDecidedTime
 {
-    [Authorize(Roles = "MANAGER")]
+    [Authorize(Roles = VicariaUserRoles.Manager)]
     [Route("api/decidedtime")]
     [ApiController]
-    public class UnbookDecidedTimeController (IHandler<UnbookDecidedTimeCommand, UnbookDecidedTimeResponse> handler) : ControllerBase
+    public class UnbookDecidedTimeController (IHandler<UnbookDecidedTimeCommand, UnbookDecidedTimeStatus> handler) : ControllerBase
     {
         [HttpDelete("delete/{id:guid}")]
         public async Task<IActionResult> UnbookDecidedTime(Guid id, CancellationToken cancellationToken)
@@ -26,12 +27,12 @@ namespace Vicaria.Server.Features.DecidedTimes.UnbookDecidedTime
 
             var response = await handler.HandleAsync(command, cancellationToken);
 
-            if (response.Status is UnbookDecidedTimeStatus.NotFound)
+            return response switch
             {
-                return NotFound();
-            }
-
-            return NoContent();
+                UnbookDecidedTimeStatus.NotFound => NotFound(),
+                UnbookDecidedTimeStatus.Success => NoContent(),
+                _ => StatusCode(StatusCodes.Status500InternalServerError)
+            };
         }
     }
 }
