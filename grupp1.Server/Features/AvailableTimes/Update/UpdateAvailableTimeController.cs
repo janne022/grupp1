@@ -11,14 +11,14 @@ namespace Vicaria.Server.Features.AvailableTimes.Update
     [Authorize(Roles = VicariaUserRoles.Substitute)]
     [ApiController]
     public class UpdateAvailableTimeController(
-        IHandler<UpdateAvailableTimeCommand, UpdateAvailableTimeResponse> handler
+        IHandler<UpdateAvailableTimeCommand, UpdateAvailableTimeResponse> handler,
+        ILogger<UpdateAvailableTimeController> logger
     ) : ControllerBase
     {
         [HttpPut()]
         public async Task<ActionResult<UpdateAvailableTimeResponse>> Update(
             [FromBody] UpdateAvailableTimeQuery query,
-            CancellationToken cancellationToken,
-            ILogger<UpdateAvailableTimeController> _logger
+            CancellationToken cancellationToken
         )
         {
             var userClaim = User.FindFirstValue(ClaimTypes.NameIdentifier);
@@ -36,30 +36,19 @@ namespace Vicaria.Server.Features.AvailableTimes.Update
 
             var response = await handler.HandleAsync(command, cancellationToken);
 
-            switch (response.StatusMessage)
+            return response.StatusMessage switch
             {
-                case UpdateAvailableTimeStatus.Ok:
-                {
-                    return Ok(response);
-                }
+                UpdateAvailableTimeStatus.Ok => Ok(response),
+                UpdateAvailableTimeStatus.BadTime => BadRequest(response),
+                UpdateAvailableTimeStatus.WasNull => NotFound(response),
+                UpdateAvailableTimeStatus.NotOwner => Forbid(),
+                _ => UnknownError(command.TimeId),
+            };
+        }
 
-                case UpdateAvailableTimeStatus.BadTime:
-                {
-                    return BadRequest(response);
-                }
-
-                case UpdateAvailableTimeStatus.WasNull:
-                {
-                    return NotFound(response);
-                }
-
-                case UpdateAvailableTimeStatus.NotOwner:
-                {
-                    return Forbid();
-                }
-            }
-
-            _logger.LogError("Reached unknown error when looking for {TimeId}", command.TimeId);
+        private ActionResult UnknownError(Guid timeId)
+        {
+            logger.LogError("Reached unknown error when looking for {TimeId}", timeId);
             return Problem();
         }
     }
