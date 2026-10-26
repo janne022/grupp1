@@ -4,7 +4,7 @@ using Microsoft.AspNetCore.Mvc;
 using Vicaria.Server.Features.UserInfo.DTOs;
 using Vicaria.Server.Infrastructure;
 
-namespace grupp1.Server.Features.UserInfo
+namespace Vicaria.Server.Features.UserInfo
 {
     [Route("api/userinfo")]
     [Authorize]
