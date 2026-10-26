@@ -7,7 +7,7 @@ public record class UserInfoResponse
     string LastName,
     string? Email,
     IReadOnlyList<string> Roles,
-    string? PhoneNumber
+    string PhoneNumber
 );
 // PhoneNumber is nullable since it is nullable on IdentityUser,
 // but it should never end up null due to registration requiring
