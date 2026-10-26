@@ -4,5 +4,6 @@ public record class UpdateAvailableTimeCommand
 (
     Guid TimeId,
     DateTime StartTime,
-    DateTime EndTime
+    DateTime EndTime,
+    Guid UserId
 );
