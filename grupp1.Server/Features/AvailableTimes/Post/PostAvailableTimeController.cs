@@ -1,19 +1,36 @@
-﻿using Microsoft.AspNetCore.Mvc;
+﻿using Microsoft.AspNetCore.Authorization;
+using Microsoft.AspNetCore.Mvc;
+using System.Security.Claims;
 using Vicaria.Server.Infrastructure;
 
 
 namespace grupp1.Server.Features.AvailableTimes.Post
 {
+    [Authorize(Roles = "Substitute")]
     [Route("api/availabletimes")]
     [ApiController]
-    public class PostAvailableTimeController(IHandler<PostAvailableTimeRequest, PostAvailableTimeResponse> handler) : ControllerBase
+    public class PostAvailableTimeController(IHandler<PostAvailableTimeCommand, PostAvailableTimeResponse> handler) : ControllerBase
     {
 
         [HttpPost]
-        public async Task<ActionResult<PostAvailableTimeResponse>> PostAvailableTime(PostAvailableTimeRequest request, CancellationToken cancellationToken)
+        public async Task<ActionResult<PostAvailableTimeResponse>> PostAvailableTime([FromBody] PostAvailableTimeRequest request, CancellationToken cancellationToken)
         {
+            var userId = User.FindFirstValue(ClaimTypes.NameIdentifier);
 
-            var response = await handler.HandleAsync(request, cancellationToken);
+            if(!Guid.TryParse(userId, out var userGuidId)) 
+            {
+                return Unauthorized();
+            }
+
+            var command = new PostAvailableTimeCommand
+            {
+                StartTime = request.StartTime,
+                EndTime = request.EndTime,
+                Kindergartens = request.Kindergartens,
+                UserId = userGuidId
+            };
+
+            var response = await handler.HandleAsync(command, cancellationToken);
 
             if (!response.Success)
             {
