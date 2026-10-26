@@ -14,12 +14,13 @@ public class UpdateAvailableTimeHandler(
         CancellationToken ct = default
     )
     {
-        if (command.StartTime > command.EndTime || command.StartTime == command.EndTime)
+        if (command.StartTime >= command.EndTime)
         {
             _logger.LogWarning(
-                "{EndTime} was not after {StartTime}",
+                "{EndTime} was not after {StartTime} in UpdateAvailableTimeHandler for TimeId {timeId}",
                 command.EndTime,
-                command.StartTime
+                command.StartTime,
+                command.TimeId
             );
 
             return new UpdateAvailableTimeResponse(
