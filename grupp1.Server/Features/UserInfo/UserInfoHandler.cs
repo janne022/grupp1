@@ -1,3 +1,4 @@
+using Microsoft.AspNetCore.Http.HttpResults;
 using Microsoft.AspNetCore.Identity;
 using Vicaria.Server.Domain.Models;
 using Vicaria.Server.Features.UserInfo.DTOs;
@@ -21,6 +22,12 @@ public async Task<UserInfoResponse?> HandleAsync(UserInfoQuery query, Cancellati
             return null;
         }
 
+        if (user.PhoneNumber is null)
+        {
+            _logger.LogWarning("User {id} was found without phone number in UserInfoHandler", query.UserId);
+            return null;
+        }
+
         var roles = await userManager.GetRolesAsync(user);
 
         var response = new UserInfoResponse(
@@ -28,7 +35,8 @@ public async Task<UserInfoResponse?> HandleAsync(UserInfoQuery query, Cancellati
             user.FirstName,
             user.LastName,
             user.Email,
-            roles.ToList()
+            roles.ToList(),
+            user.PhoneNumber
         );
 
         return response;
