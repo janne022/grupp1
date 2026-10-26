@@ -1,7 +1,7 @@
 import type { KindergartenGroup } from "@/api/types/types";
 
-import { Field } from "./ui/field";
-import { SelectGroups } from "./selectGroups";
+import { Field } from "./field";
+import { SelectGroups } from "../selectGroups";
 import { GeneralBooking, type GeneralBookingProps } from "./generalBookingModal";
 
 
@@ -16,7 +16,7 @@ interface AddEditTimeModalProps extends Omit<
   existingEndTime?: string;
 }
 
-export default function AddEditTimeModalNew({
+export default function AddEditTimeModal({
   deleteItem,
   kindergartens,
   selectedTime,

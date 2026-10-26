@@ -1,6 +1,6 @@
-import { EllipsisVertical, MoveLeft, TrashIcon, XIcon } from "lucide-react";
-import { DatePickerTime } from "./date-picker";
-import { Button } from "./ui/button";
+import { EllipsisVertical, TrashIcon, XIcon } from "lucide-react";
+import { DatePickerTime } from "../date-picker";
+import { Button } from "./button";
 import {
   Dialog,
   DialogClose,
@@ -8,18 +8,18 @@ import {
   DialogFooter,
   DialogHeader,
   DialogTitle,
-} from "./ui/dialog";
+} from "./dialog";
 
-import { Field, FieldGroup } from "./ui/field";
+import { Field, FieldGroup } from "./field";
 import {
   DropdownMenu,
   DropdownMenuTrigger,
   DropdownMenuContent,
   DropdownMenuItem,
-} from "./ui/dropdown-menu";
+} from "./dropdown-menu";
 
 import { type Dispatch, type ReactNode, type SetStateAction } from "react";
-import { TimePicker } from "./ui/timePicker";
+import { TimePicker } from "./timePicker";
 
 export interface GeneralBookingProps {
   open: boolean;

@@ -1,7 +1,6 @@
 import type { KindergartenGroup } from "@/api/types/types";
-import AddEditTimeModal from "@/components/addEditTimeModal";
-import AddEditTimeModalNew from "@/components/AddEditTimeModalNEW";
-import ManagerBooking from "@/components/managerBooking";
+import AddEditTimeModal from "@/components/ui/addEditTimeModal";
+import ManagerBooking from "@/components/ui/managerBooking";
 import { Calendar } from "@/components/ui/calendar";
 import { createFileRoute } from "@tanstack/react-router";
 import { sv } from "date-fns/locale";
@@ -23,7 +22,7 @@ export interface KindergartenAvailability {
 
 export interface AvailableTimeInfo {
   id: string;
-  startTime: string; //ex: "2026-10-26T09:00:00Z"
+  startTime: string; //ex: "2026-10-26T09:00:00Z" //the "Z" means that this is UTC sweden is utc +1 fyifyi
   endTime: string;
   firstName: string;
   lastName: string;
@@ -55,37 +54,37 @@ function RouteComponent() {
       availableTimes: [
         {
           id: "764fa3f6-b558-459f-95ef-9dfb0613b507",
-          startTime: "2026-10-26T09:00:00Z",
-          endTime: "2026-10-26T17:00:00Z",
+          startTime: "2026-10-26T06:00:00Z",
+          endTime: "2026-10-26T19:00:00Z",
           firstName: "john",
           lastName: "sub",
         },
         {
           id: "8b1c7664-932e-47b5-ba33-4bc95ed2be96",
-          startTime: "2026-10-28T09:00:00Z",
-          endTime: "2026-10-28T17:00:00Z",
+          startTime: "2026-10-28T06:00:00Z",
+          endTime: "2026-10-28T19:00:00Z",
           firstName: "AAAA",
           lastName: "långtefternamn",
         },
         {
           id: "cf93c7ac-5dd3-4613-b5f6-cccaa9f31377",
-          startTime: "2026-10-29T09:00:00Z",
-          endTime: "2026-10-29T17:00:00Z",
+          startTime: "2026-10-29T06:00:00Z",
+          endTime: "2026-10-29T19:00:00Z",
           firstName: "johnnnnnyy",
           lastName: "ännulängreefternamn",
         },
         {
           id: "e21b7235-2bc8-4be8-8d01-8ded95c11e64",
-          startTime: "2026-10-30T09:00:00Z",
-          endTime: "2026-10-30T17:00:00Z",
+          startTime: "2026-10-30T06:00:00Z",
+          endTime: "2026-10-30T19:00:00Z",
           firstName: "AAAA",
           lastName: "subs",
         },
         {
           id: "ee908213-5fc1-4e9c-8433-59762160a549",
-          startTime: "2026-10-27T09:00:00Z",
-          endTime: "2026-10-27T17:00:00Z",
-          firstName: "AAAA",
+          startTime: "2026-10-27T06:00:00Z",
+          endTime: "2026-10-27T19:00:00Z",
+          firstName: "bBBBBbb",
           lastName: "subs",
         },
       ],
@@ -118,32 +117,20 @@ function RouteComponent() {
         title="wdawwda"
       />
 
-      {/*NY*/}
-      {
-        <ManagerBooking
-          open={open}
-          setOpen={setOpen}
-          title="Boka tid"
-          availableTimes={filterByKindergarten(allTimes, "Chas Academy")}
-          submitLabel="Bekräfta Bokning"
-          Loading={false}
-          selectedDate={date}
-          selectedKindergarten="Chas Academy"
-          showOnlyTime={true}
-        />
-      }
-
-      {/* original */}
-      {/* <AddEditTimeModal
+      <ManagerBooking
         open={open}
         setOpen={setOpen}
-        deleteItem={onDelete}
-        addTime={onSubmit}
-        kindergartens={kindergarten}
-      /> */}
+        title="Boka tid"
+        availableTimes={filterByKindergarten(allTimes, "Chas Academy")}
+        submitLabel="Bekräfta Bokning"
+        Loading={false}
+        selectedDate={date}
+        selectedKindergarten="Chas Academy"
+        showOnlyTime={true}
+      />
 
-      {/* edited original "inheritence" type shit */}
-      {/* <AddEditTimeModalNew
+      {/*This is the refactor version of AddEditTimeModal. Should look identical to the old one*/}
+      {/* <AddEditTimeModal
         open={open}
         setOpen={setOpen}
         deleteItem={onDelete}

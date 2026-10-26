@@ -1774,11 +1774,6 @@
         }
       },
       "PostAvailableTimeRequest": {
-        "required": [
-          "startTime",
-          "endTime",
-          "kindergartens"
-        ],
         "type": "object",
         "properties": {
           "startTime": {

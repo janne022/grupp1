@@ -1,5 +1,5 @@
 import type { AvailableTimeInfo } from "@/routes/TestPage";
-import type {} from "../managerBooking";
+import type {} from "./managerBooking";
 import {
   Table,
   TableBody,
@@ -19,10 +19,6 @@ export function filterAvailableTimes(
   from: Date,
   to: Date,
 ) {
-  if (!from || !to)
-    //one or both are undefined this needs to be here as
-    return;
-
   return times.filter((t) => {
     const availableFrom = new Date(t.startTime);
     const availableTo = new Date(t.endTime);

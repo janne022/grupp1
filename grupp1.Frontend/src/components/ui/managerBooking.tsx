@@ -3,11 +3,11 @@ import {
   GeneralBooking,
   type GeneralBookingProps,
 } from "./generalBookingModal";
-import { Field } from "./ui/field";
+import { Field } from "./field";
 import {
   SubstituteDisplay,
   filterAvailableTimes,
-} from "./ui/substituteDisplay";
+} from "./substituteDisplay";
 import { useState } from "react";
 
 export interface BookingSubmitData {
@@ -46,11 +46,13 @@ export default function ManagerBooking({
 
   const from = convertToDate(selectedDate, start);
   const to = convertToDate(selectedDate, end);
-  const filtered = filterAvailableTimes(availableTimes, from, to);
-
+  
   function ConfirmBooking(data: BookingSubmitData) {
-    console.log(data); // TODO: do the booking thingy
+    console.log(data); // TODO: add the booking api shit here. not for the mvp tho
   }
+
+  const filtered = filterAvailableTimes(availableTimes, from, to);
+  
 
   return (
     <GeneralBooking
