@@ -110,24 +110,32 @@ function RouteComponent() {
                   day={day}
                   modifiers={modifiers}
                   {...props}
-                  className="flex h-full w-full flex-col items-center justify-start gap-2 rounded-none p-2"
+                  className="flex h-full w-full min-w-0 flex-col items-center justify-start gap-2 rounded-none py-2
+                  data-[selected-single=true]:bg-transparent!
+                  data-[selected-single=true]:text-foreground!
+                  data-[selected-single=true]:ring-2!
+                  data-[selected-single=true]:ring-inset!
+                  data-[selected-single=true]:ring-primary!"
                 >
                   {children}
-                  <div className="flex flex-col gap-1">
+                  <div className="flex w-full min-w-0 flex-col gap-1">
                     {AvailableTimeResponse.data?.availableTimes.map(
                       (item, index) => {
                         return new Date(item.startTime).toLocaleDateString(
                           "sv-SE",
                         ) == day.isoDate ? (
-                          <div
-                            className="flex flex-row gap-1 items-center"
+                          <span
+                            onClick={(e) => {
+                              e.stopPropagation();
+                            }}
+                            className="flex w-full min-w-0 flex-row gap-1 items-center hover:cursor-pointer hover:text-white hover:bg-primary p-1"
                             key={index}
                           >
                             <Dot
                               key={index}
                               className="size-1.5 rounded-full bg-blue-600"
                             />
-                            <p>
+                            <p className="min-w-0 truncate leading-normal">
                               Tillgänglig mellan{" "}
                               {new Date(item.startTime).toLocaleTimeString(
                                 "sv-SE",
@@ -139,7 +147,7 @@ function RouteComponent() {
                                 { hour: "2-digit", minute: "2-digit" },
                               )}
                             </p>
-                          </div>
+                          </span>
                         ) : (
                           ""
                         );

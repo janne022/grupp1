@@ -31,7 +31,6 @@ export default function AddEditTimeModal({
   setOpen: setOpen,
   deleteItem: deleteTime,
   kindergartens: kindergartens,
-  selectedDate: selectedDate,
   existingStartTime: existingStartTime,
   existingEndTime: existingEndTime,
 }: {
