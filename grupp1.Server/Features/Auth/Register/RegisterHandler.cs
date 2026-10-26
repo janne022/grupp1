@@ -33,6 +33,7 @@ public class RegisterHandler(UserManager<User> userManager, ILogger<RegisterHand
             Email = request.Email,
             FirstName = request.FirstName,
             LastName = request.LastName,
+            PhoneNumber = request.PhoneNumber
         };
 
         var createResult = await userManager.CreateAsync(user, request.Password);
