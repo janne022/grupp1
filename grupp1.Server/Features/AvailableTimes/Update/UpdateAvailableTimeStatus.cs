@@ -5,4 +5,5 @@ public enum UpdateAvailableTimeStatus
     Ok,
     BadTime,
     WasNull,
+    NotOwner,
 }
