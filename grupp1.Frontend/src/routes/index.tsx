@@ -47,7 +47,7 @@ export const Route = createFileRoute("/")({
 
 function RouteComponent() {
   const [date, setDate] = React.useState<Date | undefined>(new Date());
-  const [open, setOpen] = React.useState(false);
+  const [openModal, setOpenModal] = React.useState(false);
   const [month, setMonth] = React.useState(new Date());
   const [deleteTime, setDeleteTime] = React.useState(false);
   const [popoverOpen, setPopoverOpen] = React.useState(false);
@@ -55,7 +55,7 @@ function RouteComponent() {
 
   function openDialog(day?: Date) {
     setDate(day);
-    setOpen(true);
+    setOpenModal(true);
   }
 
   const AvailableTimeResponse = GetAllAvailableTimes();
@@ -212,7 +212,7 @@ function RouteComponent() {
                                     <Button
                                       onClick={(e) => {
                                         e.stopPropagation();
-                                        setOpen(true);
+                                        setOpenModal(true);
                                       }}
                                       variant="ghost"
                                       size="icon-sm"
@@ -294,8 +294,8 @@ function RouteComponent() {
           }}
         />
         <AddEditTimeModal
-          open={open}
-          setOpen={setOpen}
+          open={openModal}
+          setOpen={setOpenModal}
           deleteItem={function (): void {
             throw new Error("Function not implemented.");
           }}
