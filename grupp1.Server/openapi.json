@@ -167,6 +167,16 @@
         "responses": {
           "200": {
             "description": "OK"
+          },
+          "400": {
+            "description": "Bad Request",
+            "content": {
+              "application/problem+json": {
+                "schema": {
+                  "$ref": "#/components/schemas/HttpValidationProblemDetails"
+                }
+              }
+            }
           }
         }
       }
@@ -580,6 +590,18 @@
         }
       }
     },
+    "/api/auth/make-manager": {
+      "post": {
+        "tags": [
+          "MakeManager"
+        ],
+        "responses": {
+          "200": {
+            "description": "OK"
+          }
+        }
+      }
+    },
     "/api/decidedtime/delete/{id}": {
       "delete": {
         "tags": [
@@ -721,6 +743,35 @@
         }
       }
     },
+    "/api/availabletimes/bymanager": {
+      "get": {
+        "tags": [
+          "GetAllAvailableTimeByManager"
+        ],
+        "responses": {
+          "200": {
+            "description": "OK",
+            "content": {
+              "text/plain": {
+                "schema": {
+                  "$ref": "#/components/schemas/GetAllAvailableTimeByManagerResponse"
+                }
+              },
+              "application/json": {
+                "schema": {
+                  "$ref": "#/components/schemas/GetAllAvailableTimeByManagerResponse"
+                }
+              },
+              "text/json": {
+                "schema": {
+                  "$ref": "#/components/schemas/GetAllAvailableTimeByManagerResponse"
+                }
+              }
+            }
+          }
+        }
+      }
+    },
     "/api/availabletimes/{id}": {
       "get": {
         "tags": [
@@ -759,9 +810,7 @@
             }
           }
         }
-      }
-    },
-    "/api/availabletimes/delete/{id}": {
+      },
       "delete": {
         "tags": [
           "DeleteAvailableTime"
@@ -828,9 +877,64 @@
           }
         }
       },
+      "AvailableTimesByKindergartenDTO": {
+        "required": [
+          "kindergartenId",
+          "kindergartenName",
+          "availableTimes"
+        ],
+        "type": "object",
+        "properties": {
+          "kindergartenId": {
+            "type": "string",
+            "format": "uuid"
+          },
+          "kindergartenName": {
+            "type": "string"
+          },
+          "availableTimes": {
+            "type": "array",
+            "items": {
+              "$ref": "#/components/schemas/AvailableTimesByManagerDTO"
+            }
+          }
+        }
+      },
+      "AvailableTimesByManagerDTO": {
+        "required": [
+          "id",
+          "startTime",
+          "endTime",
+          "substituteFirstName",
+          "substituteLastName"
+        ],
+        "type": "object",
+        "properties": {
+          "id": {
+            "type": "string",
+            "format": "uuid"
+          },
+          "startTime": {
+            "type": "string",
+            "format": "date-time"
+          },
+          "endTime": {
+            "type": "string",
+            "format": "date-time"
+          },
+          "substituteFirstName": {
+            "type": "string"
+          },
+          "substituteLastName": {
+            "type": "string"
+          }
+        }
+      },
       "BookDecidedTimeQuery": {
         "required": [
           "availableTimeGuid",
+          "startTime",
+          "endTime",
           "kindergartenId"
         ],
         "type": "object",
@@ -838,6 +942,14 @@
           "availableTimeGuid": {
             "type": "string",
             "format": "uuid"
+          },
+          "startTime": {
+            "type": "string",
+            "format": "date-time"
+          },
+          "endTime": {
+            "type": "string",
+            "format": "date-time"
           },
           "kindergartenId": {
             "type": "string",
@@ -1255,6 +1367,20 @@
       },
       "GeometryRelate": {
         "type": "object"
+      },
+      "GetAllAvailableTimeByManagerResponse": {
+        "required": [
+          "availableTimesByKindergarten"
+        ],
+        "type": "object",
+        "properties": {
+          "availableTimesByKindergarten": {
+            "type": "array",
+            "items": {
+              "$ref": "#/components/schemas/AvailableTimesByKindergartenDTO"
+            }
+          }
+        }
       },
       "GetAllDecidedTimesDTO": {
         "required": [
@@ -1911,7 +2037,8 @@
           "password",
           "firstName",
           "lastName",
-          "role"
+          "role",
+          "phoneNumber"
         ],
         "type": "object",
         "properties": {
@@ -1928,6 +2055,9 @@
             "type": "string"
           },
           "role": {
+            "type": "string"
+          },
+          "phoneNumber": {
             "type": "string"
           }
         }
@@ -2183,6 +2313,9 @@
       "name": "Register"
     },
     {
+      "name": "MakeManager"
+    },
+    {
       "name": "UnbookDecidedTime"
     },
     {
@@ -2193,6 +2326,9 @@
     },
     {
       "name": "BookDecidedTime"
+    },
+    {
+      "name": "GetAllAvailableTimeByManager"
     },
     {
       "name": "GetAvailableTimeByIds"

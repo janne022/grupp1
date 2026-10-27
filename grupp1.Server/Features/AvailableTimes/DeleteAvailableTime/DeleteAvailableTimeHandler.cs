@@ -11,11 +11,11 @@ public class DeleteAvailableTimeHandler(
         DeleteAvailableTimeQuery query,
         CancellationToken cancellationToken = default)
     {
-        var deletedTime = await dbContext.AvailableTimes
+        int deletedTime = await dbContext.AvailableTimes
         .Where(at => at.Id == query.AvailableTimeId)
         .ExecuteDeleteAsync(cancellationToken);
 
-        if (deletedTime == 0) //nothing to delete / not found
+        if (deletedTime is 0)
         {
             _logger.LogInformation($"AvailableTime {query.AvailableTimeId} not found");
             return false;
