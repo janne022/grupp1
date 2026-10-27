@@ -17,8 +17,8 @@ export default function Layout({ children }: LayoutProps) {
         </nav>
         <SidebarInset>
           <main className="w-full min-w-0">{children}</main>
-          <Footer />
           <Toaster />
+          <Footer />
         </SidebarInset>
       </SidebarProvider>
     </>

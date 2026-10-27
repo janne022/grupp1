@@ -3,8 +3,10 @@ import { Button } from "@/components/ui/button";
 import { createFileRoute } from "@tanstack/react-router";
 import React from "react";
 import { sv } from "date-fns/locale";
-
-import { GetAllAvailableTimes } from "@/api/services/AvailableTimeService";
+import {
+  DeleteAvailableTime,
+  GetAllAvailableTimes,
+} from "@/api/services/AvailableTimeService";
 import AddEditTimeModal from "@/components/addEditTimeModal";
 import {
   ChevronLeft,
@@ -37,6 +39,7 @@ import {
   AlertDialogMedia,
   AlertDialogTitle,
 } from "@/components/ui/alert-dialog";
+import { toast } from "@/components/ui/toast";
 
 export const Route = createFileRoute("/")({
   component: RouteComponent,
@@ -48,6 +51,7 @@ function RouteComponent() {
   const [month, setMonth] = React.useState(new Date());
   const [deleteTime, setDeleteTime] = React.useState(false);
   const [popoverOpen, setPopoverOpen] = React.useState(false);
+  const [availableTimeId, setAvailableTimeId] = React.useState("");
 
   function openDialog(day?: Date) {
     setDate(day);
@@ -56,6 +60,7 @@ function RouteComponent() {
 
   const AvailableTimeResponse = GetAllAvailableTimes();
   const KindergartenResponse = GetAllKindergartens();
+  const DeleteAvailableTimeFunction = DeleteAvailableTime();
 
   if (AvailableTimeResponse.isPending || KindergartenResponse.isPending) {
     return <div>Loading...</div>;
@@ -159,8 +164,8 @@ function RouteComponent() {
                       .map((item, index) => (
                         <Popover
                           key={index}
-                          open={popoverOpen}
-                          onOpenChange={setPopoverOpen}
+                          // open={popoverOpen}
+                          // onOpenChange={setPopoverOpen}
                         >
                           <PopoverTrigger
                             render={
@@ -220,6 +225,7 @@ function RouteComponent() {
                                       onClick={(e) => {
                                         e.stopPropagation();
                                         setDeleteTime(true);
+                                        setAvailableTimeId(item.id);
                                       }}
                                       className="hover:bg-destructive/10"
                                     >
@@ -311,7 +317,31 @@ function RouteComponent() {
             </AlertDialogHeader>
             <AlertDialogFooter>
               <AlertDialogCancel variant="outline">Avbryt</AlertDialogCancel>
-              <AlertDialogAction variant="destructive">
+              <AlertDialogAction
+                onClick={(e) => {
+                  e.stopPropagation();
+
+                  DeleteAvailableTimeFunction.mutate(availableTimeId, {
+                    onSuccess: () => {
+                      toast.add({
+                        title: "Success!",
+                        description: "Din tillgängliga tid har tagits bort", // TODO: iterate here, to show more dynamic information about what was deleted
+                      });
+                    },
+
+                    onError: () => {
+                      toast.add({
+                        title: "Åh nej...",
+                        description:
+                          "Något gick fel när tiden skulle tas bort.",
+                      });
+                    },
+                  });
+
+                  setAvailableTimeId("");
+                }}
+                variant="destructive"
+              >
                 Radera
               </AlertDialogAction>
             </AlertDialogFooter>
