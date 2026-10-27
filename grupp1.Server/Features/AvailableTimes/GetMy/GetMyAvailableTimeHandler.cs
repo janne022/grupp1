@@ -4,21 +4,27 @@ using Vicaria.Server.Infrastructure;
 
 namespace Vicaria.Server.Features.AvailableTimes.GetMy;
 
-public class GetMyAvailableTimesHandler(
-    VicariaDbContext DbContext
-) : IHandler<GetMyAvailableTimesQuery, GetMyAvailableTimesResponse>
+public class GetMyAvailableTimesHandler(VicariaDbContext DbContext)
+    : IHandler<GetMyAvailableTimesQuery, GetMyAvailableTimesResponse>
 {
     public async Task<GetMyAvailableTimesResponse> HandleAsync(
         GetMyAvailableTimesQuery query,
         CancellationToken cancellationToken = default
     )
     {
-        var fromTime = DateTime.UtcNow.Date;
+        var relevantTimes = DbContext.AvailableTimes.Where(at => at.UserId == query.UserId);
 
-        var availableTimes = await DbContext
-            .AvailableTimes.Where(at => at.UserId == query.UserId)
-            .Where(at => at.StartTime >= fromTime)
-            .OrderBy(at => at.StartTime)
+        if (query.FromTime is not null)
+        {
+            relevantTimes = relevantTimes.Where(at => at.StartTime >= query.FromTime.Value);
+        }
+
+        if (query.ToTime is not null)
+        {
+            relevantTimes = relevantTimes.Where(at => at.StartTime <= query.ToTime.Value);
+        }
+
+        var filteredAvailableTimes = await relevantTimes
             .Select(at => new GetMyAvailableTimesDTO(
                 at.Id,
                 at.StartTime,
@@ -33,6 +39,6 @@ public class GetMyAvailableTimesHandler(
             ))
             .ToListAsync(cancellationToken);
 
-        return new GetMyAvailableTimesResponse(availableTimes);
+        return new GetMyAvailableTimesResponse(filteredAvailableTimes);
     }
 }
