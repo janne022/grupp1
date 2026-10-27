@@ -324,6 +324,7 @@ function RouteComponent() {
                   DeleteAvailableTimeFunction.mutate(availableTimeId, {
                     onSuccess: () => {
                       toast.add({
+                        type: "success",
                         title: "Success!",
                         description: "Din tillgängliga tid har tagits bort", // TODO: iterate here, to show more dynamic information about what was deleted
                       });
@@ -331,6 +332,7 @@ function RouteComponent() {
 
                     onError: () => {
                       toast.add({
+                        type: "error",
                         title: "Åh nej...",
                         description:
                           "Något gick fel när tiden skulle tas bort.",
