@@ -465,7 +465,7 @@
           }
         }
       },
-      "put": {
+      "patch": {
         "tags": [
           "UpdateAvailableTime"
         ],
@@ -2192,23 +2192,40 @@
       },
       "UpdateAvailableTimeQuery": {
         "required": [
-          "timeId",
+          "availableTimeId",
           "startTime",
-          "endTime"
+          "endTime",
+          "kindergartens"
         ],
         "type": "object",
         "properties": {
-          "timeId": {
+          "availableTimeId": {
             "type": "string",
             "format": "uuid"
           },
           "startTime": {
-            "type": "string",
+            "type": [
+              "null",
+              "string"
+            ],
             "format": "date-time"
           },
           "endTime": {
-            "type": "string",
+            "type": [
+              "null",
+              "string"
+            ],
             "format": "date-time"
+          },
+          "kindergartens": {
+            "type": [
+              "null",
+              "array"
+            ],
+            "items": {
+              "type": "string",
+              "format": "uuid"
+            }
           }
         }
       },
@@ -2217,6 +2234,7 @@
           "timeId",
           "startTime",
           "endTime",
+          "kindergartens",
           "statusMessage"
         ],
         "type": "object",
@@ -2241,6 +2259,15 @@
               "string"
             ],
             "format": "date-time"
+          },
+          "kindergartens": {
+            "type": [
+              "null",
+              "array"
+            ],
+            "items": {
+              "$ref": "#/components/schemas/KindergartenDto"
+            }
           },
           "statusMessage": {
             "$ref": "#/components/schemas/UpdateAvailableTimeStatus"
