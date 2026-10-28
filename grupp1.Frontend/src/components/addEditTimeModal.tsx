@@ -13,7 +13,7 @@ import {
   DialogTitle,
 } from "./ui/dialog";
 
-import { Field, FieldGroup } from "./ui/field";
+import { Field, FieldError, FieldGroup } from "./ui/field";
 
 import React, { useEffect, type Dispatch } from "react";
 import type { GetMyAvailableTimesDTO, KindergartenDto } from "@/api/models";
@@ -38,12 +38,6 @@ export default function AddEditTimeModal({
 }) {
   // TODO: Extract Selectgroups to children
 
-  let isEdit = false;
-
-  if (updateAvailableTime) {
-    isEdit = true;
-  }
-
   function splitDateTime(dateTime: string | Date) {
     const date = new Date(dateTime);
 
@@ -53,13 +47,44 @@ export default function AddEditTimeModal({
     };
   }
 
+  function hasDateTimeChanged(
+    current: { date: Date; time: string },
+    original: string,
+  ): boolean {
+    const previous = splitDateTime(original);
+
+    return (
+      current.date.toDateString() !== previous.date.toDateString() ||
+      current.time !== previous.time
+    );
+  }
+
+  function toIsoDateTime(dateTime: { date: Date; time: string }) {
+    const [hours, minutes] = dateTime.time.split(":").map(Number);
+
+    const date = new Date(dateTime.date);
+    date.setHours(hours, minutes, 0, 0);
+
+    return date.toISOString();
+  }
+
   const dateTime = z.object({ date: z.date(), time: z.string() });
 
-  const formSchema = z.object({
-    StartDateTime: dateTime,
-    EndDateTime: dateTime,
-    kindergartens: z.array(z.string()),
-  });
+  const formSchema = z
+    .object({
+      StartDateTime: dateTime,
+      EndDateTime: dateTime,
+      kindergartens: z.array(z.string()),
+    })
+    .refine(
+      (data) =>
+        new Date(toIsoDateTime(data.StartDateTime)) <
+        new Date(toIsoDateTime(data.EndDateTime)),
+      {
+        message: "Sluttiden måste vara efter starttiden",
+        path: ["EndDateTime"],
+      },
+    );
 
   const form = useForm<z.infer<typeof formSchema>>({
     resolver: zodResolver(formSchema),
@@ -101,34 +126,67 @@ export default function AddEditTimeModal({
   const editService = EditAvailableTime();
 
   function onSubmit(data: z.infer<typeof formSchema>) {
-    if (isEdit) {
+    if (updateAvailableTime) {
+      // Check if any of the fields have changed
+
+      const hasStartTimeChanged = hasDateTimeChanged(
+        data.StartDateTime,
+        updateAvailableTime.startTime,
+      );
+
+      const hasEndTimeChanged = hasDateTimeChanged(
+        data.EndDateTime,
+        updateAvailableTime.endTime,
+      );
+
+      const hasKindergartensChanged =
+        data.kindergartens.length !==
+          updateAvailableTime.kindergartens.length ||
+        !data.kindergartens.every((id) =>
+          updateAvailableTime.kindergartens.some((k) => k.id === id),
+        );
+
+      // If none of the fields have changed, close the modal and return
+      if (
+        !hasStartTimeChanged &&
+        !hasEndTimeChanged &&
+        !hasKindergartensChanged
+      ) {
+        setOpen(false);
+        return;
+      }
+
       editService.mutate({
-        availableTimeId: "",
-        startTime: null,
-        endTime: null,
-        kindergartens: data.kindergartens,
+        availableTimeId: updateAvailableTime.id,
+        startTime: hasStartTimeChanged
+          ? toIsoDateTime(data.StartDateTime)
+          : null,
+        endTime: hasEndTimeChanged ? toIsoDateTime(data.EndDateTime) : null,
+        kindergartens: hasKindergartensChanged ? data.kindergartens : null,
       });
       return;
     }
 
     postService.mutate({
-      startTime: new Date(
-        `${data.StartDateTime.date.toLocaleDateString("sv-SE")}T${data.StartDateTime.time}:00`,
-      ).toISOString(),
-      endTime: new Date(
-        `${data.EndDateTime.date.toLocaleDateString("sv-SE")}T${data.EndDateTime.time}:00`,
-      ).toISOString(),
+      startTime: toIsoDateTime(data.StartDateTime),
+      endTime: toIsoDateTime(data.EndDateTime),
       kindergartens: data.kindergartens,
     });
   }
 
   return (
     <Dialog open={open} onOpenChange={(e) => setOpen(e.valueOf())}>
-      <form id="add-availabletime-form" onSubmit={form.handleSubmit(onSubmit)}>
-        <DialogContent showCloseButton={false} className="sm:max-w-sm">
+      <DialogContent showCloseButton={false} className="sm:max-w-sm">
+        <form
+          className="flex flex-col gap-4"
+          id="add-availabletime-form"
+          onSubmit={form.handleSubmit(onSubmit)}
+        >
           <DialogHeader className="flex flex-row items-center gap-0">
             <DialogTitle className="text-center mx-auto">
-              {isEdit ? "Ändra din tid" : "Lägg till en tillgänglig tid!"}
+              {updateAvailableTime
+                ? "Ändra din tid"
+                : "Lägg till en tillgänglig tid!"}
             </DialogTitle>
             <DialogClose
               render={
@@ -168,6 +226,10 @@ export default function AddEditTimeModal({
                       field.onChange(x);
                     }}
                   />
+
+                  {fieldState.invalid && (
+                    <FieldError errors={[fieldState.error]} />
+                  )}
                 </Field>
               )}
             />
@@ -181,6 +243,7 @@ export default function AddEditTimeModal({
                   data-invalid={fieldState.invalid}
                   className="flex flex-col items-center"
                 >
+                  <FieldError errors={[fieldState.error]} />
                   <SelectGroups {...field} KindergartenDto={kindergartens} />
                 </Field>
               )}
@@ -189,11 +252,11 @@ export default function AddEditTimeModal({
           <DialogFooter className="flex flex-row justify-between">
             <DialogClose render={<Button variant="outline">Avbryt</Button>} />
             <Button form="add-availabletime-form" type="submit">
-              {isEdit ? "Ändra" : "Bekräfta"}
+              {updateAvailableTime ? "Ändra" : "Bekräfta"}
             </Button>
           </DialogFooter>
-        </DialogContent>
-      </form>
+        </form>
+      </DialogContent>
     </Dialog>
   );
 }
