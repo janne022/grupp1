@@ -13,7 +13,16 @@ export interface KindergartenDTO {
 }
 
 export interface KindergartenDto {
-  name: string;
   id: string;
-  location: null | Point;
+  name: string;
+  /**
+     * @nullable
+     * @pattern ^-?(?:0|[1-9]\d*)(?:\.\d+)?(?:[eE][+-]?\d+)?$
+     */
+  latitude: number | string | null;
+  /**
+     * @nullable
+     * @pattern ^-?(?:0|[1-9]\d*)(?:\.\d+)?(?:[eE][+-]?\d+)?$
+     */
+  longitude: number | string | null;
 }

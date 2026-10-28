@@ -71,9 +71,12 @@ function EditAvailableTime() {
   const query = useQueryClient();
   return useMutation({
     mutationFn: () => {
-      return apiClient.put<UpdateAvailableTimeResponse>(`/api/availabletimes`, {});
-    }
-  })
+      return apiClient.patch<UpdateAvailableTimeResponse>(
+        `/api/availabletimes`,
+        {},
+      );
+    },
+  });
 }
 
 export { GetAllAvailableTimes, AddAvailableTime, DeleteAvailableTime };

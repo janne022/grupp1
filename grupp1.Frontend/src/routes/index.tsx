@@ -50,7 +50,7 @@ function RouteComponent() {
   const [openModal, setOpenModal] = React.useState(false);
   const [month, setMonth] = React.useState(new Date());
   const [deleteTime, setDeleteTime] = React.useState(false);
-  const [popoverOpen, setPopoverOpen] = React.useState(false);
+  const [popoverOpenId, setPopoverOpenId] = React.useState<string | null>(null);
   const [availableTimeId, setAvailableTimeId] = React.useState("");
 
   function openDialog(day?: Date) {
@@ -164,8 +164,14 @@ function RouteComponent() {
                       .map((item, index) => (
                         <Popover
                           key={index}
-                          // open={popoverOpen}
-                          // onOpenChange={setPopoverOpen}
+                          open={popoverOpenId === item.id}
+                          onOpenChange={(open) => {
+                            if (open) {
+                              setPopoverOpenId(item.id);
+                            } else {
+                              setPopoverOpenId(null);
+                            }
+                          }}
                         >
                           <PopoverTrigger
                             render={
@@ -235,7 +241,7 @@ function RouteComponent() {
                                     <Button
                                       onClick={(e) => {
                                         e.stopPropagation();
-                                        setPopoverOpen(false);
+                                        setPopoverOpenId(null);
                                       }}
                                       variant="ghost"
                                       size="icon-sm"
