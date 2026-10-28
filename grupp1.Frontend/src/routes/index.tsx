@@ -11,14 +11,11 @@ import AddEditTimeModal from "@/components/addEditTimeModal";
 import {
   ChevronLeft,
   ChevronRight,
-  ClipboardPasteIcon,
   Clock,
-  CopyIcon,
   Dot,
   PenLine,
   Plus,
   PlusIcon,
-  ScissorsIcon,
   Trash,
   Trash2Icon,
   TrashIcon,
@@ -54,7 +51,6 @@ import {
   ContextMenuGroup,
   ContextMenuItem,
   ContextMenuLabel,
-  ContextMenuSeparator,
   ContextMenuTrigger,
 } from "@/components/ui/context-menu";
 
