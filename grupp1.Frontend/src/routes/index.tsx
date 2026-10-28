@@ -11,12 +11,17 @@ import AddEditTimeModal from "@/components/addEditTimeModal";
 import {
   ChevronLeft,
   ChevronRight,
+  ClipboardPasteIcon,
   Clock,
+  CopyIcon,
   Dot,
   PenLine,
   Plus,
+  PlusIcon,
+  ScissorsIcon,
   Trash,
   Trash2Icon,
+  TrashIcon,
   X,
 } from "lucide-react";
 import { addMonths, format, isSameDay } from "date-fns";
@@ -42,6 +47,16 @@ import {
 import { toast } from "@/components/ui/toast";
 import type { GetMyAvailableTimesDTO } from "@/api/models";
 import { cn } from "cn";
+import { Skeleton } from "@/components/ui/skeleton";
+import {
+  ContextMenu,
+  ContextMenuContent,
+  ContextMenuGroup,
+  ContextMenuItem,
+  ContextMenuLabel,
+  ContextMenuSeparator,
+  ContextMenuTrigger,
+} from "@/components/ui/context-menu";
 
 export const Route = createFileRoute("/")({
   component: RouteComponent,
@@ -65,10 +80,6 @@ function RouteComponent() {
   const AvailableTimeResponse = GetAllAvailableTimes();
   const KindergartenResponse = GetAllKindergartens();
   const DeleteAvailableTimeFunction = DeleteAvailableTime();
-
-  if (AvailableTimeResponse.isPending || KindergartenResponse.isPending) {
-    return <div>Loading...</div>;
-  }
 
   if (AvailableTimeResponse.error || KindergartenResponse.error) {
     return <div>Error!</div>;
@@ -155,49 +166,72 @@ function RouteComponent() {
               const isSelected = date ? isSameDay(date, day.date) : false;
 
               return (
-                <td
-                  {...props}
-                  className={cn(
-                    className,
-                    "relative cursor-pointer hover:bg-primary/5",
-                  )}
-                  onClick={(e) => {
-                    if (modifiers.disabled || modifiers.hidden) return;
+                <ContextMenu>
+                  <ContextMenuTrigger className="flex items-center gap-2">
+                    <td
+                      {...props}
+                      className={cn(
+                        className,
+                        "relative cursor-pointer hover:bg-primary/5",
+                      )}
+                      onClick={(e) => {
+                        if (modifiers.disabled || modifiers.hidden) return;
 
-                    if (
-                      (e.target as HTMLElement).closest(
-                        "button, a, input, select, textarea, [role='button']",
-                      )
-                    ) {
-                      return;
-                    }
+                        if (
+                          (e.target as HTMLElement).closest(
+                            "button, a, input, select, textarea, [role='button']",
+                          )
+                        ) {
+                          return;
+                        }
 
-                    setSelectedAvailableTime(null);
-                    openDialog(day.date);
-                  }}
-                >
-                  {children}
+                        setSelectedAvailableTime(null);
+                        openDialog(day.date);
+                      }}
+                    >
+                      {children}
 
-                  {isSelected && (
-                    <div
-                      aria-hidden="true"
-                      className="pointer-events-none absolute inset-0 z-20 border-2 border-primary"
-                    />
-                  )}
-                </td>
+                      {isSelected && (
+                        <div
+                          aria-hidden="true"
+                          className="pointer-events-none absolute inset-0 z-20 border-2 border-primary"
+                        />
+                      )}
+                    </td>
+                  </ContextMenuTrigger>
+                  <ContextMenuContent>
+                    <ContextMenuGroup>
+                      <ContextMenuItem
+                        onClick={(e) => {
+                          e.stopPropagation();
+                          setSelectedAvailableTime(null);
+                          openDialog(day.date);
+                        }}
+                      >
+                        <PlusIcon />
+                        Ny Tid
+                      </ContextMenuItem>
+                    </ContextMenuGroup>
+                  </ContextMenuContent>
+                </ContextMenu>
               );
             },
             DayButton: ({ children, modifiers, day, ...props }) => {
               return (
                 <div className="flex h-full min-h-0 min-w-0 flex-col gap-1 p-2">
-                  <CalendarDayButton
-                    day={day}
-                    modifiers={modifiers}
-                    {...props}
-                    className="h-8! min-h-8! w-8! shrink-0 self-end rounded-md p-0 data-[selected-single=true]:bg-primary data-[selected-single=true]:text-primary-foreground"
-                  >
-                    {children}
-                  </CalendarDayButton>
+                  {AvailableTimeResponse.isPending &&
+                  KindergartenResponse.isPending ? (
+                    <Skeleton className="h-8 min-h-8 w-full shrink-0 rounded-md" />
+                  ) : (
+                    <CalendarDayButton
+                      day={day}
+                      modifiers={modifiers}
+                      {...props}
+                      className="h-8! min-h-8! w-8! shrink-0 self-end rounded-md p-0 data-[selected-single=true]:bg-primary data-[selected-single=true]:text-primary-foreground"
+                    >
+                      {children}
+                    </CalendarDayButton>
+                  )}
                   <div className="flex flex-1 min-h-0 w-full min-w-0 flex-col gap-1 overflow-y-auto">
                     {AvailableTimeResponse.data?.availableTimes
                       .filter(
@@ -231,27 +265,61 @@ function RouteComponent() {
                                   onClick={(e) => {
                                     e.stopPropagation();
                                   }}
-                                  className="flex w-full min-w-0 flex-row gap-1 items-center hover:cursor-pointer hover:text-white hover:bg-primary p-1"
+                                  className="hover:cursor-pointer hover:text-white hover:bg-primary p-1"
                                   key={uniqueKey}
                                 >
-                                  <Dot
-                                    key={uniqueKey}
-                                    className="size-1.5 rounded-full bg-blue-600"
-                                  />
-                                  <span className="min-w-0 truncate leading-normal">
-                                    Tillgänglig mellan{" "}
-                                    {new Date(
-                                      item.startTime,
-                                    ).toLocaleTimeString("sv-SE", {
-                                      hour: "2-digit",
-                                      minute: "2-digit",
-                                    })}{" "}
-                                    och{" "}
-                                    {new Date(item.endTime).toLocaleTimeString(
-                                      "sv-SE",
-                                      { hour: "2-digit", minute: "2-digit" },
-                                    )}
-                                  </span>
+                                  <ContextMenu>
+                                    <ContextMenuTrigger className="flex items-center gap-2">
+                                      <Dot
+                                        key={uniqueKey}
+                                        className="size-1.5 rounded-full bg-blue-600"
+                                      />
+                                      <span className="min-w-0 truncate leading-normal">
+                                        Tillgänglig mellan{" "}
+                                        {new Date(
+                                          item.startTime,
+                                        ).toLocaleTimeString("sv-SE", {
+                                          hour: "2-digit",
+                                          minute: "2-digit",
+                                        })}{" "}
+                                        och{" "}
+                                        {new Date(
+                                          item.endTime,
+                                        ).toLocaleTimeString("sv-SE", {
+                                          hour: "2-digit",
+                                          minute: "2-digit",
+                                        })}
+                                      </span>
+                                    </ContextMenuTrigger>
+                                    <ContextMenuContent>
+                                      <ContextMenuGroup>
+                                        <ContextMenuLabel>
+                                          Tillgänlig tid
+                                        </ContextMenuLabel>
+                                        <ContextMenuItem
+                                          onClick={(e) => {
+                                            e.stopPropagation();
+                                            setSelectedAvailableTime(item);
+                                            setOpenModal(true);
+                                          }}
+                                        >
+                                          <PenLine />
+                                          Ändra
+                                        </ContextMenuItem>
+                                        <ContextMenuItem
+                                          onClick={(e) => {
+                                            e.stopPropagation();
+                                            setDeleteTime(true);
+                                            setAvailableTimeId(item.id);
+                                          }}
+                                          variant="destructive"
+                                        >
+                                          <TrashIcon />
+                                          Radera
+                                        </ContextMenuItem>
+                                      </ContextMenuGroup>
+                                    </ContextMenuContent>
+                                  </ContextMenu>
                                 </button>
                               }
                             />
@@ -406,6 +474,7 @@ function RouteComponent() {
                   });
 
                   setAvailableTimeId("");
+                  setDeleteTime(false);
                 }}
                 variant="destructive"
               >
