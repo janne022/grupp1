@@ -11,7 +11,6 @@ namespace Vicaria.Server.Features.DecidedTimes.UnbookDecidedTime
     [ApiController]
     public class UnbookDecidedTimeController (IHandler<UnbookDecidedTimeCommand, UnbookDecidedTimeResponse> handler) : ControllerBase
     {
-        // TODO: Add Authorization tag when authorisation is up.
         [HttpDelete("delete/{id:guid}")]
         public async Task<IActionResult> UnbookDecidedTime(Guid id, CancellationToken cancellationToken)
         {
