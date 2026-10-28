@@ -19,7 +19,7 @@ import {
   Trash2Icon,
   X,
 } from "lucide-react";
-import { addMonths, format } from "date-fns";
+import { addMonths, format, isSameDay } from "date-fns";
 import { GetAllKindergartens } from "@/api/services/KindergartenService";
 
 import {
@@ -41,6 +41,7 @@ import {
 } from "@/components/ui/alert-dialog";
 import { toast } from "@/components/ui/toast";
 import type { GetMyAvailableTimesDTO } from "@/api/models";
+import { cn } from "cn";
 
 export const Route = createFileRoute("/")({
   component: RouteComponent,
@@ -130,7 +131,6 @@ function RouteComponent() {
             openDialog(date);
           }}
           weekStartsOn={1}
-          fixedWeeks
           hideNavigation
           captionLayout="label"
           hidden={{ dayOfWeek: [0, 6] }}
@@ -151,163 +151,211 @@ function RouteComponent() {
             day: "h-full min-h-0 min-w-0 w-full rounded-none border-b border-r p-0",
           }}
           components={{
-            DayButton: ({ children, modifiers, day, ...props }) => {
+            Day: ({ day, modifiers, children, className, ...props }) => {
+              const isSelected = date ? isSameDay(date, day.date) : false;
+
               return (
-                <CalendarDayButton
-                  day={day}
-                  modifiers={modifiers}
+                <td
                   {...props}
-                  className="flex h-full w-full min-w-0 flex-col items-center justify-start gap-2 rounded-none py-2
-                  data-[selected-single=true]:bg-transparent!
-                  data-[selected-single=true]:text-foreground!
-                  data-[selected-single=true]:ring-2!
-                  data-[selected-single=true]:ring-inset!
-                  data-[selected-single=true]:ring-primary!"
+                  className={cn(
+                    className,
+                    "relative cursor-pointer hover:bg-primary/5",
+                  )}
+                  onClick={(e) => {
+                    if (modifiers.disabled || modifiers.hidden) return;
+
+                    if (
+                      (e.target as HTMLElement).closest(
+                        "button, a, input, select, textarea, [role='button']",
+                      )
+                    ) {
+                      return;
+                    }
+
+                    setSelectedAvailableTime(null);
+                    openDialog(day.date);
+                  }}
                 >
                   {children}
-                  <div className="flex w-full min-w-0 flex-col gap-1">
+
+                  {isSelected && (
+                    <div
+                      aria-hidden="true"
+                      className="pointer-events-none absolute inset-0 z-20 border-2 border-primary"
+                    />
+                  )}
+                </td>
+              );
+            },
+            DayButton: ({ children, modifiers, day, ...props }) => {
+              return (
+                <div className="flex h-full min-h-0 min-w-0 flex-col gap-1 p-2">
+                  <CalendarDayButton
+                    day={day}
+                    modifiers={modifiers}
+                    {...props}
+                    className="h-8! min-h-8! w-8! shrink-0 self-end rounded-md p-0 data-[selected-single=true]:bg-primary data-[selected-single=true]:text-primary-foreground"
+                  >
+                    {children}
+                  </CalendarDayButton>
+                  <div className="flex flex-1 min-h-0 w-full min-w-0 flex-col gap-1 overflow-y-auto">
                     {AvailableTimeResponse.data?.availableTimes
                       .filter(
                         (item) =>
                           new Date(item.startTime).toLocaleDateString(
                             "sv-SE",
-                          ) === day.isoDate,
+                          ) <= day.isoDate &&
+                          new Date(item.endTime).toLocaleDateString("sv-SE") >=
+                            day.isoDate,
                       )
-                      .map((item, index) => (
-                        <Popover
-                          key={index}
-                          open={popoverOpenId === item.id}
-                          onOpenChange={(open) => {
-                            if (open) {
-                              setPopoverOpenId(item.id);
-                            } else {
-                              setPopoverOpenId(null);
-                            }
-                          }}
-                        >
-                          <PopoverTrigger
-                            render={
-                              <button
-                                type="button"
-                                onClick={(e) => {
-                                  e.stopPropagation();
-                                }}
-                                className="flex w-full min-w-0 flex-row gap-1 items-center hover:cursor-pointer hover:text-white hover:bg-primary p-1"
-                                key={index}
-                              >
-                                <Dot
-                                  key={index}
-                                  className="size-1.5 rounded-full bg-blue-600"
-                                />
-                                <span className="min-w-0 truncate leading-normal">
-                                  Tillgänglig mellan{" "}
-                                  {new Date(item.startTime).toLocaleTimeString(
-                                    "sv-SE",
-                                    { hour: "2-digit", minute: "2-digit" },
-                                  )}{" "}
-                                  och{" "}
-                                  {new Date(item.endTime).toLocaleTimeString(
-                                    "sv-SE",
-                                    { hour: "2-digit", minute: "2-digit" },
-                                  )}
-                                </span>
-                              </button>
-                            }
-                          />
-                          <PopoverContent
-                            className="w-80 p-4 shadow-2xl border rounded-lg bg-popover text-popover-foreground"
-                            side="right"
-                            align="center"
+                      .map((item) => {
+                        const uniqueKey = `${item.id}-${day.isoDate}`;
+
+                        return (
+                          <Popover
+                            key={uniqueKey}
+                            open={popoverOpenId === uniqueKey}
+                            onOpenChange={(open) => {
+                              setPopoverOpenId((current) => {
+                                if (open) {
+                                  return uniqueKey;
+                                }
+                                return current === uniqueKey ? null : current;
+                              });
+                            }}
                           >
-                            <div className="grid gap-4">
-                              <div className="space-y-5">
-                                <div className="flex flex-row justify-between items-center">
-                                  <h3 className="leading-none font-medium text-lg">
-                                    <Clock className="size-4 mr-2 inline-block" />
-                                    Tillgänglig Tid
-                                  </h3>
-                                  <div className="flex flex-row">
-                                    <Button
-                                      onClick={(e) => {
-                                        e.stopPropagation();
-                                        setSelectedAvailableTime(item);
-                                        setOpenModal(true);
-                                      }}
-                                      variant="ghost"
-                                      size="icon-sm"
-                                    >
-                                      <PenLine className="text-primary/70" />
-                                    </Button>
-                                    <Button
-                                      variant="ghost"
-                                      size="icon-sm"
-                                      onClick={(e) => {
-                                        e.stopPropagation();
-                                        setDeleteTime(true);
-                                        setAvailableTimeId(item.id);
-                                      }}
-                                      className="hover:bg-destructive/10"
-                                    >
-                                      <Trash className="text-destructive" />
-                                    </Button>
-                                    <div className="mx-1 h-5 w-px bg-gray-400 translate-y-1" />
-                                    <Button
-                                      onClick={(e) => {
-                                        e.stopPropagation();
-                                        setPopoverOpenId(null);
-                                      }}
-                                      variant="ghost"
-                                      size="icon-sm"
-                                    >
-                                      <X />
-                                    </Button>
-                                  </div>
-                                </div>
-                                <div className="flex flex-col gap-2">
-                                  <p className="text-sm">
-                                    {new Date(
-                                      item.startTime,
-                                    ).toLocaleDateString("sv-SE", {
-                                      weekday: "long",
-                                    })}
-                                    {" den "}
-                                    {new Date(
-                                      item.startTime,
-                                    ).toLocaleDateString("sv-SE", {
-                                      day: "numeric",
-                                      month: "long",
-                                    })}
-                                    {" ⋅ "}
+                            <PopoverTrigger
+                              render={
+                                <button
+                                  type="button"
+                                  onClick={(e) => {
+                                    e.stopPropagation();
+                                  }}
+                                  className="flex w-full min-w-0 flex-row gap-1 items-center hover:cursor-pointer hover:text-white hover:bg-primary p-1"
+                                  key={uniqueKey}
+                                >
+                                  <Dot
+                                    key={uniqueKey}
+                                    className="size-1.5 rounded-full bg-blue-600"
+                                  />
+                                  <span className="min-w-0 truncate leading-normal">
+                                    Tillgänglig mellan{" "}
                                     {new Date(
                                       item.startTime,
                                     ).toLocaleTimeString("sv-SE", {
                                       hour: "2-digit",
                                       minute: "2-digit",
                                     })}{" "}
-                                    -{" "}
+                                    och{" "}
                                     {new Date(item.endTime).toLocaleTimeString(
                                       "sv-SE",
                                       { hour: "2-digit", minute: "2-digit" },
                                     )}
-                                  </p>
-                                  <div>
-                                    <p className="text-sm">Förskolor</p>
-                                    <p className="text-sm text-muted-foreground">
-                                      {item.kindergartens
-                                        .map(
-                                          (kindergarten) => kindergarten.name,
-                                        )
-                                        .join(", ")}
+                                  </span>
+                                </button>
+                              }
+                            />
+                            <PopoverContent
+                              className="w-80 p-4 shadow-2xl border rounded-lg bg-popover text-popover-foreground"
+                              side="right"
+                              align="center"
+                            >
+                              <div className="grid gap-4">
+                                <div className="space-y-5">
+                                  <div className="flex flex-row justify-between items-center">
+                                    <h3 className="leading-none font-medium text-lg">
+                                      <Clock className="size-4 mr-2 inline-block" />
+                                      Tillgänglig Tid
+                                    </h3>
+                                    <div className="flex flex-row">
+                                      <Button
+                                        onClick={(e) => {
+                                          e.stopPropagation();
+                                          setSelectedAvailableTime(item);
+                                          setOpenModal(true);
+                                        }}
+                                        variant="ghost"
+                                        size="icon-sm"
+                                      >
+                                        <PenLine className="text-primary/70" />
+                                      </Button>
+                                      <Button
+                                        variant="ghost"
+                                        size="icon-sm"
+                                        onClick={(e) => {
+                                          e.stopPropagation();
+                                          setDeleteTime(true);
+                                          setAvailableTimeId(item.id);
+                                        }}
+                                        className="hover:bg-destructive/10"
+                                      >
+                                        <Trash className="text-destructive" />
+                                      </Button>
+                                      <div className="mx-1 h-5 w-px bg-gray-400 translate-y-1" />
+                                      <Button
+                                        onClick={(e) => {
+                                          e.stopPropagation();
+                                          setPopoverOpenId((current) =>
+                                            current === uniqueKey
+                                              ? null
+                                              : current,
+                                          );
+                                        }}
+                                        variant="ghost"
+                                        size="icon-sm"
+                                      >
+                                        <X />
+                                      </Button>
+                                    </div>
+                                  </div>
+                                  <div className="flex flex-col gap-2">
+                                    <p className="text-sm">
+                                      {new Date(
+                                        item.startTime,
+                                      ).toLocaleDateString("sv-SE", {
+                                        weekday: "long",
+                                      })}
+                                      {" den "}
+                                      {new Date(
+                                        item.startTime,
+                                      ).toLocaleDateString("sv-SE", {
+                                        day: "numeric",
+                                        month: "long",
+                                      })}
+                                      {" ⋅ "}
+                                      {new Date(
+                                        item.startTime,
+                                      ).toLocaleTimeString("sv-SE", {
+                                        hour: "2-digit",
+                                        minute: "2-digit",
+                                      })}{" "}
+                                      -{" "}
+                                      {new Date(
+                                        item.endTime,
+                                      ).toLocaleTimeString("sv-SE", {
+                                        hour: "2-digit",
+                                        minute: "2-digit",
+                                      })}
                                     </p>
+                                    <div>
+                                      <p className="text-sm">Förskolor</p>
+                                      <p className="text-sm text-muted-foreground">
+                                        {item.kindergartens
+                                          .map(
+                                            (kindergarten) => kindergarten.name,
+                                          )
+                                          .join(", ")}
+                                      </p>
+                                    </div>
                                   </div>
                                 </div>
                               </div>
-                            </div>
-                          </PopoverContent>
-                        </Popover>
-                      ))}
+                            </PopoverContent>
+                          </Popover>
+                        );
+                      })}
                   </div>
-                </CalendarDayButton>
+                </div>
               );
             },
           }}
