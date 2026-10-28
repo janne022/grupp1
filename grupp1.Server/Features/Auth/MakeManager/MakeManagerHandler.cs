@@ -3,7 +3,7 @@ using Vicaria.Server.Domain;
 using Vicaria.Server.Domain.Models;
 using Vicaria.Server.Infrastructure;
 
-namespace grupp1.Server.Features.Auth.MakeManager;
+namespace Vicaria.Server.Features.Auth.MakeManager;
 
 public class MakeManagerHandler(
     UserManager<User> userManager,

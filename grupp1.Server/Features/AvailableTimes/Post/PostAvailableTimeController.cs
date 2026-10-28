@@ -4,7 +4,7 @@ using System.Security.Claims;
 using Vicaria.Server.Infrastructure;
 
 
-namespace grupp1.Server.Features.AvailableTimes.Post
+namespace Vicaria.Server.Features.AvailableTimes.Post
 {
     [Authorize(Roles = "Substitute")]
     [Route("api/availabletimes")]

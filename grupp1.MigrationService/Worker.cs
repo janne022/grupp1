@@ -3,7 +3,7 @@ using NetTopologySuite.Geometries;
 using Vicaria.Server.Domain.Models;
 using Vicaria.Server.Infrastructure;
 
-namespace grupp1.MigrationService
+namespace Vicaria.MigrationService
 {
     public class Worker : BackgroundService
     {

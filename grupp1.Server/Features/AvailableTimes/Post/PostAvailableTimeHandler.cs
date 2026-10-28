@@ -3,7 +3,7 @@ using Vicaria.Server.Infrastructure;
 using Microsoft.EntityFrameworkCore;
 
 
-namespace grupp1.Server.Features.AvailableTimes.Post
+namespace Vicaria.Server.Features.AvailableTimes.Post
 {
     public sealed class PostAvailableTimeHandler(VicariaDbContext context, ILogger<PostAvailableTimeHandler> _logger) : IHandler<PostAvailableTimeCommand, PostAvailableTimeResponse>
     {
