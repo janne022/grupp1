@@ -23,26 +23,34 @@ import {
 } from "./ui/dropdown-menu";
 
 import React, { type Dispatch } from "react";
-import type { KindergartenDto } from "@/api/models";
-import { AddAvailableTime } from "@/api/services/AvailableTimeService";
+import type { GetMyAvailableTimesDTO, KindergartenDto } from "@/api/models";
+import {
+  AddAvailableTime,
+  EditAvailableTime,
+} from "@/api/services/AvailableTimeService";
 
 export default function AddEditTimeModal({
   open: open,
   setOpen: setOpen,
   deleteItem: deleteTime,
-  kindergartens: kindergartens,
-  existingStartTime: existingStartTime,
-  existingEndTime: existingEndTime,
+  selectedDate: selectedDate,
+  updateAvailableTime: updateAvailableTime,
+  allKindergartens: kindergartens,
 }: {
   open: boolean;
   setOpen: Dispatch<React.SetStateAction<boolean>>;
   deleteItem: () => void;
-  kindergartens: KindergartenDto[];
   selectedDate?: Date | undefined;
-  existingStartTime?: string;
-  existingEndTime?: string;
+  updateAvailableTime: GetMyAvailableTimesDTO | null;
+  allKindergartens: KindergartenDto[];
 }) {
   // TODO: Extract Selectgroups to children
+
+  let isEdit = false;
+
+  if (updateAvailableTime) {
+    isEdit = true;
+  }
 
   const dateTime = z.object({ date: z.date(), time: z.string() });
 
@@ -68,8 +76,19 @@ export default function AddEditTimeModal({
   });
 
   const postService = AddAvailableTime();
+  const editService = EditAvailableTime();
 
   function onSubmit(data: z.infer<typeof formSchema>) {
+    if (isEdit) {
+      editService.mutate({
+        availableTimeId: "",
+        startTime: null,
+        endTime: null,
+        kindergartens: data.kindergartens,
+      });
+      return;
+    }
+
     postService.mutate({
       startTime: new Date(
         `${data.StartDateTime.date.toLocaleDateString("sv-SE")}T${data.StartDateTime.time}:00`,
@@ -79,12 +98,6 @@ export default function AddEditTimeModal({
       ).toISOString(),
       kindergartens: data.kindergartens,
     });
-  }
-
-  let isEdit = false;
-
-  if (existingEndTime && existingStartTime) {
-    isEdit = true;
   }
 
   return (

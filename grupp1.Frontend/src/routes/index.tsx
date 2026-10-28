@@ -40,6 +40,7 @@ import {
   AlertDialogTitle,
 } from "@/components/ui/alert-dialog";
 import { toast } from "@/components/ui/toast";
+import type { GetMyAvailableTimesDTO } from "@/api/models";
 
 export const Route = createFileRoute("/")({
   component: RouteComponent,
@@ -52,6 +53,8 @@ function RouteComponent() {
   const [deleteTime, setDeleteTime] = React.useState(false);
   const [popoverOpenId, setPopoverOpenId] = React.useState<string | null>(null);
   const [availableTimeId, setAvailableTimeId] = React.useState("");
+  const [selectedAvailableTime, setSelectedAvailableTime] =
+    React.useState<GetMyAvailableTimesDTO | null>(null);
 
   function openDialog(day?: Date) {
     setDate(day);
@@ -218,6 +221,7 @@ function RouteComponent() {
                                     <Button
                                       onClick={(e) => {
                                         e.stopPropagation();
+                                        setSelectedAvailableTime(item);
                                         setOpenModal(true);
                                       }}
                                       variant="ghost"
@@ -305,7 +309,8 @@ function RouteComponent() {
           deleteItem={function (): void {
             throw new Error("Function not implemented.");
           }}
-          kindergartens={KindergartenResponse.data?.kindergartens ?? []}
+          updateAvailableTime={selectedAvailableTime}
+          allKindergartens={KindergartenResponse.data?.kindergartens ?? []}
           selectedDate={date}
         />
 

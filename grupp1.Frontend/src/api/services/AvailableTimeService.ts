@@ -4,6 +4,7 @@ import type {
   GetMyAvailableTimesResponse,
   PostAvailableTimeRequest,
   PostAvailableTimeResponse,
+  UpdateAvailableTimeQuery,
   UpdateAvailableTimeResponse,
 } from "../models";
 
@@ -70,13 +71,24 @@ function DeleteAvailableTime() {
 function EditAvailableTime() {
   const query = useQueryClient();
   return useMutation({
-    mutationFn: () => {
+    mutationFn: (req: UpdateAvailableTimeQuery) => {
       return apiClient.patch<UpdateAvailableTimeResponse>(
         `/api/availabletimes`,
-        {},
+        req,
       );
+    },
+
+    onSuccess: async () => {
+      await query.invalidateQueries({
+        queryKey: ["availableTimesData"],
+      });
     },
   });
 }
 
-export { GetAllAvailableTimes, AddAvailableTime, DeleteAvailableTime };
+export {
+  GetAllAvailableTimes,
+  AddAvailableTime,
+  DeleteAvailableTime,
+  EditAvailableTime,
+};
