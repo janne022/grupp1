@@ -1,4 +1,3 @@
-import { EllipsisVertical, TrashIcon, XIcon } from "lucide-react";
 import { DatePickerTime } from "./date-picker";
 import { SelectGroups } from "./selectGroups";
 import { Button } from "./ui/button";
@@ -15,31 +14,24 @@ import {
 } from "./ui/dialog";
 
 import { Field, FieldGroup } from "./ui/field";
-import {
-  DropdownMenu,
-  DropdownMenuTrigger,
-  DropdownMenuContent,
-  DropdownMenuItem,
-} from "./ui/dropdown-menu";
 
-import React, { type Dispatch } from "react";
+import React, { useEffect, type Dispatch } from "react";
 import type { GetMyAvailableTimesDTO, KindergartenDto } from "@/api/models";
 import {
   AddAvailableTime,
   EditAvailableTime,
 } from "@/api/services/AvailableTimeService";
+import { XIcon } from "lucide-react";
 
 export default function AddEditTimeModal({
   open: open,
   setOpen: setOpen,
-  deleteItem: deleteTime,
   selectedDate: selectedDate,
   updateAvailableTime: updateAvailableTime,
   allKindergartens: kindergartens,
 }: {
   open: boolean;
   setOpen: Dispatch<React.SetStateAction<boolean>>;
-  deleteItem: () => void;
   selectedDate?: Date | undefined;
   updateAvailableTime: GetMyAvailableTimesDTO | null;
   allKindergartens: KindergartenDto[];
@@ -50,6 +42,15 @@ export default function AddEditTimeModal({
 
   if (updateAvailableTime) {
     isEdit = true;
+  }
+
+  function splitDateTime(dateTime: string | Date) {
+    const date = new Date(dateTime);
+
+    return {
+      date: new Date(date.getFullYear(), date.getMonth(), date.getDate()),
+      time: `${String(date.getHours()).padStart(2, "0")}:${String(date.getMinutes()).padStart(2, "0")}`,
+    };
   }
 
   const dateTime = z.object({ date: z.date(), time: z.string() });
@@ -63,18 +64,39 @@ export default function AddEditTimeModal({
   const form = useForm<z.infer<typeof formSchema>>({
     resolver: zodResolver(formSchema),
     defaultValues: {
-      StartDateTime: {
-        date: new Date(),
-        time: "08:00",
-      },
-      EndDateTime: {
-        date: new Date(),
-        time: "16:00",
-      },
-      kindergartens: [],
+      StartDateTime: splitDateTime(
+        updateAvailableTime?.startTime ?? selectedDate ?? new Date(),
+      ),
+      EndDateTime: splitDateTime(
+        updateAvailableTime?.endTime ?? selectedDate ?? new Date(),
+      ),
+      kindergartens: updateAvailableTime?.kindergartens.map((k) => k.id) ?? [],
     },
   });
 
+  const { reset } = form;
+
+  useEffect(() => {
+    if (!open) return;
+
+    reset({
+      StartDateTime: updateAvailableTime
+        ? splitDateTime(updateAvailableTime.startTime)
+        : {
+            date: selectedDate ?? new Date(),
+            time: "08:00",
+          },
+
+      EndDateTime: updateAvailableTime
+        ? splitDateTime(updateAvailableTime.endTime)
+        : {
+            date: selectedDate ?? new Date(),
+            time: "16:00",
+          },
+
+      kindergartens: updateAvailableTime?.kindergartens.map((k) => k.id) ?? [],
+    });
+  }, [open, updateAvailableTime, selectedDate, reset]);
   const postService = AddAvailableTime();
   const editService = EditAvailableTime();
 
@@ -104,37 +126,17 @@ export default function AddEditTimeModal({
     <Dialog open={open} onOpenChange={(e) => setOpen(e.valueOf())}>
       <form id="add-availabletime-form" onSubmit={form.handleSubmit(onSubmit)}>
         <DialogContent showCloseButton={false} className="sm:max-w-sm">
-          <DialogHeader className="flex flex-row justify-between items-center">
+          <DialogHeader className="flex flex-row items-center gap-0">
+            <DialogTitle className="text-center mx-auto">
+              {isEdit ? "Ändra din tid" : "Lägg till en tillgänglig tid!"}
+            </DialogTitle>
             <DialogClose
               render={
-                <Button variant="ghost">
+                <Button variant="ghost" className="m-0 p-0">
                   <XIcon />
                 </Button>
               }
             />
-            <DialogTitle>
-              {isEdit ? "Ändra din tid" : "Lägg till en tillgänglig tid!"}
-            </DialogTitle>
-
-            {isEdit ? (
-              <DropdownMenu>
-                <DropdownMenuTrigger
-                  render={
-                    <Button variant="ghost">
-                      <EllipsisVertical />
-                    </Button>
-                  }
-                />
-                <DropdownMenuContent>
-                  <DropdownMenuItem onClick={deleteTime} variant="destructive">
-                    <TrashIcon />
-                    Delete
-                  </DropdownMenuItem>
-                </DropdownMenuContent>
-              </DropdownMenu>
-            ) : (
-              <div></div>
-            )}
           </DialogHeader>
           <FieldGroup>
             <Controller
@@ -159,7 +161,13 @@ export default function AddEditTimeModal({
               control={form.control}
               render={({ field, fieldState }) => (
                 <Field data-invalid={fieldState.invalid}>
-                  <DatePickerTime {...field} labelName="Slutdag" />
+                  <DatePickerTime
+                    {...field}
+                    labelName="Slutdag"
+                    onChange={(x) => {
+                      field.onChange(x);
+                    }}
+                  />
                 </Field>
               )}
             />

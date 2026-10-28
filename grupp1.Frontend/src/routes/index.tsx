@@ -103,7 +103,13 @@ function RouteComponent() {
           </h1>
         </div>
 
-        <Button variant="default" onClick={() => openDialog()}>
+        <Button
+          variant="default"
+          onClick={() => {
+            setSelectedAvailableTime(null);
+            openDialog();
+          }}
+        >
           <Plus />
           Ny Tid
         </Button>
@@ -119,7 +125,10 @@ function RouteComponent() {
           month={month}
           onMonthChange={setMonth}
           selected={date}
-          onDayClick={openDialog}
+          onDayClick={(date) => {
+            setSelectedAvailableTime(null);
+            openDialog(date);
+          }}
           weekStartsOn={1}
           fixedWeeks
           hideNavigation
@@ -306,9 +315,6 @@ function RouteComponent() {
         <AddEditTimeModal
           open={openModal}
           setOpen={setOpenModal}
-          deleteItem={function (): void {
-            throw new Error("Function not implemented.");
-          }}
           updateAvailableTime={selectedAvailableTime}
           allKindergartens={KindergartenResponse.data?.kindergartens ?? []}
           selectedDate={date}
