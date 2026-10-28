@@ -3,7 +3,7 @@ using Microsoft.AspNetCore.Mvc;
 using Vicaria.Server.Domain.Models;
 using Vicaria.Server.Infrastructure;
 
-namespace grupp1.Server.Features.Auth.Register;
+namespace Vicaria.Server.Features.Auth.Register;
 
 [Route("api/auth")]
 [ApiController]

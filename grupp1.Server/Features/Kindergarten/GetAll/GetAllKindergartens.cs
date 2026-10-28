@@ -7,7 +7,7 @@ using NetTopologySuite.Geometries;
 using Vicaria.Server.Infrastructure;
 using Microsoft.EntityFrameworkCore;
 
-namespace grupp1.Server.Features.Kindergarten.GetAll
+namespace Vicaria.Server.Features.Kindergarten.GetAll
 {
     public sealed class GetAllKindergartensHandler(VicariaDbContext dbContext) : IHandler<GetAllKindergartensRequest, GetAllKindergartensResponse>
     {

@@ -2,7 +2,7 @@
 
 #nullable disable
 
-namespace grupp1.Server.Migrations
+namespace Vicaria.Server.Migrations
 {
     /// <inheritdoc />
     public partial class PhoneNumberRequired : Migration
