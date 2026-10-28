@@ -46,12 +46,12 @@ export function DatePickerTime({
                 id="date-picker-optional"
                 className="w-32 justify-between font-normal"
               >
-                { value?.date ? format(value.date, "PPP") : "Välj datum"}
+                {value?.date ? format(value.date, "PPP") : "Välj datum"}
                 <ChevronDownIcon data-icon="inline-end" />
               </Button>
             }
           />
-          <PopoverContent className="w-auto overflow-hidden p-0" align="start">
+          <PopoverContent className=" p-0" align="start">
             <Calendar
               mode="single"
               selected={value.date}
@@ -64,7 +64,7 @@ export function DatePickerTime({
                   return;
                 }
 
-                onChange({...value, date});
+                onChange({ ...value, date });
                 setOpen(false);
               }}
             />
@@ -79,7 +79,9 @@ export function DatePickerTime({
           type="time"
           id="time-picker-optional"
           step="60"
-          onChange={(time) => {onChange({...value, time: time.target.value})}}
+          onChange={(time) => {
+            onChange({ ...value, time: time.target.value });
+          }}
           value={value.time}
           className="appearance-none bg-background [&::-webkit-calendar-picker-indicator]:hidden [&::-webkit-calendar-picker-indicator]:appearance-none"
         />

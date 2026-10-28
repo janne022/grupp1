@@ -33,7 +33,7 @@ function Calendar({
     <DayPicker
       showOutsideDays={showOutsideDays}
       className={cn(
-        "group/calendar bg-background p-2 [--cell-radius:var(--radius-md)] [--cell-size:--spacing(7)] in-data-[slot=card-content]:bg-transparent in-data-[slot=popover-content]:bg-transparent",
+        "group/calendar min-w-32 bg-background p-2 [--cell-radius:var(--radius-md)] [--cell-size:--spacing(7)] in-data-[slot=card-content]:bg-transparent in-data-[slot=popover-content]:bg-transparent",
         String.raw`rtl:**:[.rdp-button\_next>svg]:rotate-180`,
         String.raw`rtl:**:[.rdp-button\_previous>svg]:rotate-180`,
         className,
@@ -93,13 +93,19 @@ function Calendar({
           defaultClassNames.caption_label,
         ),
         month_grid: cn("w-full border-collapse", defaultClassNames.month_grid),
-        weekdays: cn("grid w-full grid-cols-5", defaultClassNames.weekdays),
+        weekdays: cn(
+          "grid w-full grid-cols-[repeat(5,minmax(56px,1fr))]",
+          defaultClassNames.weekdays,
+        ),
         weekday: cn(
-          "text-center text-[0.8rem] font-medium text-muted-foreground",
+          "min-w-0 text-center text-sm font-medium text-muted-foreground",
           "nth-[n+6]:hidden",
           defaultClassNames.weekday,
         ),
-        week: cn("mt-2 grid w-full grid-cols-5", defaultClassNames.week),
+        week: cn(
+          "mt-2 grid w-full grid-cols-[repeat(5,minmax(56px,1fr))]",
+          defaultClassNames.week,
+        ),
         week_number_header: cn(
           "w-(--cell-size) select-none",
           defaultClassNames.week_number_header,
@@ -109,7 +115,7 @@ function Calendar({
           defaultClassNames.week_number,
         ),
         day: cn(
-          "group/day relative h-20 w-full rounded-md p-0 text-center",
+          "group/day relative h-16 min-w-0 rounded-md p-0 text-center",
           "nth-[n+6]:hidden",
           defaultClassNames.day,
         ),
