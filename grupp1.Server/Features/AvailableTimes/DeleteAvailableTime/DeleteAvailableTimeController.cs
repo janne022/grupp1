@@ -1,9 +1,10 @@
 using Vicaria.Server.Infrastructure;
 using Microsoft.AspNetCore.Mvc;
+using Microsoft.AspNetCore.Authorization;
 
 namespace Vicaria.Server.Features.AvailableTimes.Delete;
-
 [Route("api/availabletimes")]
+[Authorize]
 [ApiController]
 public class DeleteAvailableTimeController(
     IHandler<DeleteAvailableTimeQuery, bool> handler) : ControllerBase
