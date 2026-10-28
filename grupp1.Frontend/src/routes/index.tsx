@@ -167,43 +167,45 @@ function RouteComponent() {
 
               return (
                 <ContextMenu>
-                  <ContextMenuTrigger className="flex items-center gap-2">
-                    <td
-                      {...props}
-                      className={cn(
-                        className,
-                        "relative cursor-pointer hover:bg-primary/5",
-                      )}
-                      onClick={(e) => {
-                        if (modifiers.disabled || modifiers.hidden) return;
+                  <ContextMenuTrigger
+                    render={
+                      <td
+                        {...props}
+                        className={cn(
+                          className,
+                          "relative cursor-pointer hover:bg-primary/5",
+                        )}
+                        onClick={(e) => {
+                          if (modifiers.disabled || modifiers.hidden) return;
 
-                        if (
-                          (e.target as HTMLElement).closest(
-                            "button, a, input, select, textarea, [role='button']",
-                          )
-                        ) {
-                          return;
-                        }
+                          if (
+                            (e.target as HTMLElement).closest(
+                              "button, a, input, select, textarea, [role='button']",
+                            )
+                          ) {
+                            return;
+                          }
 
-                        setSelectedAvailableTime(null);
-                        openDialog(day.date);
-                      }}
-                    >
-                      {children}
+                          setSelectedAvailableTime(null);
+                          openDialog(day.date);
+                        }}
+                      >
+                        {children}
 
-                      {isSelected && (
-                        <div
-                          aria-hidden="true"
-                          className="pointer-events-none absolute inset-0 z-20 border-2 border-primary"
-                        />
-                      )}
-                    </td>
-                  </ContextMenuTrigger>
+                        {isSelected && (
+                          <div
+                            aria-hidden="true"
+                            className="pointer-events-none absolute inset-0 z-20 border-2 border-primary"
+                          />
+                        )}
+                      </td>
+                    }
+                  />
+
                   <ContextMenuContent>
                     <ContextMenuGroup>
                       <ContextMenuItem
-                        onClick={(e) => {
-                          e.stopPropagation();
+                        onClick={() => {
                           setSelectedAvailableTime(null);
                           openDialog(day.date);
                         }}
