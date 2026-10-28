@@ -40,7 +40,6 @@ namespace Vicaria.Server.Features.DecidedTimes.GetAll
             return response.Report switch
             {
                 GetAllDecidedTimesStatus.Ok => Ok(response),
-                GetAllDecidedTimesStatus.NoKindergartensSpecified => BadRequest(response),
                 GetAllDecidedTimesStatus.NotManagerOfKindergarten => Forbid(),
                 _ => Problem(),
             };

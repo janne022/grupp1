@@ -16,18 +16,10 @@ public class GetAllDecidedTimesHandler(
     {
         #region Pre-run checks
 
+        bool noIdsSupplied = false;
         if (query.KindergartenIds is null || query.KindergartenIds.Length <= 0)
         {
-            _logger.LogWarning(
-                "KindergartenIds was null or empty on UserId {UserId} request "
-                    + "in GetAllDecidedTimesHandler",
-                query.ManagerId
-            );
-
-            return new GetAllDecidedTimesResponse(
-                [],
-                GetAllDecidedTimesStatus.NoKindergartensSpecified
-            );
+            noIdsSupplied = true;
         }
 
         bool hasFromTime = false;
@@ -50,10 +42,20 @@ public class GetAllDecidedTimesHandler(
             .Select(uk => uk.KindergartenId)
             .ToListAsync(cancellationToken);
 
-        bool managesThemAll = true;
-        foreach (var IdFromQuery in query.KindergartenIds)
+        Guid[] kindergartensToShow;
+        if (noIdsSupplied)
         {
-            bool managesCurrentKindergarten = managedKindergartenIds.Contains(IdFromQuery);
+            kindergartensToShow = managedKindergartenIds.ToArray();
+        }
+        else
+        {
+            kindergartensToShow = query.KindergartenIds!;
+        }
+
+        bool managesThemAll = true;
+        foreach (var entry in kindergartensToShow)
+        {
+            bool managesCurrentKindergarten = managedKindergartenIds.Contains(entry);
 
             if (!managesCurrentKindergarten)
             {
@@ -77,10 +79,10 @@ public class GetAllDecidedTimesHandler(
         }
 
         #endregion
-        #region Get data
+        #region Filter data
 
         var relevantTimes = DbContext.DecidedTimes.Where(dt =>
-            query.KindergartenIds.Contains(dt.KindergartenId)
+            kindergartensToShow.Contains(dt.KindergartenId)
         );
 
         if (hasFromTime)
