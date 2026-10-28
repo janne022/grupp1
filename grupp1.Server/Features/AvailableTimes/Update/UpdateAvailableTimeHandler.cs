@@ -15,6 +15,28 @@ public class UpdateAvailableTimeHandler(
         CancellationToken ct = default
     )
     {
+        var availableTime = await DbContext.AvailableTimes.FirstOrDefaultAsync(
+            at => at.Id == command.AvailableTimeId && at.UserId == command.UserId,
+            ct
+        );
+
+        if (availableTime is null)
+        {
+            _logger.LogWarning(
+                "AvailableTime {TimeId} not found or not owned by user {UserId}",
+                command.AvailableTimeId,
+                command.UserId
+            );
+
+            return new UpdateAvailableTimeResponse(
+                null, null, null, null,
+                UpdateAvailableTimeStatus.WasNull
+            );
+        }
+
+        var startTime = command.StartTime ?? availableTime.StartTime;
+        var endTime = command.EndTime ?? availableTime.EndTime;
+
         if (command.StartTime >= command.EndTime)
         {
             _logger.LogWarning(
@@ -33,71 +55,41 @@ public class UpdateAvailableTimeHandler(
             );
         }
 
-        var availableTime = await DbContext.AvailableTimes.Include(at => at.Kindergartens).ThenInclude(kat => kat.Kindergarten).FirstOrDefaultAsync(
-            at => at.Id == command.AvailableTimeId && at.UserId == command.UserId,
-            ct
-        );
+        availableTime.StartTime = startTime;
+        availableTime.EndTime = endTime;
 
-        HashSet<Guid> kindergartensInDto = command.Kindergartens ?? [];
-
-        var kindergartens = await DbContext.Kindergartens.Where(kindergarten => kindergartensInDto.Contains(kindergarten.Id))
-                .Select(k => new KindergartenDto(
-                    k.Id,
-                    k.Name,
-                    k.Location != null ? k.Location.Y : null,
-                    k.Location != null ? k.Location.X : null
-                )).ToArrayAsync();
-
-        if (availableTime is null)
-        {
-            _logger.LogWarning("AvailableTime {TimeId} was returned null.", command.AvailableTimeId);
-            return new UpdateAvailableTimeResponse(
-                null,
-                command.StartTime,
-                command.EndTime,
-                kindergartens,
-                UpdateAvailableTimeStatus.WasNull
-            );
-        }
-
-        if (availableTime.UserId != command.UserId)
-        {
-            _logger.LogWarning(
-                "User {id} not recognised as owner of AvailableTime {availTimeId} in UpdateAvailableHandler",
-                command.UserId,
-                availableTime.Id
-            );
-            return new UpdateAvailableTimeResponse(
-                null,
-                null,
-                null,
-                null,
-                UpdateAvailableTimeStatus.NotOwner
-            );
-        }
-
-        // I will leave some helping comments because this is quite hard to comprehend at first glance:
-        // --------------------------------------------------------------------------------------------
-
-        // If Kindergartens is not null, create a local variable called selectedIds, an put the data from Kindergartens inside of it.
         if (command.Kindergartens is { } selectedIds)
         {
 
-            // Get a collection of the current kindergartens coming in from the client (a.k.a. what should be in the entity after updating).
-            HashSet<Kindergarten>? selectedKindergartens = await DbContext.Kindergartens
-                .Where(k => selectedIds.Contains(k.Id))
-                .ToHashSetAsync(ct);
+            // Get the Kindergarten entities for the selected IDs from the database.
+            var existingLinks = await DbContext.KindergartenAvailableTimes
+                .Where(kat => kat.AvailableTimeId == availableTime.Id)
+                .ToListAsync(ct);
 
-            // Get a collection of the KindergartenAvailableTimes no longer needed (stale data).
-            HashSet<KindergartenAvailableTime> staleKats = availableTime.Kindergartens
-                .Where(kat => !selectedIds.Contains(kat.KindergartenId))
-                .ToHashSet();
+            DbContext.KindergartenAvailableTimes.RemoveRange(
+                existingLinks.Where(kat => !selectedIds.Contains(kat.KindergartenId))
+                );
 
-            // Remove the stale kats from the entity, both in the local version and our DB.
-            foreach (KindergartenAvailableTime kat in staleKats)
+            var existingKindergartenIds = existingLinks.Select(kat => kat.KindergartenId).ToHashSet();
+
+            var selectedKindergartens = await DbContext.Kindergartens
+            .Where(k => selectedIds.Contains(k.Id))
+            .ToListAsync(ct);
+
+            // Add missing relationships
+            foreach (var kindergarten in selectedKindergartens)
             {
-                availableTime.Kindergartens.Remove(kat);
-                DbContext.KindergartenAvailableTimes.Remove(kat);
+                if (existingKindergartenIds.Contains(kindergarten.Id))
+                {
+                    continue;
+                }
+
+                DbContext.KindergartenAvailableTimes.Add(new KindergartenAvailableTime
+                {
+                    AvailableTimeId = availableTime.Id,
+                    KindergartenId = kindergarten.Id,
+                    Kindergarten = kindergarten
+                });
             }
 
             // Get a collection of the Kats still remaining in the AvailableTime
@@ -125,16 +117,22 @@ public class UpdateAvailableTimeHandler(
         }
 
         // Finally save the changes made.
-        await DbContext.SaveChangesAsync();
+        await DbContext.SaveChangesAsync(ct);
 
-        _logger.LogInformation("before mapping out: {kindergartens}", availableTime);
-
-        KindergartenDto[] kindergartenDtos = availableTime.Kindergartens.Select(k => new KindergartenDto(
-            k.KindergartenId,
-            k.Kindergarten.Name,
-            k.Kindergarten.Location?.Y,
-            k.Kindergarten.Location?.X
-        )).ToArray();
+        var kindergartenDtos = await DbContext.KindergartenAvailableTimes
+           .AsNoTracking()
+           .Where(kat => kat.AvailableTimeId == availableTime.Id)
+           .Select(kat => new KindergartenDto(
+               kat.KindergartenId,
+               kat.Kindergarten.Name,
+               kat.Kindergarten.Location != null
+                   ? kat.Kindergarten.Location.Y
+                   : null,
+               kat.Kindergarten.Location != null
+                   ? kat.Kindergarten.Location.X
+                   : null
+           ))
+           .ToArrayAsync(ct);
 
         return new UpdateAvailableTimeResponse(
             availableTime.Id,

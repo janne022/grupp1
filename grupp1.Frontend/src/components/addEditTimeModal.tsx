@@ -164,6 +164,7 @@ export default function AddEditTimeModal({
         endTime: hasEndTimeChanged ? toIsoDateTime(data.EndDateTime) : null,
         kindergartens: hasKindergartensChanged ? data.kindergartens : null,
       });
+      setOpen(false);
       return;
     }
 
@@ -172,6 +173,8 @@ export default function AddEditTimeModal({
       endTime: toIsoDateTime(data.EndDateTime),
       kindergartens: data.kindergartens,
     });
+
+    setOpen(false);
   }
 
   return (
