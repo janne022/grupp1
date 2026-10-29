@@ -133,6 +133,7 @@ function RouteComponent() {
           month={month}
           onMonthChange={setMonth}
           selected={date}
+          onSelect={setDate}
           onDayClick={(date) => {
             setSelectedAvailableTime(null);
             openDialog(date);
@@ -215,6 +216,8 @@ function RouteComponent() {
               );
             },
             DayButton: ({ children, modifiers, day, ...props }) => {
+              const isSelected = date ? isSameDay(date, day.date) : false;
+
               return (
                 <div className="flex h-full min-h-0 min-w-0 flex-col gap-1 p-2">
                   {AvailableTimeResponse.isPending &&
@@ -225,6 +228,7 @@ function RouteComponent() {
                       day={day}
                       modifiers={modifiers}
                       {...props}
+                      data-selected-single={isSelected}
                       className="h-8! min-h-8! w-8! shrink-0 self-end rounded-md p-0 data-[selected-single=true]:bg-primary data-[selected-single=true]:text-primary-foreground"
                     >
                       {children}
