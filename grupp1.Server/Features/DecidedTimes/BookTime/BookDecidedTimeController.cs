@@ -1,6 +1,6 @@
 
 
-using grupp1.Server.Features.DecidedTimes.BookTime.DTOs;
+using Vicaria.Server.Features.DecidedTimes.BookTime.DTOs;
 using Microsoft.AspNetCore.Authorization;
 using Microsoft.AspNetCore.Mvc;
 using System.Security.Claims;
