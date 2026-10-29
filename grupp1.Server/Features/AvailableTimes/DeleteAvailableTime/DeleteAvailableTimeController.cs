@@ -5,7 +5,7 @@ using Microsoft.AspNetCore.Authorization;
 namespace Vicaria.Server.Features.AvailableTimes.Delete;
 
 [Route("api/availabletimes")]
-[Authorize(Roles = "Substitute")]
+[Authorize(Roles = VicariaUserRoles.Substitute)]
 [ApiController]
 public class DeleteAvailableTimeController(
     IHandler<DeleteAvailableTimeQuery, bool> handler,
