@@ -74,7 +74,7 @@ export default function AddEditTimeModal({
     .object({
       StartDateTime: dateTime,
       EndDateTime: dateTime,
-      kindergartens: z.array(z.string()),
+      kindergartens: z.array(z.string()).min(1, "Välj minst en förskola"),
     })
     .refine(
       (data) =>
