@@ -9,6 +9,7 @@ namespace Vicaria.Server.Features.DecidedTimes.UnbookDecidedTime
 {
     [Authorize]
     [Route("api/decidedtime")]
+    [Authorize]
     [ApiController]
     public class UnbookDecidedTimeController (IHandler<UnbookDecidedTimeCommand, UnbookDecidedTimeStatus> handler) : ControllerBase
     {

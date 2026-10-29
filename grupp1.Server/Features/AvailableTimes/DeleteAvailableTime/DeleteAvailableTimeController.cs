@@ -8,6 +8,7 @@ namespace Vicaria.Server.Features.AvailableTimes.Delete;
 
 [Authorize(Roles = VicariaUserRoles.Substitute)]
 [Route("api/availabletimes")]
+[Authorize]
 [ApiController]
 public class DeleteAvailableTimeController(
     IHandler<DeleteAvailableTimeCommand, DeleteAvailableTimeStatus> handler) : ControllerBase

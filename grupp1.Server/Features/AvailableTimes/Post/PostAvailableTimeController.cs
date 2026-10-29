@@ -1,13 +1,14 @@
 ﻿using Microsoft.AspNetCore.Authorization;
 using Microsoft.AspNetCore.Mvc;
 using System.Security.Claims;
+using Vicaria.Server.Domain;
 using Vicaria.Server.Infrastructure;
 
 
 namespace Vicaria.Server.Features.AvailableTimes.Post
 {
-    [Authorize(Roles = "Substitute")]
     [Route("api/availabletimes")]
+    [Authorize(Roles = VicariaUserRoles.Substitute)]
     [ApiController]
     public class PostAvailableTimeController(IHandler<PostAvailableTimeCommand, PostAvailableTimeResponse> handler) : ControllerBase
     {
