@@ -9,6 +9,7 @@ namespace Vicaria.Server.Features.DecidedTimes.GetAll
 {
     [Authorize(Roles = VicariaUserRoles.Manager)]
     [Route("api/decidedtime")]
+    [Authorize]
     [ApiController]
     public class GetAllDecidedTimesController(
         IHandler<GetAllDecidedTimesQuery, GetAllDecidedTimesResponse> handler
