@@ -5,22 +5,23 @@ namespace Vicaria.Server.Features.AvailableTimes.Delete;
 public class DeleteAvailableTimeHandler(
     VicariaDbContext dbContext,
     ILogger<DeleteAvailableTimeHandler> _logger
-) : IHandler<DeleteAvailableTimeQuery, bool>
+) : IHandler<DeleteAvailableTimeCommand, DeleteAvailableTimeStatus>
 {
-    public async Task<bool> HandleAsync(
-        DeleteAvailableTimeQuery query,
+    public async Task<DeleteAvailableTimeStatus> HandleAsync(
+        DeleteAvailableTimeCommand command,
         CancellationToken cancellationToken = default)
     {
-        var deletedTime = await dbContext.AvailableTimes
-        .Where(at => at.Id == query.AvailableTimeId)
-        .ExecuteDeleteAsync(cancellationToken);
 
-        if (deletedTime == 0) //nothing to delete / not found
+        var deletedTime = await dbContext.AvailableTimes.Where(at => at.Id == command.AvailableTimeId && at.UserId == command.SubstituteId).ExecuteDeleteAsync(cancellationToken);
+
+        if(deletedTime == 0) //nothing to delete / not found
         {
-            _logger.LogInformation($"AvailableTime {query.AvailableTimeId} not found");
-            return false;
+            _logger.LogWarning("The availableTime {AvailableTimeId} could not be found", command.AvailableTimeId);
+            return DeleteAvailableTimeStatus.NotFound;
         }
 
-        return true;
+        return DeleteAvailableTimeStatus.Success;
+
+        
     }
 }

@@ -1,6 +1,6 @@
 ﻿
 
-namespace grupp1.Server.Features.AvailableTimes.Post
+namespace Vicaria.Server.Features.AvailableTimes.Post
 {
     public record PostAvailableTimeRequest
     {
