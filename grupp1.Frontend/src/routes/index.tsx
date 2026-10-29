@@ -296,7 +296,7 @@ function RouteComponent() {
                                     <ContextMenuContent>
                                       <ContextMenuGroup>
                                         <ContextMenuLabel>
-                                          Tillgänlig tid
+                                          Tillgänglig tid
                                         </ContextMenuLabel>
                                         <ContextMenuItem
                                           onClick={(e) => {
