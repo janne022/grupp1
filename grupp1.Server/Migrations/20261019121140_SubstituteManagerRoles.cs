@@ -5,7 +5,7 @@ using Microsoft.EntityFrameworkCore.Migrations;
 
 #pragma warning disable CA1814 // Prefer jagged arrays over multidimensional
 
-namespace grupp1.Server.Migrations
+namespace Vicaria.Server.Migrations
 {
     /// <inheritdoc />
     public partial class SubstituteManagerRoles : Migration
