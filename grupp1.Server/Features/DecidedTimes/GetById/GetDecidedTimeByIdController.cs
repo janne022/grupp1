@@ -1,4 +1,5 @@
 
+using Microsoft.AspNetCore.Authorization;
 using Microsoft.AspNetCore.Mvc;
 using Vicaria.Server.Features.DecidedTimes.GetById.DTOs;
 using Vicaria.Server.Infrastructure;
@@ -6,6 +7,7 @@ using Vicaria.Server.Infrastructure;
 namespace Vicaria.Server.Features.DecidedTimes.GetById;
 
 [Route("api/decidedtime")]
+[Authorize]
 [ApiController]
 public class GetDecidedTimeByIdController(
     IHandler<GetDecidedTimeByIdQuery, GetDecidedTimeByIdResponse> handler
