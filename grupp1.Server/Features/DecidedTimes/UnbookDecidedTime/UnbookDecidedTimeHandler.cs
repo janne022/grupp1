@@ -11,11 +11,11 @@ namespace Vicaria.Server.Features.DecidedTimes.UnbookDecidedTime
         {
 
             var decidedTime = await context.DecidedTimes.FirstOrDefaultAsync(dt => dt.Id == command.DecidedTimeId && 
-                                                                             dt.Kindergarten.Managers.Any(m => m.UserId == command.ManagerId),  cancellationToken);
+                                                                             (dt.Kindergarten.Managers.Any(m => m.UserId == command.UserId) || dt.UserId == command.UserId),  cancellationToken);
 
             if (decidedTime is null)
             {
-                logger.LogWarning("DecidedTime with Id {DecidedTimeId} could be found for Manager {ManagerId}", command.DecidedTimeId, command.ManagerId);
+                logger.LogWarning("DecidedTime with Id {DecidedTimeId} could be found for User {UserId}", command.DecidedTimeId, command.UserId);
                 return UnbookDecidedTimeStatus.NotFound;
             }
 

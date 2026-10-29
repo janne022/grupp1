@@ -4,26 +4,25 @@ using Microsoft.AspNetCore.Mvc;
 using Vicaria.Server.Infrastructure;
 using System.Security.Claims;
 using Microsoft.AspNetCore.Authorization;
-using Vicaria.Server.Domain;
 
 namespace Vicaria.Server.Features.DecidedTimes.UnbookDecidedTime
 {
-    [Authorize(Roles = VicariaUserRoles.Manager)]
+    [Authorize]
     [Route("api/decidedtime")]
     [ApiController]
     public class UnbookDecidedTimeController (IHandler<UnbookDecidedTimeCommand, UnbookDecidedTimeStatus> handler) : ControllerBase
     {
         [HttpDelete("delete/{id:guid}")]
-        public async Task<IActionResult> UnbookDecidedTime(Guid id, CancellationToken cancellationToken)
+        public async Task<IActionResult> UnbookDecidedTime([FromRoute]Guid id, CancellationToken cancellationToken)
         {
-            var userId = User.FindFirstValue(ClaimTypes.NameIdentifier);
+            var userClaim = User.FindFirstValue(ClaimTypes.NameIdentifier);
 
-            if(!Guid.TryParse(userId, out var managerId))
+            if(!Guid.TryParse(userClaim, out var userId))
             {
                 return Unauthorized();
             }
 
-            var command = new UnbookDecidedTimeCommand(id, managerId);
+            var command = new UnbookDecidedTimeCommand(id, userId);
 
             var response = await handler.HandleAsync(command, cancellationToken);
 
