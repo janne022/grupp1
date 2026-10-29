@@ -1,4 +1,5 @@
 using Vicaria.Server.Infrastructure;
+using Vicaria.Server.Domain;
 using Microsoft.AspNetCore.Mvc;
 using Microsoft.AspNetCore.Authorization;
 
