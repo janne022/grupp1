@@ -6,10 +6,11 @@ using Microsoft.AspNetCore.Mvc;
 using System.Security.Claims;
 using Vicaria.Server.Features.DecidedTimes.Book.DTOs;
 using Vicaria.Server.Infrastructure;
+using Vicaria.Server.Domain;
 
 namespace Vicaria.Server.Features.DecidedTimes.Book;
 
-[Authorize(Roles = "Manager")]
+[Authorize(Roles = VicariaUserRoles.Manager)]
 [Route("api/decidedtime")]
 [ApiController]
 public class BookDecidedTimeController(
