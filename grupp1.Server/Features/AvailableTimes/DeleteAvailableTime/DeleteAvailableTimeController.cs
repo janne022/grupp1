@@ -26,8 +26,6 @@ public class DeleteAvailableTimeController(
 
         DeleteAvailableTimeQuery query = new(guidFormattedId);
 
-        _logger.LogInformation($"Fucking hack log: {query.AvailableTimeId}");
-
         bool FoundAndDeleted = await handler.HandleAsync(query, cancellationToken);
 
         if (!FoundAndDeleted)
