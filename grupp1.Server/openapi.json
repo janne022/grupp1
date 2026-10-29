@@ -390,179 +390,6 @@
         }
       }
     },
-    "/api/availabletimes": {
-      "post": {
-        "tags": [
-          "PostAvailableTime"
-        ],
-        "requestBody": {
-          "content": {
-            "application/json": {
-              "schema": {
-                "$ref": "#/components/schemas/PostAvailableTimeRequest"
-              }
-            },
-            "text/json": {
-              "schema": {
-                "$ref": "#/components/schemas/PostAvailableTimeRequest"
-              }
-            },
-            "application/*+json": {
-              "schema": {
-                "$ref": "#/components/schemas/PostAvailableTimeRequest"
-              }
-            }
-          },
-          "required": true
-        },
-        "responses": {
-          "200": {
-            "description": "OK",
-            "content": {
-              "text/plain": {
-                "schema": {
-                  "$ref": "#/components/schemas/PostAvailableTimeResponse"
-                }
-              },
-              "application/json": {
-                "schema": {
-                  "$ref": "#/components/schemas/PostAvailableTimeResponse"
-                }
-              },
-              "text/json": {
-                "schema": {
-                  "$ref": "#/components/schemas/PostAvailableTimeResponse"
-                }
-              }
-            }
-          }
-        }
-      },
-      "put": {
-        "tags": [
-          "UpdateAvailableTime"
-        ],
-        "requestBody": {
-          "content": {
-            "application/json": {
-              "schema": {
-                "$ref": "#/components/schemas/UpdateAvailableTimeQuery"
-              }
-            },
-            "text/json": {
-              "schema": {
-                "$ref": "#/components/schemas/UpdateAvailableTimeQuery"
-              }
-            },
-            "application/*+json": {
-              "schema": {
-                "$ref": "#/components/schemas/UpdateAvailableTimeQuery"
-              }
-            }
-          },
-          "required": true
-        },
-        "responses": {
-          "200": {
-            "description": "OK",
-            "content": {
-              "text/plain": {
-                "schema": {
-                  "$ref": "#/components/schemas/UpdateAvailableTimeResponse"
-                }
-              },
-              "application/json": {
-                "schema": {
-                  "$ref": "#/components/schemas/UpdateAvailableTimeResponse"
-                }
-              },
-              "text/json": {
-                "schema": {
-                  "$ref": "#/components/schemas/UpdateAvailableTimeResponse"
-                }
-              }
-            }
-          }
-        }
-      },
-      "get": {
-        "tags": [
-          "GetMyAvailableTimes"
-        ],
-        "parameters": [
-          {
-            "name": "fromTime",
-            "in": "query",
-            "schema": {
-              "type": "string",
-              "format": "date-time"
-            }
-          },
-          {
-            "name": "toTime",
-            "in": "query",
-            "schema": {
-              "type": "string",
-              "format": "date-time"
-            }
-          }
-        ],
-        "responses": {
-          "200": {
-            "description": "OK",
-            "content": {
-              "text/plain": {
-                "schema": {
-                  "$ref": "#/components/schemas/GetMyAvailableTimesResponse"
-                }
-              },
-              "application/json": {
-                "schema": {
-                  "$ref": "#/components/schemas/GetMyAvailableTimesResponse"
-                }
-              },
-              "text/json": {
-                "schema": {
-                  "$ref": "#/components/schemas/GetMyAvailableTimesResponse"
-                }
-              }
-            }
-          }
-        }
-      }
-    },
-    "/api/auth/register": {
-      "post": {
-        "tags": [
-          "Register"
-        ],
-        "requestBody": {
-          "content": {
-            "application/json": {
-              "schema": {
-                "$ref": "#/components/schemas/RegisterQuery"
-              }
-            },
-            "text/json": {
-              "schema": {
-                "$ref": "#/components/schemas/RegisterQuery"
-              }
-            },
-            "application/*+json": {
-              "schema": {
-                "$ref": "#/components/schemas/RegisterQuery"
-              }
-            }
-          },
-          "required": true
-        },
-        "responses": {
-          "200": {
-            "description": "OK"
-          }
-        }
-      }
-    },
     "/api/decidedtime/delete/{id}": {
       "delete": {
         "tags": [
@@ -630,6 +457,35 @@
       "get": {
         "tags": [
           "GetAllDecidedTimes"
+        ],
+        "parameters": [
+          {
+            "name": "kindergartenIds",
+            "in": "query",
+            "schema": {
+              "type": "array",
+              "items": {
+                "type": "string",
+                "format": "uuid"
+              }
+            }
+          },
+          {
+            "name": "fromTime",
+            "in": "query",
+            "schema": {
+              "type": "string",
+              "format": "date-time"
+            }
+          },
+          {
+            "name": "toTime",
+            "in": "query",
+            "schema": {
+              "type": "string",
+              "format": "date-time"
+            }
+          }
         ],
         "responses": {
           "200": {
@@ -704,6 +560,176 @@
         }
       }
     },
+    "/api/availabletimes": {
+      "put": {
+        "tags": [
+          "UpdateAvailableTime"
+        ],
+        "requestBody": {
+          "content": {
+            "application/json": {
+              "schema": {
+                "$ref": "#/components/schemas/UpdateAvailableTimeQuery"
+              }
+            },
+            "text/json": {
+              "schema": {
+                "$ref": "#/components/schemas/UpdateAvailableTimeQuery"
+              }
+            },
+            "application/*+json": {
+              "schema": {
+                "$ref": "#/components/schemas/UpdateAvailableTimeQuery"
+              }
+            }
+          },
+          "required": true
+        },
+        "responses": {
+          "200": {
+            "description": "OK",
+            "content": {
+              "text/plain": {
+                "schema": {
+                  "$ref": "#/components/schemas/UpdateAvailableTimeResponse"
+                }
+              },
+              "application/json": {
+                "schema": {
+                  "$ref": "#/components/schemas/UpdateAvailableTimeResponse"
+                }
+              },
+              "text/json": {
+                "schema": {
+                  "$ref": "#/components/schemas/UpdateAvailableTimeResponse"
+                }
+              }
+            }
+          }
+        }
+      },
+      "post": {
+        "tags": [
+          "PostAvailableTime"
+        ],
+        "requestBody": {
+          "content": {
+            "application/json": {
+              "schema": {
+                "$ref": "#/components/schemas/PostAvailableTimeRequest"
+              }
+            },
+            "text/json": {
+              "schema": {
+                "$ref": "#/components/schemas/PostAvailableTimeRequest"
+              }
+            },
+            "application/*+json": {
+              "schema": {
+                "$ref": "#/components/schemas/PostAvailableTimeRequest"
+              }
+            }
+          },
+          "required": true
+        },
+        "responses": {
+          "200": {
+            "description": "OK",
+            "content": {
+              "text/plain": {
+                "schema": {
+                  "$ref": "#/components/schemas/PostAvailableTimeResponse"
+                }
+              },
+              "application/json": {
+                "schema": {
+                  "$ref": "#/components/schemas/PostAvailableTimeResponse"
+                }
+              },
+              "text/json": {
+                "schema": {
+                  "$ref": "#/components/schemas/PostAvailableTimeResponse"
+                }
+              }
+            }
+          }
+        }
+      },
+      "get": {
+        "tags": [
+          "GetMyAvailableTimes"
+        ],
+        "parameters": [
+          {
+            "name": "fromTime",
+            "in": "query",
+            "schema": {
+              "type": "string",
+              "format": "date-time"
+            }
+          },
+          {
+            "name": "toTime",
+            "in": "query",
+            "schema": {
+              "type": "string",
+              "format": "date-time"
+            }
+          }
+        ],
+        "responses": {
+          "200": {
+            "description": "OK",
+            "content": {
+              "text/plain": {
+                "schema": {
+                  "$ref": "#/components/schemas/GetMyAvailableTimesResponse"
+                }
+              },
+              "application/json": {
+                "schema": {
+                  "$ref": "#/components/schemas/GetMyAvailableTimesResponse"
+                }
+              },
+              "text/json": {
+                "schema": {
+                  "$ref": "#/components/schemas/GetMyAvailableTimesResponse"
+                }
+              }
+            }
+          }
+        }
+      }
+    },
+    "/api/availabletimes/bymanager": {
+      "get": {
+        "tags": [
+          "GetAllAvailableTimeByManager"
+        ],
+        "responses": {
+          "200": {
+            "description": "OK",
+            "content": {
+              "text/plain": {
+                "schema": {
+                  "$ref": "#/components/schemas/GetAllAvailableTimeByManagerResponse"
+                }
+              },
+              "application/json": {
+                "schema": {
+                  "$ref": "#/components/schemas/GetAllAvailableTimeByManagerResponse"
+                }
+              },
+              "text/json": {
+                "schema": {
+                  "$ref": "#/components/schemas/GetAllAvailableTimeByManagerResponse"
+                }
+              }
+            }
+          }
+        }
+      }
+    },
     "/api/availabletimes/{id}": {
       "get": {
         "tags": [
@@ -766,6 +792,50 @@
         }
       }
     },
+    "/api/auth/register": {
+      "post": {
+        "tags": [
+          "Register"
+        ],
+        "requestBody": {
+          "content": {
+            "application/json": {
+              "schema": {
+                "$ref": "#/components/schemas/RegisterQuery"
+              }
+            },
+            "text/json": {
+              "schema": {
+                "$ref": "#/components/schemas/RegisterQuery"
+              }
+            },
+            "application/*+json": {
+              "schema": {
+                "$ref": "#/components/schemas/RegisterQuery"
+              }
+            }
+          },
+          "required": true
+        },
+        "responses": {
+          "200": {
+            "description": "OK"
+          }
+        }
+      }
+    },
+    "/api/auth/make-manager": {
+      "post": {
+        "tags": [
+          "MakeManager"
+        ],
+        "responses": {
+          "200": {
+            "description": "OK"
+          }
+        }
+      }
+    },
     "/api/auth/logout": {
       "post": {
         "tags": [
@@ -811,9 +881,64 @@
           }
         }
       },
+      "AvailableTimesByKindergartenDTO": {
+        "required": [
+          "kindergartenId",
+          "kindergartenName",
+          "availableTimes"
+        ],
+        "type": "object",
+        "properties": {
+          "kindergartenId": {
+            "type": "string",
+            "format": "uuid"
+          },
+          "kindergartenName": {
+            "type": "string"
+          },
+          "availableTimes": {
+            "type": "array",
+            "items": {
+              "$ref": "#/components/schemas/AvailableTimesByManagerDTO"
+            }
+          }
+        }
+      },
+      "AvailableTimesByManagerDTO": {
+        "required": [
+          "id",
+          "startTime",
+          "endTime",
+          "substituteFirstName",
+          "substituteLastName"
+        ],
+        "type": "object",
+        "properties": {
+          "id": {
+            "type": "string",
+            "format": "uuid"
+          },
+          "startTime": {
+            "type": "string",
+            "format": "date-time"
+          },
+          "endTime": {
+            "type": "string",
+            "format": "date-time"
+          },
+          "substituteFirstName": {
+            "type": "string"
+          },
+          "substituteLastName": {
+            "type": "string"
+          }
+        }
+      },
       "BookDecidedTimeQuery": {
         "required": [
           "availableTimeGuid",
+          "startTime",
+          "endTime",
           "kindergartenId"
         ],
         "type": "object",
@@ -821,6 +946,14 @@
           "availableTimeGuid": {
             "type": "string",
             "format": "uuid"
+          },
+          "startTime": {
+            "type": "string",
+            "format": "date-time"
+          },
+          "endTime": {
+            "type": "string",
+            "format": "date-time"
           },
           "kindergartenId": {
             "type": "string",
@@ -1239,17 +1372,34 @@
       "GeometryRelate": {
         "type": "object"
       },
+      "GetAllAvailableTimeByManagerResponse": {
+        "required": [
+          "availableTimesByKindergarten"
+        ],
+        "type": "object",
+        "properties": {
+          "availableTimesByKindergarten": {
+            "type": "array",
+            "items": {
+              "$ref": "#/components/schemas/AvailableTimesByKindergartenDTO"
+            }
+          }
+        }
+      },
       "GetAllDecidedTimesDTO": {
         "required": [
-          "id",
+          "timeId",
           "startTime",
           "endTime",
+          "substituteId",
+          "substituteFirstName",
+          "substituteLastName",
           "kindergartenId",
           "kindergartenName"
         ],
         "type": "object",
         "properties": {
-          "id": {
+          "timeId": {
             "type": "string",
             "format": "uuid"
           },
@@ -1260,6 +1410,16 @@
           "endTime": {
             "type": "string",
             "format": "date-time"
+          },
+          "substituteId": {
+            "type": "string",
+            "format": "uuid"
+          },
+          "substituteFirstName": {
+            "type": "string"
+          },
+          "substituteLastName": {
+            "type": "string"
           },
           "kindergartenId": {
             "type": "string",
@@ -1272,7 +1432,8 @@
       },
       "GetAllDecidedTimesResponse": {
         "required": [
-          "decidedTimes"
+          "decidedTimes",
+          "report"
         ],
         "type": "object",
         "properties": {
@@ -1281,8 +1442,14 @@
             "items": {
               "$ref": "#/components/schemas/GetAllDecidedTimesDTO"
             }
+          },
+          "report": {
+            "$ref": "#/components/schemas/GetAllDecidedTimesStatus"
           }
         }
+      },
+      "GetAllDecidedTimesStatus": {
+        "type": "integer"
       },
       "GetByIdResponse": {
         "required": [
@@ -1871,7 +2038,8 @@
           "password",
           "firstName",
           "lastName",
-          "role"
+          "role",
+          "phoneNumber"
         ],
         "type": "object",
         "properties": {
@@ -1888,6 +2056,9 @@
             "type": "string"
           },
           "role": {
+            "type": "string"
+          },
+          "phoneNumber": {
             "type": "string"
           }
         }
@@ -2131,18 +2302,6 @@
       "name": "GetAllKindergartens"
     },
     {
-      "name": "PostAvailableTime"
-    },
-    {
-      "name": "UpdateAvailableTime"
-    },
-    {
-      "name": "GetMyAvailableTimes"
-    },
-    {
-      "name": "Register"
-    },
-    {
       "name": "UnbookDecidedTime"
     },
     {
@@ -2155,10 +2314,28 @@
       "name": "BookDecidedTime"
     },
     {
+      "name": "UpdateAvailableTime"
+    },
+    {
+      "name": "PostAvailableTime"
+    },
+    {
+      "name": "GetMyAvailableTimes"
+    },
+    {
+      "name": "GetAllAvailableTimeByManager"
+    },
+    {
       "name": "GetAvailableTimeByIds"
     },
     {
       "name": "DeleteAvailableTime"
+    },
+    {
+      "name": "Register"
+    },
+    {
+      "name": "MakeManager"
     },
     {
       "name": "LogOut"
