@@ -1,26 +1,43 @@
 using Vicaria.Server.Infrastructure;
 using Microsoft.AspNetCore.Mvc;
 using Microsoft.AspNetCore.Authorization;
+using Vicaria.Server.Domain;
+using System.Security.Claims;
 
 namespace Vicaria.Server.Features.AvailableTimes.Delete;
+
+[Authorize(Roles = VicariaUserRoles.Substitute)]
 [Route("api/availabletimes")]
 [Authorize]
 [ApiController]
 public class DeleteAvailableTimeController(
-    IHandler<DeleteAvailableTimeQuery, bool> handler) : ControllerBase
+    IHandler<DeleteAvailableTimeCommand, DeleteAvailableTimeStatus> handler) : ControllerBase
 {
     [HttpDelete("delete/{id}")]
     public async Task<IActionResult> Delete(
-        [FromRoute(Name = "id")] DeleteAvailableTimeQuery query,
+        [FromRoute(Name = "id")] Guid availableTimeId,
         CancellationToken cancellationToken
     )
     {
-        var FoundAndDeleted = await handler.HandleAsync(query, cancellationToken);
+        var userId = User.FindFirstValue(ClaimTypes.NameIdentifier);
 
-        if (!FoundAndDeleted)
-            return NotFound();
+        if(!Guid.TryParse(userId, out var substituteId))
+        {
+            return Unauthorized();
+        }
 
-        return NoContent();
+        var command = new DeleteAvailableTimeCommand(availableTimeId, substituteId);
+        
+
+        var result = await handler.HandleAsync(command, cancellationToken);
+
+        return result switch
+        {
+            DeleteAvailableTimeStatus.NotFound => NotFound(),
+            DeleteAvailableTimeStatus.Success => NoContent(),
+            _ => StatusCode(StatusCodes.Status500InternalServerError)
+        };
+
     }
 }
 
