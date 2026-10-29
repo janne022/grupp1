@@ -326,6 +326,7 @@ function RouteComponent() {
                               }
                             />
                             <PopoverContent
+                              onClick={(e) => e.stopPropagation()}
                               className="w-80 p-4 shadow-2xl border rounded-lg bg-popover text-popover-foreground"
                               side="right"
                               align="center"
