@@ -11,6 +11,7 @@
 import { Route as rootRouteImport } from './routes/__root'
 import { Route as IndexRouteImport } from './routes/index'
 import { Route as CalenderPageRouteImport } from './routes/CalenderPage'
+import { Route as ManagerDashboardRouteImport } from './routes/ManagerDashboard'
 import { Route as ManagerPageRouteImport } from './routes/ManagerPage'
 import { Route as LoginRouteImport } from './routes/login'
 import { Route as SignupRouteImport } from './routes/signup'
@@ -23,6 +24,11 @@ const IndexRoute = IndexRouteImport.update({
 const CalenderPageRoute = CalenderPageRouteImport.update({
   id: '/CalenderPage',
   path: '/CalenderPage',
+  getParentRoute: () => rootRouteImport,
+} as any)
+const ManagerDashboardRoute = ManagerDashboardRouteImport.update({
+  id: '/ManagerDashboard',
+  path: '/ManagerDashboard',
   getParentRoute: () => rootRouteImport,
 } as any)
 const ManagerPageRoute = ManagerPageRouteImport.update({
@@ -44,6 +50,7 @@ const SignupRoute = SignupRouteImport.update({
 export interface FileRoutesByFullPath {
   '/': typeof IndexRoute
   '/CalenderPage': typeof CalenderPageRoute
+  '/ManagerDashboard': typeof ManagerDashboardRoute
   '/ManagerPage': typeof ManagerPageRoute
   '/login': typeof LoginRoute
   '/signup': typeof SignupRoute
@@ -51,6 +58,7 @@ export interface FileRoutesByFullPath {
 export interface FileRoutesByTo {
   '/': typeof IndexRoute
   '/CalenderPage': typeof CalenderPageRoute
+  '/ManagerDashboard': typeof ManagerDashboardRoute
   '/ManagerPage': typeof ManagerPageRoute
   '/login': typeof LoginRoute
   '/signup': typeof SignupRoute
@@ -59,21 +67,42 @@ export interface FileRoutesById {
   __root__: typeof rootRouteImport
   '/': typeof IndexRoute
   '/CalenderPage': typeof CalenderPageRoute
+  '/ManagerDashboard': typeof ManagerDashboardRoute
   '/ManagerPage': typeof ManagerPageRoute
   '/login': typeof LoginRoute
   '/signup': typeof SignupRoute
 }
 export interface FileRouteTypes {
   fileRoutesByFullPath: FileRoutesByFullPath
-  fullPaths: '/' | '/CalenderPage' | '/ManagerPage' | '/login' | '/signup'
+  fullPaths:
+    | '/'
+    | '/CalenderPage'
+    | '/ManagerDashboard'
+    | '/ManagerPage'
+    | '/login'
+    | '/signup'
   fileRoutesByTo: FileRoutesByTo
-  to: '/' | '/CalenderPage' | '/ManagerPage' | '/login' | '/signup'
-  id: '__root__' | '/' | '/CalenderPage' | '/ManagerPage' | '/login' | '/signup'
+  to:
+    | '/'
+    | '/CalenderPage'
+    | '/ManagerDashboard'
+    | '/ManagerPage'
+    | '/login'
+    | '/signup'
+  id:
+    | '__root__'
+    | '/'
+    | '/CalenderPage'
+    | '/ManagerDashboard'
+    | '/ManagerPage'
+    | '/login'
+    | '/signup'
   fileRoutesById: FileRoutesById
 }
 export interface RootRouteChildren {
   IndexRoute: typeof IndexRoute
   CalenderPageRoute: typeof CalenderPageRoute
+  ManagerDashboardRoute: typeof ManagerDashboardRoute
   ManagerPageRoute: typeof ManagerPageRoute
   LoginRoute: typeof LoginRoute
   SignupRoute: typeof SignupRoute
@@ -93,6 +122,13 @@ declare module '@tanstack/react-router' {
       path: '/CalenderPage'
       fullPath: '/CalenderPage'
       preLoaderRoute: typeof CalenderPageRouteImport
+      parentRoute: typeof rootRouteImport
+    }
+    '/ManagerDashboard': {
+      id: '/ManagerDashboard'
+      path: '/ManagerDashboard'
+      fullPath: '/ManagerDashboard'
+      preLoaderRoute: typeof ManagerDashboardRouteImport
       parentRoute: typeof rootRouteImport
     }
     '/ManagerPage': {
@@ -122,6 +158,7 @@ declare module '@tanstack/react-router' {
 const rootRouteChildren: RootRouteChildren = {
   IndexRoute: IndexRoute,
   CalenderPageRoute: CalenderPageRoute,
+  ManagerDashboardRoute: ManagerDashboardRoute,
   ManagerPageRoute: ManagerPageRoute,
   LoginRoute: LoginRoute,
   SignupRoute: SignupRoute,
