@@ -264,10 +264,21 @@ namespace Vicaria.Server.Migrations
                         .ValueGeneratedOnAdd()
                         .HasColumnType("uuid");
 
+                    b.Property<DateTime>("EndTime")
+                        .HasColumnType("timestamp with time zone");
+
                     b.Property<bool>("IsBooked")
                         .HasColumnType("boolean");
 
+                    b.Property<Guid>("KindergartenId")
+                        .HasColumnType("uuid");
+
+                    b.Property<DateTime>("StartTime")
+                        .HasColumnType("timestamp with time zone");
+
                     b.HasKey("Id");
+
+                    b.HasIndex("KindergartenId");
 
                     b.ToTable("PendingTimes");
                 });
@@ -481,6 +492,17 @@ namespace Vicaria.Server.Migrations
                         .IsRequired();
 
                     b.Navigation("AvailableTime");
+
+                    b.Navigation("Kindergarten");
+                });
+
+            modelBuilder.Entity("Vicaria.Server.Domain.Models.PendingTime", b =>
+                {
+                    b.HasOne("Vicaria.Server.Domain.Models.Kindergarten", "Kindergarten")
+                        .WithMany()
+                        .HasForeignKey("KindergartenId")
+                        .OnDelete(DeleteBehavior.Cascade)
+                        .IsRequired();
 
                     b.Navigation("Kindergarten");
                 });
