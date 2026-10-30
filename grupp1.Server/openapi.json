@@ -598,14 +598,14 @@
         }
       }
     },
-    "/api/decidedtime/{Id}": {
+    "/api/decidedtime/{id}": {
       "get": {
         "tags": [
           "GetDecidedTimeById"
         ],
         "parameters": [
           {
-            "name": "Id",
+            "name": "id",
             "in": "path",
             "required": true,
             "schema": {
@@ -1663,7 +1663,8 @@
         "required": [
           "id",
           "name",
-          "location"
+          "latitude",
+          "longitude"
         ],
         "type": "object",
         "properties": {
@@ -1674,15 +1675,23 @@
           "name": {
             "type": "string"
           },
-          "location": {
-            "oneOf": [
-              {
-                "type": "null"
-              },
-              {
-                "$ref": "#/components/schemas/Point"
-              }
-            ]
+          "latitude": {
+            "pattern": "^-?(?:0|[1-9]\\d*)(?:\\.\\d+)?(?:[eE][+-]?\\d+)?$",
+            "type": [
+              "null",
+              "number",
+              "string"
+            ],
+            "format": "double"
+          },
+          "longitude": {
+            "pattern": "^-?(?:0|[1-9]\\d*)(?:\\.\\d+)?(?:[eE][+-]?\\d+)?$",
+            "type": [
+              "null",
+              "number",
+              "string"
+            ],
+            "format": "double"
           }
         }
       },
