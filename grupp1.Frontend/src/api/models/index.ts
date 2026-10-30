@@ -6,6 +6,8 @@
  */
 
 export * from './accessTokenResponse';
+export * from './availableTimesByKindergartenDTO';
+export * from './availableTimesByManagerDTO';
 export * from './bookDecidedTimeQuery';
 export * from './bookDecidedTimeResponse';
 export * from './coordinate';
@@ -20,11 +22,11 @@ export * from './geometry';
 export * from './geometryFactory';
 export * from './geometryOverlay';
 export * from './geometryRelate';
-export * from './getMyAvailableTimesDTO';
-export * from './getMyAvailableTimesKindergartensDTO';
-export * from './getMyAvailableTimesResponse';
+export * from './getAllAvailableTimeByManagerResponse';
 export * from './getAllDecidedTimesDTO';
 export * from './getAllDecidedTimesResponse';
+export * from './getAllKindergartensResponse';
+export * from './getApiAvailabletimesParams';
 export * from './getByIdResponse';
 export * from './getDecidedTimeByIdResponse';
 export * from './getMyAvailableTimesDTO';

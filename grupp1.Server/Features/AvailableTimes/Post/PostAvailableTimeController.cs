@@ -18,7 +18,7 @@ namespace Vicaria.Server.Features.AvailableTimes.Post
         {
             var userId = User.FindFirstValue(ClaimTypes.NameIdentifier);
 
-            if(!Guid.TryParse(userId, out var userGuidId)) 
+            if(!Guid.TryParse(userId, out var userGuidId))
             {
                 return Unauthorized();
             }

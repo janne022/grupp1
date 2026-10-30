@@ -15,12 +15,17 @@ namespace Vicaria.Server.Features.AvailableTimes.Update
         ILogger<UpdateAvailableTimeController> logger
     ) : ControllerBase
     {
-        [HttpPut()]
-        public async Task<ActionResult<UpdateAvailableTimeResponse>> Update(
+        [HttpPatch()]
+        public async Task<ActionResult<UpdateAvailableTimeResponse>> Patch(
             [FromBody] UpdateAvailableTimeQuery query,
             CancellationToken cancellationToken
         )
         {
+            if (query is null)
+            {
+                return BadRequest();
+            }
+
             var userClaim = User.FindFirstValue(ClaimTypes.NameIdentifier);
             if (!Guid.TryParse(userClaim, out var userId))
             {
@@ -28,10 +33,11 @@ namespace Vicaria.Server.Features.AvailableTimes.Update
             }
 
             var command = new UpdateAvailableTimeCommand(
-                query.TimeId,
+                query.AvailableTimeId,
+                userId,
                 query.StartTime,
                 query.EndTime,
-                userId
+                query.Kindergartens?.ToHashSet()
             );
 
             var response = await handler.HandleAsync(command, cancellationToken);
@@ -42,7 +48,7 @@ namespace Vicaria.Server.Features.AvailableTimes.Update
                 UpdateAvailableTimeStatus.BadTime => BadRequest(response),
                 UpdateAvailableTimeStatus.WasNull => NotFound(response),
                 UpdateAvailableTimeStatus.NotOwner => Forbid(),
-                _ => UnknownError(command.TimeId),
+                _ => UnknownError(command.AvailableTimeId),
             };
         }
 

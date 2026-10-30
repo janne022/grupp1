@@ -14,6 +14,9 @@ public class Program
         var builder = WebApplication.CreateBuilder(args);
 
         var frontendOrigin = builder.Configuration["WEBFRONTEND_HTTP"] ?? "";
+        var port = builder.Configuration["FRONTEND_PORT"];
+        var frontendDomainOrigin = $"http://webfrontend-grupp1.dev.localhost:{port}";
+
         builder.AddRedisClientBuilder("cache").WithOutputCache();
 
         builder.AddServiceDefaults();
@@ -38,7 +41,7 @@ public class Program
         {
             options.AddPolicy(name: "Frontend", configurePolicy: p =>
             {
-                p.WithOrigins(frontendOrigin)
+                p.WithOrigins(frontendOrigin, frontendDomainOrigin)
                 .AllowAnyHeader()
                 .AllowAnyMethod()
                 .AllowCredentials();

@@ -43,6 +43,6 @@ public class GetByIdHandler : IHandler<GetByIdQuery, GetByIdResponse?>
             ))]
         );
     }
-    
+
     #endregion
 }

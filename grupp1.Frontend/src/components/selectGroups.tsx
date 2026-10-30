@@ -1,44 +1,44 @@
 import {
   Select,
   SelectContent,
-  SelectGroup,
   SelectItem,
-  SelectLabel,
-  SelectSeparator,
   SelectTrigger,
   SelectValue,
 } from "@/components/ui/select";
 
-import type { KindergartenGroup } from "@/api/types/types";
+import type { KindergartenDto } from "@/api/models";
 
 export function SelectGroups({
-  KindergartenGroups,
+  KindergartenDto,
+  value,
+  onChange,
 }: {
-  KindergartenGroups: KindergartenGroup[];
+  KindergartenDto: KindergartenDto[];
+  value?: string[];
+  onChange?: (value: string[]) => void;
 }) {
   return (
     <Select
       multiple={true}
-      items={KindergartenGroups.flatMap((group) => group.kindergartens)}
+      items={KindergartenDto.map((dto) => ({
+        label: dto.name,
+        value: dto.id,
+      }))}
+      value={value}
+      onValueChange={(newValue) => {
+        if (onChange) {
+          onChange(newValue);
+        }
+      }}
     >
       <SelectTrigger className="w-full max-w-48">
         <SelectValue placeholder="Välj Förskola" />
       </SelectTrigger>
       <SelectContent>
-        {KindergartenGroups.map((group) => (
-          <>
-            <SelectGroup key={group.groupName}>
-              <SelectLabel>{group.groupName}</SelectLabel>
-              {group.kindergartens.map((item) => (
-                <SelectItem key={item.value} value={item.value}>
-                  {item.label}
-                </SelectItem>
-              ))}
-            </SelectGroup>
-            {group !== KindergartenGroups[KindergartenGroups.length - 1] && (
-              <SelectSeparator />
-            )}
-          </>
+        {KindergartenDto.map((dto) => (
+          <SelectItem key={dto.id} value={dto.id}>
+            {dto.name}
+          </SelectItem>
         ))}
       </SelectContent>
     </Select>
