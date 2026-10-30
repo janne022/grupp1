@@ -9,7 +9,7 @@ namespace Vicaria.Server.Features.AddManagerToKindergarten;
 
 public class AddManagerToKindergartenHandler(
     VicariaDbContext dbContext,
-    ILogger<BookDecidedTimeHandler> _logger
+    ILogger<AddManagerToKindergartenHandler> _logger
 ) : IHandler<AddManagerToKindergartenCommand, AddManagerToKindergartenResult>
 {
     public async Task<AddManagerToKindergartenResult> HandleAsync(

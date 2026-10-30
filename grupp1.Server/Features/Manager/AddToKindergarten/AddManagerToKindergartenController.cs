@@ -30,10 +30,12 @@ public class AddManagerToKindergartenController(
 
         var response = await handler.HandleAsync(command, cancellationToken);
 
-        if (response.Succeeded)
-            return NoContent();
-
-
-        return BadRequest(response.Error);
+        return response.Error switch
+        {
+            null => NoContent(),
+            { Type: ErrorType.NotFound } error => NotFound(error),
+            { Type: ErrorType.Conflict } error => Conflict(error),
+            var error => BadRequest(error),
+        };
     }
 }

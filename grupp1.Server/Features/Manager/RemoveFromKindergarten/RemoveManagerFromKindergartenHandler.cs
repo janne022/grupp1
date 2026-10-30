@@ -13,7 +13,7 @@ public class RemoveManagerFromKindergartenHandler(
         RemoveManagerFromKindergartenCommand command,
         CancellationToken cancellationToken = default)
     {
-        var kindergarten = await dbContext.Kindergartens.SingleOrDefaultAsync(k => k.Id == command.KindergartenId);
+        var kindergarten = await dbContext.Kindergartens.SingleOrDefaultAsync(k => k.Id == command.KindergartenId, cancellationToken);
 
         if (kindergarten == null)
         {
@@ -23,7 +23,7 @@ public class RemoveManagerFromKindergartenHandler(
 
         var user = await dbContext.Users
             .Include(u => u.Kindergartens)
-            .SingleAsync(u => u.Id == command.UserId);
+            .SingleAsync(u => u.Id == command.UserId, cancellationToken);
 
         if (!user.Kindergartens.Any(k => k.KindergartenId == command.KindergartenId))
         {
