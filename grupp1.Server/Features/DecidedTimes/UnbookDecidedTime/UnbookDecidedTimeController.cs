@@ -2,27 +2,37 @@
 using Vicaria.Server.Features.DecidedTimes.UnbookDecidedTime.DTOs;
 using Microsoft.AspNetCore.Mvc;
 using Vicaria.Server.Infrastructure;
+using System.Security.Claims;
+using Microsoft.AspNetCore.Authorization;
 
 namespace Vicaria.Server.Features.DecidedTimes.UnbookDecidedTime
 {
+    [Authorize]
     [Route("api/decidedtime")]
+    [Authorize]
     [ApiController]
-    public class UnbookDecidedTimeController (IHandler<UnbookDecidedTimeCommand, UnbookDecidedTimeResponse> handler) : ControllerBase
+    public class UnbookDecidedTimeController (IHandler<UnbookDecidedTimeCommand, UnbookDecidedTimeStatus> handler) : ControllerBase
     {
-        // TODO: Add Authorization tag when authorisation is up.
         [HttpDelete("delete/{id:guid}")]
-        public async Task<IActionResult> UnbookDecidedTime(Guid id, CancellationToken cancellationToken)
+        public async Task<IActionResult> UnbookDecidedTime([FromRoute]Guid id, CancellationToken cancellationToken)
         {
-            var command = new UnbookDecidedTimeCommand(id);
+            var userClaim = User.FindFirstValue(ClaimTypes.NameIdentifier);
+
+            if(!Guid.TryParse(userClaim, out var userId))
+            {
+                return Unauthorized();
+            }
+
+            var command = new UnbookDecidedTimeCommand(id, userId);
 
             var response = await handler.HandleAsync(command, cancellationToken);
 
-            if (response.Status is UnbookDecidedTimeStatus.NotFound)
+            return response switch
             {
-                return NotFound();
-            }
-
-            return NoContent();
+                UnbookDecidedTimeStatus.NotFound => NotFound(),
+                UnbookDecidedTimeStatus.Success => NoContent(),
+                _ => StatusCode(StatusCodes.Status500InternalServerError)
+            };
         }
     }
 }
