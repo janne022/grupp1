@@ -40,6 +40,6 @@ public class BookDecidedTimeController(
 
         var createdResult = await handler.HandleAsync(command, cancellationToken);
 
-        return Created("", createdResult); //TODO: add get api path here when we have it
+        return Created($"/api/decidedtime/{createdResult.Id}", createdResult);
     }
 }
