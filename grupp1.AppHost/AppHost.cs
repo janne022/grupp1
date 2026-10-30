@@ -93,9 +93,16 @@ var webfrontend = builder.AddViteApp("webfrontend", "../grupp1.Frontend")
                 ? CommandResults.Success("API client generated successfully.")
                 : CommandResults.Failure("Orval generation failed.");
         })
+    .WithEnvironment("VITE_API_BASE_URL", server.GetEndpoint("https"))
     .WaitFor(server);
 
+var frontendUrl = webfrontend.GetEndpoint("http");
+
 server.WithReference(webfrontend); // for CORS
+server.WithEnvironment(
+    "FRONTEND_PORT",
+    webfrontend.GetEndpoint("http").Property(EndpointProperty.Port)
+);
 
 var scalar = builder.AddScalarApiReference()
     .ExcludeFromManifest();

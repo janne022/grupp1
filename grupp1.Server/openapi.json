@@ -167,6 +167,16 @@
         "responses": {
           "200": {
             "description": "OK"
+          },
+          "400": {
+            "description": "Bad Request",
+            "content": {
+              "application/problem+json": {
+                "schema": {
+                  "$ref": "#/components/schemas/HttpValidationProblemDetails"
+                }
+              }
+            }
           }
         }
       }
@@ -385,192 +395,24 @@
         ],
         "responses": {
           "200": {
-            "description": "OK"
-          }
-        }
-      }
-    },
-    "/api/availabletimes": {
-      "post": {
-        "tags": [
-          "PostAvailableTime"
-        ],
-        "requestBody": {
-          "content": {
-            "application/json": {
-              "schema": {
-                "$ref": "#/components/schemas/PostAvailableTimeRequest"
-              }
-            },
-            "text/json": {
-              "schema": {
-                "$ref": "#/components/schemas/PostAvailableTimeRequest"
-              }
-            },
-            "application/*+json": {
-              "schema": {
-                "$ref": "#/components/schemas/PostAvailableTimeRequest"
-              }
-            }
-          },
-          "required": true
-        },
-        "responses": {
-          "200": {
             "description": "OK",
             "content": {
               "text/plain": {
                 "schema": {
-                  "$ref": "#/components/schemas/PostAvailableTimeResponse"
+                  "$ref": "#/components/schemas/GetAllKindergartensResponse"
                 }
               },
               "application/json": {
                 "schema": {
-                  "$ref": "#/components/schemas/PostAvailableTimeResponse"
+                  "$ref": "#/components/schemas/GetAllKindergartensResponse"
                 }
               },
               "text/json": {
                 "schema": {
-                  "$ref": "#/components/schemas/PostAvailableTimeResponse"
+                  "$ref": "#/components/schemas/GetAllKindergartensResponse"
                 }
               }
             }
-          }
-        }
-      },
-      "put": {
-        "tags": [
-          "UpdateAvailableTime"
-        ],
-        "requestBody": {
-          "content": {
-            "application/json": {
-              "schema": {
-                "$ref": "#/components/schemas/UpdateAvailableTimeQuery"
-              }
-            },
-            "text/json": {
-              "schema": {
-                "$ref": "#/components/schemas/UpdateAvailableTimeQuery"
-              }
-            },
-            "application/*+json": {
-              "schema": {
-                "$ref": "#/components/schemas/UpdateAvailableTimeQuery"
-              }
-            }
-          },
-          "required": true
-        },
-        "responses": {
-          "200": {
-            "description": "OK",
-            "content": {
-              "text/plain": {
-                "schema": {
-                  "$ref": "#/components/schemas/UpdateAvailableTimeResponse"
-                }
-              },
-              "application/json": {
-                "schema": {
-                  "$ref": "#/components/schemas/UpdateAvailableTimeResponse"
-                }
-              },
-              "text/json": {
-                "schema": {
-                  "$ref": "#/components/schemas/UpdateAvailableTimeResponse"
-                }
-              }
-            }
-          }
-        }
-      },
-      "get": {
-        "tags": [
-          "GetMyAvailableTimes"
-        ],
-        "parameters": [
-          {
-            "name": "fromTime",
-            "in": "query",
-            "schema": {
-              "type": "string",
-              "format": "date-time"
-            }
-          },
-          {
-            "name": "toTime",
-            "in": "query",
-            "schema": {
-              "type": "string",
-              "format": "date-time"
-            }
-          }
-        ],
-        "responses": {
-          "200": {
-            "description": "OK",
-            "content": {
-              "text/plain": {
-                "schema": {
-                  "$ref": "#/components/schemas/GetMyAvailableTimesResponse"
-                }
-              },
-              "application/json": {
-                "schema": {
-                  "$ref": "#/components/schemas/GetMyAvailableTimesResponse"
-                }
-              },
-              "text/json": {
-                "schema": {
-                  "$ref": "#/components/schemas/GetMyAvailableTimesResponse"
-                }
-              }
-            }
-          }
-        }
-      }
-    },
-    "/api/auth/register": {
-      "post": {
-        "tags": [
-          "Register"
-        ],
-        "requestBody": {
-          "content": {
-            "application/json": {
-              "schema": {
-                "$ref": "#/components/schemas/RegisterQuery"
-              }
-            },
-            "text/json": {
-              "schema": {
-                "$ref": "#/components/schemas/RegisterQuery"
-              }
-            },
-            "application/*+json": {
-              "schema": {
-                "$ref": "#/components/schemas/RegisterQuery"
-              }
-            }
-          },
-          "required": true
-        },
-        "responses": {
-          "200": {
-            "description": "OK"
-          }
-        }
-      }
-    },
-    "/api/auth/make-manager": {
-      "post": {
-        "tags": [
-          "MakeManager"
-        ],
-        "responses": {
-          "200": {
-            "description": "OK"
           }
         }
       }
@@ -642,6 +484,35 @@
       "get": {
         "tags": [
           "GetAllDecidedTimes"
+        ],
+        "parameters": [
+          {
+            "name": "kindergartenIds",
+            "in": "query",
+            "schema": {
+              "type": "array",
+              "items": {
+                "type": "string",
+                "format": "uuid"
+              }
+            }
+          },
+          {
+            "name": "fromTime",
+            "in": "query",
+            "schema": {
+              "type": "string",
+              "format": "date-time"
+            }
+          },
+          {
+            "name": "toTime",
+            "in": "query",
+            "schema": {
+              "type": "string",
+              "format": "date-time"
+            }
+          }
         ],
         "responses": {
           "200": {
@@ -716,6 +587,147 @@
         }
       }
     },
+    "/api/availabletimes": {
+      "patch": {
+        "tags": [
+          "UpdateAvailableTime"
+        ],
+        "requestBody": {
+          "content": {
+            "application/json": {
+              "schema": {
+                "$ref": "#/components/schemas/UpdateAvailableTimeQuery"
+              }
+            },
+            "text/json": {
+              "schema": {
+                "$ref": "#/components/schemas/UpdateAvailableTimeQuery"
+              }
+            },
+            "application/*+json": {
+              "schema": {
+                "$ref": "#/components/schemas/UpdateAvailableTimeQuery"
+              }
+            }
+          },
+          "required": true
+        },
+        "responses": {
+          "200": {
+            "description": "OK",
+            "content": {
+              "text/plain": {
+                "schema": {
+                  "$ref": "#/components/schemas/UpdateAvailableTimeResponse"
+                }
+              },
+              "application/json": {
+                "schema": {
+                  "$ref": "#/components/schemas/UpdateAvailableTimeResponse"
+                }
+              },
+              "text/json": {
+                "schema": {
+                  "$ref": "#/components/schemas/UpdateAvailableTimeResponse"
+                }
+              }
+            }
+          }
+        }
+      },
+      "post": {
+        "tags": [
+          "PostAvailableTime"
+        ],
+        "requestBody": {
+          "content": {
+            "application/json": {
+              "schema": {
+                "$ref": "#/components/schemas/PostAvailableTimeRequest"
+              }
+            },
+            "text/json": {
+              "schema": {
+                "$ref": "#/components/schemas/PostAvailableTimeRequest"
+              }
+            },
+            "application/*+json": {
+              "schema": {
+                "$ref": "#/components/schemas/PostAvailableTimeRequest"
+              }
+            }
+          },
+          "required": true
+        },
+        "responses": {
+          "200": {
+            "description": "OK",
+            "content": {
+              "text/plain": {
+                "schema": {
+                  "$ref": "#/components/schemas/PostAvailableTimeResponse"
+                }
+              },
+              "application/json": {
+                "schema": {
+                  "$ref": "#/components/schemas/PostAvailableTimeResponse"
+                }
+              },
+              "text/json": {
+                "schema": {
+                  "$ref": "#/components/schemas/PostAvailableTimeResponse"
+                }
+              }
+            }
+          }
+        }
+      },
+      "get": {
+        "tags": [
+          "GetMyAvailableTimes"
+        ],
+        "parameters": [
+          {
+            "name": "fromTime",
+            "in": "query",
+            "schema": {
+              "type": "string",
+              "format": "date-time"
+            }
+          },
+          {
+            "name": "toTime",
+            "in": "query",
+            "schema": {
+              "type": "string",
+              "format": "date-time"
+            }
+          }
+        ],
+        "responses": {
+          "200": {
+            "description": "OK",
+            "content": {
+              "text/plain": {
+                "schema": {
+                  "$ref": "#/components/schemas/GetMyAvailableTimesResponse"
+                }
+              },
+              "application/json": {
+                "schema": {
+                  "$ref": "#/components/schemas/GetMyAvailableTimesResponse"
+                }
+              },
+              "text/json": {
+                "schema": {
+                  "$ref": "#/components/schemas/GetMyAvailableTimesResponse"
+                }
+              }
+            }
+          }
+        }
+      }
+    },
     "/api/availabletimes/bymanager": {
       "get": {
         "tags": [
@@ -783,9 +795,7 @@
             }
           }
         }
-      }
-    },
-    "/api/availabletimes/delete/{id}": {
+      },
       "delete": {
         "tags": [
           "DeleteAvailableTime"
@@ -796,10 +806,53 @@
             "in": "path",
             "required": true,
             "schema": {
-              "type": "string",
-              "format": "uuid"
+              "type": "string"
             }
           }
+        ],
+        "responses": {
+          "200": {
+            "description": "OK"
+          }
+        }
+      }
+    },
+    "/api/auth/register": {
+      "post": {
+        "tags": [
+          "Register"
+        ],
+        "requestBody": {
+          "content": {
+            "application/json": {
+              "schema": {
+                "$ref": "#/components/schemas/RegisterQuery"
+              }
+            },
+            "text/json": {
+              "schema": {
+                "$ref": "#/components/schemas/RegisterQuery"
+              }
+            },
+            "application/*+json": {
+              "schema": {
+                "$ref": "#/components/schemas/RegisterQuery"
+              }
+            }
+          },
+          "required": true
+        },
+        "responses": {
+          "200": {
+            "description": "OK"
+          }
+        }
+      }
+    },
+    "/api/auth/make-manager": {
+      "post": {
+        "tags": [
+          "MakeManager"
         ],
         "responses": {
           "200": {
@@ -1360,15 +1413,18 @@
       },
       "GetAllDecidedTimesDTO": {
         "required": [
-          "id",
+          "timeId",
           "startTime",
           "endTime",
+          "substituteId",
+          "substituteFirstName",
+          "substituteLastName",
           "kindergartenId",
           "kindergartenName"
         ],
         "type": "object",
         "properties": {
-          "id": {
+          "timeId": {
             "type": "string",
             "format": "uuid"
           },
@@ -1379,6 +1435,16 @@
           "endTime": {
             "type": "string",
             "format": "date-time"
+          },
+          "substituteId": {
+            "type": "string",
+            "format": "uuid"
+          },
+          "substituteFirstName": {
+            "type": "string"
+          },
+          "substituteLastName": {
+            "type": "string"
           },
           "kindergartenId": {
             "type": "string",
@@ -1391,7 +1457,8 @@
       },
       "GetAllDecidedTimesResponse": {
         "required": [
-          "decidedTimes"
+          "decidedTimes",
+          "report"
         ],
         "type": "object",
         "properties": {
@@ -1399,6 +1466,26 @@
             "type": "array",
             "items": {
               "$ref": "#/components/schemas/GetAllDecidedTimesDTO"
+            }
+          },
+          "report": {
+            "$ref": "#/components/schemas/GetAllDecidedTimesStatus"
+          }
+        }
+      },
+      "GetAllDecidedTimesStatus": {
+        "type": "integer"
+      },
+      "GetAllKindergartensResponse": {
+        "required": [
+          "kindergartens"
+        ],
+        "type": "object",
+        "properties": {
+          "kindergartens": {
+            "type": "array",
+            "items": {
+              "$ref": "#/components/schemas/KindergartenDto"
             }
           }
         }
@@ -1634,28 +1721,37 @@
       },
       "KindergartenDto": {
         "required": [
-          "name",
           "id",
-          "location"
+          "name",
+          "latitude",
+          "longitude"
         ],
         "type": "object",
         "properties": {
-          "name": {
-            "type": "string"
-          },
           "id": {
             "type": "string",
             "format": "uuid"
           },
-          "location": {
-            "oneOf": [
-              {
-                "type": "null"
-              },
-              {
-                "$ref": "#/components/schemas/Point"
-              }
-            ]
+          "name": {
+            "type": "string"
+          },
+          "latitude": {
+            "pattern": "^-?(?:0|[1-9]\\d*)(?:\\.\\d+)?(?:[eE][+-]?\\d+)?$",
+            "type": [
+              "null",
+              "number",
+              "string"
+            ],
+            "format": "double"
+          },
+          "longitude": {
+            "pattern": "^-?(?:0|[1-9]\\d*)(?:\\.\\d+)?(?:[eE][+-]?\\d+)?$",
+            "type": [
+              "null",
+              "number",
+              "string"
+            ],
+            "format": "double"
           }
         }
       },
@@ -2145,23 +2241,40 @@
       },
       "UpdateAvailableTimeQuery": {
         "required": [
-          "timeId",
+          "availableTimeId",
           "startTime",
-          "endTime"
+          "endTime",
+          "kindergartens"
         ],
         "type": "object",
         "properties": {
-          "timeId": {
+          "availableTimeId": {
             "type": "string",
             "format": "uuid"
           },
           "startTime": {
-            "type": "string",
+            "type": [
+              "null",
+              "string"
+            ],
             "format": "date-time"
           },
           "endTime": {
-            "type": "string",
+            "type": [
+              "null",
+              "string"
+            ],
             "format": "date-time"
+          },
+          "kindergartens": {
+            "type": [
+              "null",
+              "array"
+            ],
+            "items": {
+              "type": "string",
+              "format": "uuid"
+            }
           }
         }
       },
@@ -2170,6 +2283,7 @@
           "timeId",
           "startTime",
           "endTime",
+          "kindergartens",
           "statusMessage"
         ],
         "type": "object",
@@ -2195,6 +2309,15 @@
             ],
             "format": "date-time"
           },
+          "kindergartens": {
+            "type": [
+              "null",
+              "array"
+            ],
+            "items": {
+              "$ref": "#/components/schemas/KindergartenDto"
+            }
+          },
           "statusMessage": {
             "$ref": "#/components/schemas/UpdateAvailableTimeStatus"
           }
@@ -2209,7 +2332,8 @@
           "firstName",
           "lastName",
           "email",
-          "roles"
+          "roles",
+          "phoneNumber"
         ],
         "type": "object",
         "properties": {
@@ -2253,21 +2377,6 @@
       "name": "GetAllKindergartens"
     },
     {
-      "name": "PostAvailableTime"
-    },
-    {
-      "name": "UpdateAvailableTime"
-    },
-    {
-      "name": "GetMyAvailableTimes"
-    },
-    {
-      "name": "Register"
-    },
-    {
-      "name": "MakeManager"
-    },
-    {
       "name": "UnbookDecidedTime"
     },
     {
@@ -2280,6 +2389,15 @@
       "name": "BookDecidedTime"
     },
     {
+      "name": "UpdateAvailableTime"
+    },
+    {
+      "name": "PostAvailableTime"
+    },
+    {
+      "name": "GetMyAvailableTimes"
+    },
+    {
       "name": "GetAllAvailableTimeByManager"
     },
     {
@@ -2287,6 +2405,12 @@
     },
     {
       "name": "DeleteAvailableTime"
+    },
+    {
+      "name": "Register"
+    },
+    {
+      "name": "MakeManager"
     },
     {
       "name": "LogOut"

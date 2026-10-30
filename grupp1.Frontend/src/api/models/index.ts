@@ -25,6 +25,7 @@ export * from './geometryRelate';
 export * from './getAllAvailableTimeByManagerResponse';
 export * from './getAllDecidedTimesDTO';
 export * from './getAllDecidedTimesResponse';
+export * from './getAllKindergartensResponse';
 export * from './getApiAvailabletimesParams';
 export * from './getByIdResponse';
 export * from './getDecidedTimeByIdResponse';

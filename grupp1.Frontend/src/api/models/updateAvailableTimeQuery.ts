@@ -6,7 +6,11 @@
  */
 
 export interface UpdateAvailableTimeQuery {
-  timeId: string;
-  startTime: string;
-  endTime: string;
+  availableTimeId: string;
+  /** @nullable */
+  startTime: string | null;
+  /** @nullable */
+  endTime: string | null;
+  /** @nullable */
+  kindergartens: string[] | null;
 }

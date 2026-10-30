@@ -35,7 +35,7 @@ namespace Vicaria.Server.Features.Kindergarten.GetAll
     public sealed class GetAllKindergartensController(IHandler<GetAllKindergartensRequest, GetAllKindergartensResponse> handler) : ControllerBase
     {
         [HttpGet]
-        public async Task<IActionResult> GetAllKindergartens(CancellationToken cancellationToken)
+        public async Task<ActionResult<GetAllKindergartensResponse>> GetAllKindergartens(CancellationToken cancellationToken)
         {
             var request = new GetAllKindergartensRequest();
             var response = await handler.HandleAsync(request, cancellationToken);
