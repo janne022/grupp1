@@ -1,12 +1,13 @@
 using System.Security.Claims;
 using Microsoft.AspNetCore.Authorization;
 using Microsoft.AspNetCore.Mvc;
+using Vicaria.Server.Domain;
 using Vicaria.Server.Infrastructure;
 
 namespace Vicaria.Server.Features.AvailableTimes.GetByManager;
 
 [Route("api/availabletimes")]
-[Authorize(Roles = "Manager")]
+[Authorize(Roles = VicariaUserRoles.Manager)]
 [ApiController]
 public class GetAllAvailableTimeByManagerController(
     IHandler<GetAllAvailableTimeByManagerQuery, GetAllAvailableTimeByManagerResponse> handler) : ControllerBase

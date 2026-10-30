@@ -66,10 +66,12 @@ public class Program
             .AddEntityFrameworkStores<VicariaDbContext>()
             .AddDefaultTokenProviders();
 
-        builder.Services.ConfigureApplicationCookie(option =>
+        builder.Services.ConfigureApplicationCookie(options =>
         {
-            option.Cookie.SameSite = SameSiteMode.None;
-            option.Cookie.SecurePolicy = CookieSecurePolicy.Always;
+            options.Cookie.Name = "VicariaCookie";
+            options.Cookie.HttpOnly = true;
+            options.Cookie.SameSite = SameSiteMode.Strict;
+            options.Cookie.SecurePolicy = CookieSecurePolicy.Always;
         });
 
         // Bootleg wolverine, scans for all handlers and registers them as scoped services

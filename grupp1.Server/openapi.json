@@ -167,6 +167,16 @@
         "responses": {
           "200": {
             "description": "OK"
+          },
+          "400": {
+            "description": "Bad Request",
+            "content": {
+              "application/problem+json": {
+                "schema": {
+                  "$ref": "#/components/schemas/HttpValidationProblemDetails"
+                }
+              }
+            }
           }
         }
       }
@@ -474,6 +484,35 @@
       "get": {
         "tags": [
           "GetAllDecidedTimes"
+        ],
+        "parameters": [
+          {
+            "name": "kindergartenIds",
+            "in": "query",
+            "schema": {
+              "type": "array",
+              "items": {
+                "type": "string",
+                "format": "uuid"
+              }
+            }
+          },
+          {
+            "name": "fromTime",
+            "in": "query",
+            "schema": {
+              "type": "string",
+              "format": "date-time"
+            }
+          },
+          {
+            "name": "toTime",
+            "in": "query",
+            "schema": {
+              "type": "string",
+              "format": "date-time"
+            }
+          }
         ],
         "responses": {
           "200": {
@@ -1374,15 +1413,18 @@
       },
       "GetAllDecidedTimesDTO": {
         "required": [
-          "id",
+          "timeId",
           "startTime",
           "endTime",
+          "substituteId",
+          "substituteFirstName",
+          "substituteLastName",
           "kindergartenId",
           "kindergartenName"
         ],
         "type": "object",
         "properties": {
-          "id": {
+          "timeId": {
             "type": "string",
             "format": "uuid"
           },
@@ -1393,6 +1435,16 @@
           "endTime": {
             "type": "string",
             "format": "date-time"
+          },
+          "substituteId": {
+            "type": "string",
+            "format": "uuid"
+          },
+          "substituteFirstName": {
+            "type": "string"
+          },
+          "substituteLastName": {
+            "type": "string"
           },
           "kindergartenId": {
             "type": "string",
@@ -1405,7 +1457,8 @@
       },
       "GetAllDecidedTimesResponse": {
         "required": [
-          "decidedTimes"
+          "decidedTimes",
+          "report"
         ],
         "type": "object",
         "properties": {
@@ -1414,8 +1467,14 @@
             "items": {
               "$ref": "#/components/schemas/GetAllDecidedTimesDTO"
             }
+          },
+          "report": {
+            "$ref": "#/components/schemas/GetAllDecidedTimesStatus"
           }
         }
+      },
+      "GetAllDecidedTimesStatus": {
+        "type": "integer"
       },
       "GetAllKindergartensResponse": {
         "required": [
