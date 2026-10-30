@@ -22,5 +22,20 @@ export default function ConfirmBookingModal({
   setOpen: (open: boolean) => void;
   onConfirm: () => void;
 }) {
-  return <></>;
+  return (
+    <AlertDialog open={open} onOpenChange={(isOpen) => setOpen(isOpen)}>
+      <AlertDialogContent>
+        <AlertDialogHeader>
+          <AlertDialogTitle>Bekräfta bokning</AlertDialogTitle>
+          <AlertDialogDescription>
+            {/* "Detta bokar ... Stämmer det?" */}
+          </AlertDialogDescription>
+        </AlertDialogHeader>
+        <AlertDialogFooter>
+          <AlertDialogCancel>Nej</AlertDialogCancel>
+          <AlertDialogAction onClick={onConfirm}>Ja</AlertDialogAction>
+        </AlertDialogFooter>
+      </AlertDialogContent>
+    </AlertDialog>
+  );
 }
