@@ -258,6 +258,20 @@ namespace Vicaria.Server.Migrations
                     b.ToTable("KindergartenAvailableTimes");
                 });
 
+            modelBuilder.Entity("Vicaria.Server.Domain.Models.PendingTime", b =>
+                {
+                    b.Property<Guid>("Id")
+                        .ValueGeneratedOnAdd()
+                        .HasColumnType("uuid");
+
+                    b.Property<bool>("IsBooked")
+                        .HasColumnType("boolean");
+
+                    b.HasKey("Id");
+
+                    b.ToTable("PendingTimes");
+                });
+
             modelBuilder.Entity("Vicaria.Server.Domain.Models.User", b =>
                 {
                     b.Property<Guid>("Id")
@@ -346,6 +360,21 @@ namespace Vicaria.Server.Migrations
                     b.HasIndex("KindergartenId");
 
                     b.ToTable("UserKinderGartens");
+                });
+
+            modelBuilder.Entity("Vicaria.Server.Domain.Models.UserPendingTime", b =>
+                {
+                    b.Property<Guid>("UserId")
+                        .HasColumnType("uuid");
+
+                    b.Property<Guid>("PendingTimeId")
+                        .HasColumnType("uuid");
+
+                    b.HasKey("UserId", "PendingTimeId");
+
+                    b.HasIndex("PendingTimeId");
+
+                    b.ToTable("UserPendingTimes");
                 });
 
             modelBuilder.Entity("Microsoft.AspNetCore.Identity.IdentityRoleClaim<System.Guid>", b =>
@@ -475,6 +504,25 @@ namespace Vicaria.Server.Migrations
                     b.Navigation("User");
                 });
 
+            modelBuilder.Entity("Vicaria.Server.Domain.Models.UserPendingTime", b =>
+                {
+                    b.HasOne("Vicaria.Server.Domain.Models.PendingTime", "PendingTime")
+                        .WithMany("Users")
+                        .HasForeignKey("PendingTimeId")
+                        .OnDelete(DeleteBehavior.Cascade)
+                        .IsRequired();
+
+                    b.HasOne("Vicaria.Server.Domain.Models.User", "User")
+                        .WithMany("PendingTimes")
+                        .HasForeignKey("UserId")
+                        .OnDelete(DeleteBehavior.Cascade)
+                        .IsRequired();
+
+                    b.Navigation("PendingTime");
+
+                    b.Navigation("User");
+                });
+
             modelBuilder.Entity("Vicaria.Server.Domain.Models.AvailableTime", b =>
                 {
                     b.Navigation("DecidedTimes");
@@ -491,6 +539,11 @@ namespace Vicaria.Server.Migrations
                     b.Navigation("Managers");
                 });
 
+            modelBuilder.Entity("Vicaria.Server.Domain.Models.PendingTime", b =>
+                {
+                    b.Navigation("Users");
+                });
+
             modelBuilder.Entity("Vicaria.Server.Domain.Models.User", b =>
                 {
                     b.Navigation("AvailableTimes");
@@ -498,6 +551,8 @@ namespace Vicaria.Server.Migrations
                     b.Navigation("DecidedTimes");
 
                     b.Navigation("Kindergartens");
+
+                    b.Navigation("PendingTimes");
                 });
 #pragma warning restore 612, 618
         }
