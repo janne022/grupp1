@@ -6,6 +6,7 @@ using Microsoft.AspNetCore.Mvc;
 using NetTopologySuite.Geometries;
 using Vicaria.Server.Infrastructure;
 using Microsoft.EntityFrameworkCore;
+using Microsoft.AspNetCore.Authorization;
 
 namespace Vicaria.Server.Features.Kindergarten.GetAll
 {
@@ -29,11 +30,12 @@ namespace Vicaria.Server.Features.Kindergarten.GetAll
     }
 
     [ApiController]
+    [Authorize]
     [Route("api/kindergartens")]
     public sealed class GetAllKindergartensController(IHandler<GetAllKindergartensRequest, GetAllKindergartensResponse> handler) : ControllerBase
     {
         [HttpGet]
-        public async Task<IActionResult> GetAllKindergartens(CancellationToken cancellationToken)
+        public async Task<ActionResult<GetAllKindergartensResponse>> GetAllKindergartens(CancellationToken cancellationToken)
         {
             var request = new GetAllKindergartensRequest();
             var response = await handler.HandleAsync(request, cancellationToken);

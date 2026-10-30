@@ -10,29 +10,29 @@ import type {
 } from '../../models';
 
 
-export type putApiAvailabletimesResponse200TextPlain = {
+export type patchApiAvailabletimesResponse200TextPlain = {
   data: UpdateAvailableTimeResponse
   status: 200
 }
 
-export type putApiAvailabletimesResponse200ApplicationJson = {
+export type patchApiAvailabletimesResponse200ApplicationJson = {
   data: UpdateAvailableTimeResponse
   status: 200
 }
 
-export type putApiAvailabletimesResponse200TextJson = {
+export type patchApiAvailabletimesResponse200TextJson = {
   data: UpdateAvailableTimeResponse
   status: 200
 }
 
-export type putApiAvailabletimesResponseSuccess = (putApiAvailabletimesResponse200TextPlain | putApiAvailabletimesResponse200ApplicationJson | putApiAvailabletimesResponse200TextJson) & {
+export type patchApiAvailabletimesResponseSuccess = (patchApiAvailabletimesResponse200TextPlain | patchApiAvailabletimesResponse200ApplicationJson | patchApiAvailabletimesResponse200TextJson) & {
   headers: Headers;
 };
 ;
 
-export type putApiAvailabletimesResponse = (putApiAvailabletimesResponseSuccess)
+export type patchApiAvailabletimesResponse = (patchApiAvailabletimesResponseSuccess)
 
-export const getPutApiAvailabletimesUrl = () => {
+export const getPatchApiAvailabletimesUrl = () => {
 
 
 
@@ -40,7 +40,7 @@ export const getPutApiAvailabletimesUrl = () => {
   return `/api/availabletimes`
 }
 
-export const putApiAvailabletimes = async (updateAvailableTimeQuery: UpdateAvailableTimeQuery, options?: RequestInit): Promise<putApiAvailabletimesResponse> => {
+export const patchApiAvailabletimes = async (updateAvailableTimeQuery: UpdateAvailableTimeQuery, options?: RequestInit): Promise<patchApiAvailabletimesResponse> => {
 
     const getHeaders = (h?: NonNullable<RequestInit['headers']>): Record<string, string | readonly string[]> => {
     if (!h) return {};
@@ -56,10 +56,10 @@ export const putApiAvailabletimes = async (updateAvailableTimeQuery: UpdateAvail
     }
     return headers;
   };
-const res = await fetch(getPutApiAvailabletimesUrl(),
+const res = await fetch(getPatchApiAvailabletimesUrl(),
   {
     ...options,
-    method: 'PUT',
+    method: 'PATCH',
     headers: { 'Content-Type': 'application/json', ...getHeaders(options?.headers) },
     body: JSON.stringify(updateAvailableTimeQuery)
   }
@@ -68,8 +68,8 @@ const res = await fetch(getPutApiAvailabletimesUrl(),
   const contentType = (res.headers.get('content-type') ?? '').toLowerCase();
   const body = [204, 205, 304].includes(res.status) ? null : await res.text();
 
-  const data: putApiAvailabletimesResponse['data'] = body ? (contentType.includes('json') ? JSON.parse(body) : body) : {}
-  return { data, status: res.status, headers: res.headers } as putApiAvailabletimesResponse
+  const data: patchApiAvailabletimesResponse['data'] = body ? (contentType.includes('json') ? JSON.parse(body) : body) : {}
+  return { data, status: res.status, headers: res.headers } as patchApiAvailabletimesResponse
 }
 
 

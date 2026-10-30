@@ -14,6 +14,9 @@ public class Program
         var builder = WebApplication.CreateBuilder(args);
 
         var frontendOrigin = builder.Configuration["WEBFRONTEND_HTTP"] ?? "";
+        var port = builder.Configuration["FRONTEND_PORT"];
+        var frontendDomainOrigin = $"http://webfrontend-grupp1.dev.localhost:{port}";
+
         builder.AddRedisClientBuilder("cache").WithOutputCache();
 
         builder.AddServiceDefaults();
@@ -38,7 +41,7 @@ public class Program
         {
             options.AddPolicy(name: "Frontend", configurePolicy: p =>
             {
-                p.WithOrigins(frontendOrigin)
+                p.WithOrigins(frontendOrigin, frontendDomainOrigin)
                 .AllowAnyHeader()
                 .AllowAnyMethod()
                 .AllowCredentials();
@@ -63,10 +66,12 @@ public class Program
             .AddEntityFrameworkStores<VicariaDbContext>()
             .AddDefaultTokenProviders();
 
-        builder.Services.ConfigureApplicationCookie(option =>
+        builder.Services.ConfigureApplicationCookie(options =>
         {
-            option.Cookie.SameSite = SameSiteMode.None;
-            option.Cookie.SecurePolicy = CookieSecurePolicy.Always;
+            options.Cookie.Name = "VicariaCookie";
+            options.Cookie.HttpOnly = true;
+            options.Cookie.SameSite = SameSiteMode.Strict;
+            options.Cookie.SecurePolicy = CookieSecurePolicy.Always;
         });
 
         // Bootleg wolverine, scans for all handlers and registers them as scoped services

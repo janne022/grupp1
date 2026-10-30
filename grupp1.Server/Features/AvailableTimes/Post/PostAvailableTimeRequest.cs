@@ -7,8 +7,5 @@ namespace Vicaria.Server.Features.AvailableTimes.Post
         public DateTime StartTime { get; init; }
         public DateTime EndTime { get; init; }
         public HashSet<Guid> Kindergartens { get; init; } = [];
-    
     }
-
-    
 }
