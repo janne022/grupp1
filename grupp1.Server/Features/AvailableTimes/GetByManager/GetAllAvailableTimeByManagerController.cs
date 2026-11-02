@@ -6,13 +6,13 @@ using Vicaria.Server.Infrastructure;
 
 namespace Vicaria.Server.Features.AvailableTimes.GetByManager;
 
-[Route("api/availabletimes")]
+[Route("api/manager")]
 [Authorize(Roles = VicariaUserRoles.Manager)]
 [ApiController]
 public class GetAllAvailableTimeByManagerController(
     IHandler<GetAllAvailableTimeByManagerQuery, GetAllAvailableTimeByManagerResponse> handler) : ControllerBase
 {
-    [HttpGet("bymanager")]
+    [HttpGet("/{id}/availabletimes")]
     public async Task<ActionResult<GetAllAvailableTimeByManagerResponse>> GetByManager(
         CancellationToken cancellationToken = default
     )

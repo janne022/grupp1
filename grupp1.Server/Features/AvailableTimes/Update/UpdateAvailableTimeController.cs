@@ -15,7 +15,7 @@ namespace Vicaria.Server.Features.AvailableTimes.Update
         ILogger<UpdateAvailableTimeController> logger
     ) : ControllerBase
     {
-        [HttpPatch()]
+        [HttpPatch]
         public async Task<ActionResult<UpdateAvailableTimeResponse>> Patch(
             [FromBody] UpdateAvailableTimeQuery query,
             CancellationToken cancellationToken

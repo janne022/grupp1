@@ -14,7 +14,7 @@ namespace Vicaria.Server.Features.DecidedTimes.UnbookDecidedTime
     public class UnbookDecidedTimeController(IHandler<UnbookDecidedTimeCommand, UnbookDecidedTimeStatus> handler) : ControllerBase
     {
         [HttpDelete("{id:guid}")]
-        public async Task<IActionResult> UnbookDecidedTime([FromRoute] Guid id, CancellationToken cancellationToken)
+        public async Task<IActionResult> UnbookDecidedTime([FromRoute]Guid id, CancellationToken cancellationToken)
         {
             var userClaim = User.FindFirstValue(ClaimTypes.NameIdentifier);
 
