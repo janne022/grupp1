@@ -94,6 +94,8 @@ export default function ManagerBooking({
           startTime: from.toISOString(),
           endTime: to.toISOString(),
         });
+
+        rest.setOpen(false);
       }}
     >
       <div className="max-h-72 space-y-4 overflow-y-auto">
