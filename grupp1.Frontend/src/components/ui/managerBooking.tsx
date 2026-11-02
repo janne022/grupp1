@@ -97,12 +97,12 @@ export default function ManagerBooking({
       }}
     >
       <div className="max-h-72 space-y-4 overflow-y-auto">
-        {filtered.length === 0 ? (
+        {availableTimes.length === 0 ? (
           <p className="text-center text-sm text-muted-foreground">
             Inga tillgängliga vikarier för den valda tiden.
           </p>
         ) : (
-          filtered.map((kindergarten) => (
+          availableTimes.map((kindergarten) => (
             <section
               key={kindergarten.kindergartenId}
               className="space-y-2 rounded-lg border p-3"
