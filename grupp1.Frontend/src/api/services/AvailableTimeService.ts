@@ -8,7 +8,7 @@ import type {
   UpdateAvailableTimeResponse,
 } from "../models";
 
-function GetAllAvailableTimes() {
+function GetAllAvailableTimes(enabled = true) {
   return useQuery({
     queryKey: ["availableTimesData"],
     queryFn: async ({
@@ -32,6 +32,7 @@ function GetAllAvailableTimes() {
         throw error;
       }
     },
+    enabled: enabled,
   });
 }
 

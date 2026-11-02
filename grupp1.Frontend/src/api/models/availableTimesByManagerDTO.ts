@@ -4,11 +4,11 @@
  * grupp1.Server | v1
  * OpenAPI spec version: 1.0.0
  */
+import type { UserInfoResponse } from './userInfoResponse';
 
 export interface AvailableTimesByManagerDTO {
   id: string;
   startTime: string;
   endTime: string;
-  substituteFirstName: string;
-  substituteLastName: string;
+  substitute: UserInfoResponse;
 }

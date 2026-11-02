@@ -53,6 +53,9 @@ import {
   ContextMenuLabel,
   ContextMenuTrigger,
 } from "@/components/ui/context-menu";
+import { useCurrentUser } from "@/api/services/MeService";
+import ManagerBooking from "@/components/ui/managerBooking";
+import { useAvailableTimesByManager } from "@/api/services/AvailableTimeByManagerService";
 
 export const Route = createFileRoute("/")({
   component: RouteComponent,
@@ -73,13 +76,25 @@ function RouteComponent() {
     setOpenModal(true);
   }
 
-  const AvailableTimeResponse = GetAllAvailableTimes();
-  const KindergartenResponse = GetAllKindergartens();
+  // Fetch user and depending on role we choose what data to load
+  const user = useCurrentUser();
+
+  const isManager = user.data?.roles.includes("Manager") ?? false;
+  const isSubstitute = user.data?.roles.includes("Substitute") ?? false;
+
+  // Substitute functions
+  const AvailableTimeResponse = GetAllAvailableTimes(isSubstitute);
+  const KindergartenResponse = GetAllKindergartens(isSubstitute);
   const DeleteAvailableTimeFunction = DeleteAvailableTime();
 
-  if (AvailableTimeResponse.error || KindergartenResponse.error) {
+  // Manager functions
+  const AvailableTimesByManagerResponse = useAvailableTimesByManager(isManager);
+
+  if (AvailableTimeResponse.error || KindergartenResponse.error || user.error) {
     return <div>Error!</div>;
   }
+
+  const userRoles = user.data?.roles ?? [];
 
   return (
     <div className="flex h-dvh w-full flex-col overflow-hidden">
@@ -220,8 +235,9 @@ function RouteComponent() {
 
               return (
                 <div className="flex h-full min-h-0 min-w-0 flex-col gap-1 p-2">
-                  {AvailableTimeResponse.isPending &&
-                  KindergartenResponse.isPending ? (
+                  {(AvailableTimeResponse.isPending &&
+                    KindergartenResponse.isPending) ||
+                  user.isPending ? (
                     <Skeleton className="h-8 min-h-8 w-full shrink-0 rounded-md" />
                   ) : (
                     <CalendarDayButton
@@ -431,13 +447,28 @@ function RouteComponent() {
             },
           }}
         />
-        <AddEditTimeModal
-          open={openModal}
-          setOpen={setOpenModal}
-          updateAvailableTime={selectedAvailableTime}
-          allKindergartens={KindergartenResponse.data?.kindergartens ?? []}
-          selectedDate={date}
-        />
+
+        {userRoles.includes("Manager") && (
+          <ManagerBooking
+            open={openModal}
+            setOpen={setOpenModal}
+            title="Boka tid"
+            availableTimes={AvailableTimesByManagerResponse.data?.availableTimesByKindergarten ?? []}
+            submitLabel="Bekräfta Bokning"
+            selectedDate={date}
+            showOnlyTime={true}
+          />
+        )}
+
+        {userRoles.includes("Substitute") && (
+          <AddEditTimeModal
+            open={openModal}
+            setOpen={setOpenModal}
+            updateAvailableTime={selectedAvailableTime}
+            allKindergartens={KindergartenResponse.data?.kindergartens ?? []}
+            selectedDate={date}
+          />
+        )}
 
         <AlertDialog open={deleteTime} onOpenChange={setDeleteTime}>
           <AlertDialogContent size="sm">

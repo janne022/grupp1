@@ -5,7 +5,9 @@
  * OpenAPI spec version: 1.0.0
  */
 import type { GetAllDecidedTimesDTO } from './getAllDecidedTimesDTO';
+import type { GetAllDecidedTimesStatus } from './getAllDecidedTimesStatus';
 
 export interface GetAllDecidedTimesResponse {
   decidedTimes: GetAllDecidedTimesDTO[];
+  report: GetAllDecidedTimesStatus;
 }
