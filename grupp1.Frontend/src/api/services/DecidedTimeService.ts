@@ -10,7 +10,7 @@ import type {
 
 function GetAllAvailableTimes(enabled = true) {
   return useQuery({
-    queryKey: ["availableTimesData"],
+    queryKey: ["decidedTimesData"],
     queryFn: async ({
       signal,
     }: {
@@ -18,7 +18,7 @@ function GetAllAvailableTimes(enabled = true) {
     }): Promise<GetMyAvailableTimesResponse | null> => {
       try {
         const response = await apiClient.get<GetMyAvailableTimesResponse>(
-          "/api/availabletimes",
+          "/api/decidedtime",
           {
             signal,
           },
