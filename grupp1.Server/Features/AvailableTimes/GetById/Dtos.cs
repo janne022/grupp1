@@ -14,6 +14,6 @@ public record class GetByIdResponse(Guid Id, DateTime StartTime, DateTime EndTim
 #endregion
 #region DTOs
 
-public record class KindergartenDto(string Name, Guid Id, Point? Location);
+public record class KindergartenDto(string Name, Guid Id, double? Latitude, double? Longitude);
 
 #endregion
