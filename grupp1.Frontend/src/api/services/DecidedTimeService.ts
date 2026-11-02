@@ -8,7 +8,7 @@ import type {
   UpdateAvailableTimeResponse,
 } from "../models";
 
-function GetAllAvailableTimes(enabled = true) {
+function GetAllDecidedTimes(enabled = true) {
   return useQuery({
     queryKey: ["decidedTimesData"],
     queryFn: async ({
@@ -36,60 +36,57 @@ function GetAllAvailableTimes(enabled = true) {
   });
 }
 
-function AddAvailableTime() {
+function AddDecidedTime() {
   const query = useQueryClient();
   return useMutation({
     mutationFn: (req: PostAvailableTimeRequest) => {
-      return apiClient.post<PostAvailableTimeResponse>(
-        "/api/availabletimes",
-        req,
-      );
+      return apiClient.post<PostAvailableTimeResponse>("/api/decidedtime", req);
     },
 
     onSuccess: async () => {
       await query.invalidateQueries({
-        queryKey: ["availableTimesData"],
+        queryKey: ["decidedTimesData"],
       });
     },
   });
 }
 
-function DeleteAvailableTime() {
+function DeleteDecidedTime() {
   const query = useQueryClient();
   return useMutation({
     mutationFn: (id: string) => {
-      return apiClient.delete<void>(`/api/availabletimes/${id}`);
+      return apiClient.delete<void>(`/api/decidedtime/${id}`);
     },
 
     onSuccess: async () => {
       await query.invalidateQueries({
-        queryKey: ["availableTimesData"],
+        queryKey: ["decidedTimesData"],
       });
     },
   });
 }
 
-function EditAvailableTime() {
+function EditDecidedTime() {
   const query = useQueryClient();
   return useMutation({
     mutationFn: (req: UpdateAvailableTimeQuery) => {
       return apiClient.patch<UpdateAvailableTimeResponse>(
-        `/api/availabletimes`,
+        `/api/decidedtime`,
         req,
       );
     },
 
     onSuccess: async () => {
       await query.invalidateQueries({
-        queryKey: ["availableTimesData"],
+        queryKey: ["decidedTimesData"],
       });
     },
   });
 }
 
 export {
-  GetAllAvailableTimes,
-  AddAvailableTime,
-  DeleteAvailableTime,
-  EditAvailableTime,
+  GetAllDecidedTimes,
+  AddDecidedTime,
+  DeleteDecidedTime,
+  EditDecidedTime,
 };

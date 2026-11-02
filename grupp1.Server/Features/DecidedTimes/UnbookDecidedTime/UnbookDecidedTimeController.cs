@@ -11,14 +11,14 @@ namespace Vicaria.Server.Features.DecidedTimes.UnbookDecidedTime
     [Route("api/decidedtime")]
     [Authorize]
     [ApiController]
-    public class UnbookDecidedTimeController (IHandler<UnbookDecidedTimeCommand, UnbookDecidedTimeStatus> handler) : ControllerBase
+    public class UnbookDecidedTimeController(IHandler<UnbookDecidedTimeCommand, UnbookDecidedTimeStatus> handler) : ControllerBase
     {
-        [HttpDelete("delete/{id:guid}")]
-        public async Task<IActionResult> UnbookDecidedTime([FromRoute]Guid id, CancellationToken cancellationToken)
+        [HttpDelete("{id:guid}")]
+        public async Task<IActionResult> UnbookDecidedTime([FromRoute] Guid id, CancellationToken cancellationToken)
         {
             var userClaim = User.FindFirstValue(ClaimTypes.NameIdentifier);
 
-            if(!Guid.TryParse(userClaim, out var userId))
+            if (!Guid.TryParse(userClaim, out var userId))
             {
                 return Unauthorized();
             }
