@@ -126,7 +126,7 @@ export function GeneralBooking({
 
           <DialogFooter className="flex flex-row justify-between">
             <DialogClose render={<Button variant="outline">Avbryt</Button>} />
-            <Button type="submit">{submitLabel}</Button>
+            <Button type="button" onClick={onSubmit}>{submitLabel}</Button>
           </DialogFooter>
         </DialogContent>
       </form>
