@@ -6,6 +6,7 @@ import {
   AlertDialogDescription,
   AlertDialogFooter,
   AlertDialogHeader,
+  AlertDialogTitle,
 } from "@/components/ui/alert-dialog";
 
 export default function ConfirmBookingModal({
@@ -31,6 +32,7 @@ export default function ConfirmBookingModal({
     <AlertDialog open={open} onOpenChange={(isOpen) => setOpen(isOpen)}>
       <AlertDialogContent>
         <AlertDialogHeader>
+          <AlertDialogTitle>Bekräfta bokning</AlertDialogTitle>
           <AlertDialogDescription>
             Det här kommer boka{" "}
             <strong className="text-foreground">{userName}</strong> till{" "}
