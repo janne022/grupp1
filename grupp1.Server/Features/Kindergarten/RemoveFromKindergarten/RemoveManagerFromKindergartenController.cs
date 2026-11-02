@@ -7,15 +7,16 @@ using Vicaria.Server.Infrastructure;
 namespace Vicaria.Server.Features.RemoveManagerFromKindergarten;
 
 [Authorize(Roles = "Manager")]
-[Route("api/manager")]
+[Route("api/kindergartens")]
 [ApiController]
 public class RemoveManagerFromKindergartenController(
     IHandler<RemoveManagerFromKindergartenCommand, RemoveManagerFromKindergartenResult> handler
 ) : ControllerBase
 {
-    [HttpDelete("remove-from-kindergarten")]
+    //TODO: do the same as the todo in  ADdMangerTOKindergarten file. Should the managers be able to leave on their own?
+    [HttpDelete("{kindergartenId}/managers/me")]
     public async Task<IActionResult> RemoveFromKindergarten(
-        [FromQuery] Guid kindergartenId,
+        [FromRoute] Guid kindergartenId,
         CancellationToken cancellationToken = default
     )
     {

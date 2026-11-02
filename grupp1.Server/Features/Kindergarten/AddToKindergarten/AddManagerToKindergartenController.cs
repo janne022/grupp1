@@ -8,16 +8,17 @@ using Vicaria.Server.Infrastructure;
 namespace Vicaria.Server.Features.AddManagerToKindergarten;
 
 [Authorize(Roles = "Manager")]
-[Route("api/manager")]
+[Route("api/kindergartens")]
 [ApiController]
 public class AddManagerToKindergartenController(
     IHandler<AddManagerToKindergartenCommand, ErrorOr<AddManagerToKindergartenResult>> handler
 ) : ControllerBase
 {
+    //TODO: update controller to {kindergartenId}/managers/{managerId} when we want admins to assign managers to kindergartens
     //This will be expanded upon later. right now any manager can go to any kindergarten they feel like
-    [HttpPatch("addtokindergarten")]
+    [HttpPut("{kindergartenId}/managers/me")]
     public async Task<IActionResult> AddToKindergarten(
-        [FromQuery] Guid kindergartenId,
+        [FromRoute] Guid kindergartenId,
         CancellationToken cancellationToken = default
     )
     {
