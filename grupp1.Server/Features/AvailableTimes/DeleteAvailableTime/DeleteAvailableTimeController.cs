@@ -20,7 +20,7 @@ public class DeleteAvailableTimeController(
     )
     {
         ArgumentNullException.ThrowIfNullOrEmpty(id);
-        
+
         string? userId = User.FindFirstValue(ClaimTypes.NameIdentifier);
 
         if (userId is null || !Guid.TryParse(id, out var guidFormattedId) || !Guid.TryParse(userId, out var userGuidId))
