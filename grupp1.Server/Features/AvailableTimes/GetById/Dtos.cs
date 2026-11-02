@@ -4,7 +4,7 @@ namespace Vicaria.Server.Features.AvailableTimes.GetById;
 
 #region Requests
 
-public record class GetByIdQuery(Guid AvailableTimeId);
+public record class GetByIdQuery(Guid AvailableTimeId, Guid UserId);
 
 #endregion
 #region Responses
