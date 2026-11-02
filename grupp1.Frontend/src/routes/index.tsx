@@ -144,16 +144,18 @@ function RouteComponent() {
           </h1>
         </div>
 
-        <Button
-          variant="default"
-          onClick={() => {
-            setSelectedAvailableTime(null);
-            openDialog();
-          }}
-        >
-          <Plus />
-          Ny Tid
-        </Button>
+        {userRoles.includes("Substitute") && (
+          <Button
+            variant="default"
+            onClick={() => {
+              setSelectedAvailableTime(null);
+              openDialog();
+            }}
+          >
+            <Plus />
+            Ny Tid
+          </Button>
+        )}
       </header>
       <div className="min-h-0 flex-1">
         <Calendar
