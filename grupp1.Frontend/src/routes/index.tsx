@@ -11,24 +11,12 @@ import AddEditTimeModal from "@/components/addEditTimeModal";
 import {
   ChevronLeft,
   ChevronRight,
-  Clock,
-  Dot,
-  PenLine,
   Plus,
   PlusIcon,
-  Trash,
   Trash2Icon,
-  TrashIcon,
-  X,
 } from "lucide-react";
 import { addMonths, format, isSameDay } from "date-fns";
 import { GetAllKindergartens } from "@/api/services/KindergartenService";
-
-import {
-  Popover,
-  PopoverContent,
-  PopoverTrigger,
-} from "@/components/ui/popover";
 
 import {
   AlertDialog,
@@ -50,12 +38,14 @@ import {
   ContextMenuContent,
   ContextMenuGroup,
   ContextMenuItem,
-  ContextMenuLabel,
   ContextMenuTrigger,
 } from "@/components/ui/context-menu";
 import { useCurrentUser } from "@/api/services/MeService";
 import ManagerBooking from "@/components/ui/managerBooking";
 import { useAvailableTimesByManager } from "@/api/services/AvailableTimeByManagerService";
+import { GetAllDecidedTimes } from "@/api/services/DecidedTimeService";
+import DecidedTimeEntry from "@/components/decidedTimeEntry";
+import AvailableTimeEntry from "@/components/availableTimeEntry";
 
 export const Route = createFileRoute("/")({
   component: RouteComponent,
@@ -89,12 +79,40 @@ function RouteComponent() {
 
   // Manager functions
   const AvailableTimesByManagerResponse = useAvailableTimesByManager(isManager);
+  const DecidedTimesResponse = GetAllDecidedTimes(undefined, isManager);
 
-  if (AvailableTimeResponse.error || KindergartenResponse.error || user.error) {
+  if (
+    AvailableTimeResponse.error ||
+    KindergartenResponse.error ||
+    user.error ||
+    AvailableTimesByManagerResponse.error ||
+    DecidedTimesResponse.error
+  ) {
     return <div>Error!</div>;
   }
 
   const userRoles = user.data?.roles ?? [];
+
+  const calendarEvents = isManager
+    ? (DecidedTimesResponse.data?.decidedTimes ?? []).map((item) => ({
+        id: item.timeId,
+        startTime: item.startTime,
+        endTime: item.endTime,
+        type: "decided" as const,
+        original: item,
+      }))
+    : (AvailableTimeResponse.data?.availableTimes ?? []).map((item) => ({
+        id: item.id,
+        startTime: item.startTime,
+        endTime: item.endTime,
+        type: "available" as const,
+        original: item,
+      }));
+
+  const isCalendarLoading =
+    user.isPending || isManager
+      ? DecidedTimesResponse.isPending
+      : AvailableTimeResponse.isPending;
 
   return (
     <div className="flex h-dvh w-full flex-col overflow-hidden">
@@ -235,9 +253,7 @@ function RouteComponent() {
 
               return (
                 <div className="flex h-full min-h-0 min-w-0 flex-col gap-1 p-2">
-                  {(AvailableTimeResponse.isPending &&
-                    KindergartenResponse.isPending) ||
-                  user.isPending ? (
+                  {isCalendarLoading ? (
                     <Skeleton className="h-8 min-h-8 w-full shrink-0 rounded-md" />
                   ) : (
                     <CalendarDayButton
@@ -251,194 +267,52 @@ function RouteComponent() {
                     </CalendarDayButton>
                   )}
                   <div className="flex flex-1 min-h-0 w-full min-w-0 flex-col gap-1 overflow-y-auto">
-                    {AvailableTimeResponse.data?.availableTimes
-                      .filter(
-                        (item) =>
-                          new Date(item.startTime).toLocaleDateString(
-                            "sv-SE",
-                          ) <= day.isoDate &&
-                          new Date(item.endTime).toLocaleDateString("sv-SE") >=
-                            day.isoDate,
-                      )
-                      .map((item) => {
-                        const uniqueKey = `${item.id}-${day.isoDate}`;
+                    {calendarEvents
+                      .filter((item) => {
+                        const start = new Date(
+                          item.startTime,
+                        ).toLocaleDateString("sv-SE");
+                        const end = new Date(item.endTime).toLocaleDateString(
+                          "sv-SE",
+                        );
 
-                        return (
-                          <Popover
+                        return start <= day.isoDate && end >= day.isoDate;
+                      })
+                      .map((item) => {
+                        const uniqueKey = `${item.type}-${item.id}-${day.isoDate}`;
+
+                        const onOpenChange = (open: boolean) => {
+                          setPopoverOpenId((current) =>
+                            open
+                              ? uniqueKey
+                              : current === uniqueKey
+                                ? null
+                                : current,
+                          );
+                        };
+
+                        return item.type === "decided" ? (
+                          <DecidedTimeEntry
                             key={uniqueKey}
+                            time={item.original}
                             open={popoverOpenId === uniqueKey}
-                            onOpenChange={(open) => {
-                              setPopoverOpenId((current) => {
-                                if (open) {
-                                  return uniqueKey;
-                                }
-                                return current === uniqueKey ? null : current;
-                              });
+                            onOpenChange={onOpenChange}
+                          />
+                        ) : (
+                          <AvailableTimeEntry
+                            key={uniqueKey}
+                            time={item.original}
+                            open={popoverOpenId === uniqueKey}
+                            onOpenChange={onOpenChange}
+                            onEdit={(time) => {
+                              setSelectedAvailableTime(time);
+                              setOpenModal(true);
                             }}
-                          >
-                            <PopoverTrigger
-                              render={
-                                <button
-                                  type="button"
-                                  onClick={(e) => {
-                                    e.stopPropagation();
-                                  }}
-                                  className="hover:cursor-pointer hover:text-white hover:bg-primary p-1"
-                                  key={uniqueKey}
-                                >
-                                  <ContextMenu>
-                                    <ContextMenuTrigger className="flex items-center gap-2">
-                                      <Dot
-                                        key={uniqueKey}
-                                        className="size-1.5 rounded-full bg-blue-600"
-                                      />
-                                      <span className="min-w-0 truncate leading-normal">
-                                        Tillgänglig mellan{" "}
-                                        {new Date(
-                                          item.startTime,
-                                        ).toLocaleTimeString("sv-SE", {
-                                          hour: "2-digit",
-                                          minute: "2-digit",
-                                        })}{" "}
-                                        och{" "}
-                                        {new Date(
-                                          item.endTime,
-                                        ).toLocaleTimeString("sv-SE", {
-                                          hour: "2-digit",
-                                          minute: "2-digit",
-                                        })}
-                                      </span>
-                                    </ContextMenuTrigger>
-                                    <ContextMenuContent>
-                                      <ContextMenuGroup>
-                                        <ContextMenuLabel>
-                                          Tillgänglig tid
-                                        </ContextMenuLabel>
-                                        <ContextMenuItem
-                                          onClick={(e) => {
-                                            e.stopPropagation();
-                                            setSelectedAvailableTime(item);
-                                            setOpenModal(true);
-                                          }}
-                                        >
-                                          <PenLine />
-                                          Ändra
-                                        </ContextMenuItem>
-                                        <ContextMenuItem
-                                          onClick={(e) => {
-                                            e.stopPropagation();
-                                            setDeleteTime(true);
-                                            setAvailableTimeId(item.id);
-                                          }}
-                                          variant="destructive"
-                                        >
-                                          <TrashIcon />
-                                          Radera
-                                        </ContextMenuItem>
-                                      </ContextMenuGroup>
-                                    </ContextMenuContent>
-                                  </ContextMenu>
-                                </button>
-                              }
-                            />
-                            <PopoverContent
-                              onClick={(e) => e.stopPropagation()}
-                              className="w-80 p-4 shadow-2xl border rounded-lg bg-popover text-popover-foreground"
-                              side="right"
-                              align="center"
-                            >
-                              <div className="grid gap-4">
-                                <div className="space-y-5">
-                                  <div className="flex flex-row justify-between items-center">
-                                    <h3 className="leading-none font-medium text-lg">
-                                      <Clock className="size-4 mr-2 inline-block" />
-                                      Tillgänglig Tid
-                                    </h3>
-                                    <div className="flex flex-row">
-                                      <Button
-                                        onClick={(e) => {
-                                          e.stopPropagation();
-                                          setSelectedAvailableTime(item);
-                                          setOpenModal(true);
-                                        }}
-                                        variant="ghost"
-                                        size="icon-sm"
-                                      >
-                                        <PenLine className="text-primary/70" />
-                                      </Button>
-                                      <Button
-                                        variant="ghost"
-                                        size="icon-sm"
-                                        onClick={(e) => {
-                                          e.stopPropagation();
-                                          setDeleteTime(true);
-                                          setAvailableTimeId(item.id);
-                                        }}
-                                        className="hover:bg-destructive/10"
-                                      >
-                                        <Trash className="text-destructive" />
-                                      </Button>
-                                      <div className="mx-1 h-5 w-px bg-gray-400 translate-y-1" />
-                                      <Button
-                                        onClick={(e) => {
-                                          e.stopPropagation();
-                                          setPopoverOpenId((current) =>
-                                            current === uniqueKey
-                                              ? null
-                                              : current,
-                                          );
-                                        }}
-                                        variant="ghost"
-                                        size="icon-sm"
-                                      >
-                                        <X />
-                                      </Button>
-                                    </div>
-                                  </div>
-                                  <div className="flex flex-col gap-2">
-                                    <p className="text-sm">
-                                      {new Date(
-                                        item.startTime,
-                                      ).toLocaleDateString("sv-SE", {
-                                        weekday: "long",
-                                      })}
-                                      {" den "}
-                                      {new Date(
-                                        item.startTime,
-                                      ).toLocaleDateString("sv-SE", {
-                                        day: "numeric",
-                                        month: "long",
-                                      })}
-                                      {" ⋅ "}
-                                      {new Date(
-                                        item.startTime,
-                                      ).toLocaleTimeString("sv-SE", {
-                                        hour: "2-digit",
-                                        minute: "2-digit",
-                                      })}{" "}
-                                      -{" "}
-                                      {new Date(
-                                        item.endTime,
-                                      ).toLocaleTimeString("sv-SE", {
-                                        hour: "2-digit",
-                                        minute: "2-digit",
-                                      })}
-                                    </p>
-                                    <div>
-                                      <p className="text-sm">Förskolor</p>
-                                      <p className="text-sm text-muted-foreground">
-                                        {item.kindergartens
-                                          .map(
-                                            (kindergarten) => kindergarten.name,
-                                          )
-                                          .join(", ")}
-                                      </p>
-                                    </div>
-                                  </div>
-                                </div>
-                              </div>
-                            </PopoverContent>
-                          </Popover>
+                            onDelete={(id) => {
+                              setAvailableTimeId(id);
+                              setDeleteTime(true);
+                            }}
+                          />
                         );
                       })}
                   </div>
@@ -453,7 +327,10 @@ function RouteComponent() {
             open={openModal}
             setOpen={setOpenModal}
             title="Boka tid"
-            availableTimes={AvailableTimesByManagerResponse.data?.availableTimesByKindergarten ?? []}
+            availableTimes={
+              AvailableTimesByManagerResponse.data
+                ?.availableTimesByKindergarten ?? []
+            }
             submitLabel="Bekräfta Bokning"
             selectedDate={date}
             showOnlyTime={true}

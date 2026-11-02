@@ -4,15 +4,12 @@ import {
   type GeneralBookingProps,
 } from "./generalBookingModal";
 import { filterAvailableTimes } from "./substituteDisplay";
-import type { AvailableTimesByKindergartenDTO } from "@/api/models";
+import type {
+  AvailableTimesByKindergartenDTO,
+  BookDecidedTimeQuery,
+} from "@/api/models";
 import { Clock, Phone } from "lucide-react";
-
-export interface BookingSubmitData {
-  availableTimes: AvailableTimesByKindergartenDTO[];
-  date: Date | undefined;
-  startTime: string;
-  endTime: string;
-}
+import { AddDecidedTime } from "@/api/services/DecidedTimeService";
 
 interface BookTimeProps extends Omit<
   GeneralBookingProps,
@@ -57,6 +54,8 @@ export default function ManagerBooking({
 
   const to = selectedDate ? convertToDate(selectedDate, end) : undefined;
 
+  const addBooking = AddDecidedTime();
+
   // Filter each kindergarten's available times separately
   const filtered: AvailableTimesByKindergartenDTO[] =
     from && to && from < to
@@ -72,9 +71,8 @@ export default function ManagerBooking({
           .filter((kindergarten) => kindergarten.availableTimes.length > 0)
       : [];
 
-  function ConfirmBooking(data: BookingSubmitData) {
-    console.log(data);
-    // TODO: Implement booking API
+  function ConfirmBooking(data: BookDecidedTimeQuery) {
+    addBooking.mutate(data);
   }
 
   return (
@@ -87,14 +85,16 @@ export default function ManagerBooking({
       onStartTimeChange={setStart}
       onEndTimeChange={setEnd}
       submitDisabled={!from || !to || from >= to || filtered.length === 0}
-      onSubmit={() =>
+      onSubmit={() => {
+        if (!from || !to || filtered.length === 0) return;
+
         ConfirmBooking({
-          availableTimes: filtered,
-          date: selectedDate,
-          startTime: start,
-          endTime: end,
-        })
-      }
+          availableTimeGuid: filtered[0].availableTimes[0].id,
+          kindergartenId: filtered[0].kindergartenId,
+          startTime: from.toISOString(),
+          endTime: to.toISOString(),
+        });
+      }}
     >
       <div className="max-h-72 space-y-4 overflow-y-auto">
         {filtered.length === 0 ? (
