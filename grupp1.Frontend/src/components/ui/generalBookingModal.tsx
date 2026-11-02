@@ -36,7 +36,7 @@ export interface GeneralBookingProps {
   submitDisabled?: boolean;
 }
 
-export function   GeneralBooking({
+export function GeneralBooking({
   open,
   setOpen,
   title,
@@ -62,37 +62,16 @@ export function   GeneralBooking({
             onSubmit();
           }}
         >
-          <DialogHeader className="grid grid-cols-[1fr_auto_1fr] items-center">
+          <DialogHeader className="flex flex-row items-center gap-0">
+            <DialogTitle className="text-center mx-auto">{title}</DialogTitle>
+
             <DialogClose
               render={
-                <Button type="button" variant="ghost" className="justify-start">
+                <Button type="button" variant="ghost" className="m-0 p-0">
                   <XIcon />
                 </Button>
               }
             />
-
-            <DialogTitle>{title}</DialogTitle>
-
-            {onDelete ? (
-              <DropdownMenu>
-                <DropdownMenuTrigger
-                  render={
-                    <Button type="button" variant="ghost">
-                      <EllipsisVertical />
-                    </Button>
-                  }
-                />
-
-                <DropdownMenuContent>
-                  <DropdownMenuItem onClick={onDelete} variant="destructive">
-                    <TrashIcon />
-                    Delete
-                  </DropdownMenuItem>
-                </DropdownMenuContent>
-              </DropdownMenu>
-            ) : (
-              <div />
-            )}
           </DialogHeader>
 
           <div className="text-center">
