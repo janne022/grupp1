@@ -1,26 +1,34 @@
 import { useMutation, useQuery, useQueryClient } from "@tanstack/react-query";
 import { apiClient, ApiError } from "@/lib/api";
 import type {
-  GetMyAvailableTimesResponse,
-  PostAvailableTimeRequest,
-  PostAvailableTimeResponse,
-  UpdateAvailableTimeQuery,
-  UpdateAvailableTimeResponse,
+  BookDecidedTimeQuery,
+  BookDecidedTimeResponse,
+  GetAllDecidedTimesResponse,
 } from "../models";
 
-function GetAllDecidedTimes(enabled = true) {
+type GetAllDecidedTimesParams = {
+  kindergartenId?: string[];
+  fromTime?: string;
+  toTime?: string;
+};
+
+function GetAllDecidedTimes(
+  params: GetAllDecidedTimesParams = {},
+  enabled = true,
+) {
   return useQuery({
-    queryKey: ["decidedTimesData"],
+    queryKey: ["decidedTimesData", params],
     queryFn: async ({
       signal,
     }: {
       signal: AbortSignal;
-    }): Promise<GetMyAvailableTimesResponse | null> => {
+    }): Promise<GetAllDecidedTimesResponse | null> => {
       try {
-        const response = await apiClient.get<GetMyAvailableTimesResponse>(
+        const response = await apiClient.get<GetAllDecidedTimesResponse>(
           "/api/decidedtime",
           {
             signal,
+            params,
           },
         );
         return response;
@@ -39,8 +47,8 @@ function GetAllDecidedTimes(enabled = true) {
 function AddDecidedTime() {
   const query = useQueryClient();
   return useMutation({
-    mutationFn: (req: PostAvailableTimeRequest) => {
-      return apiClient.post<PostAvailableTimeResponse>("/api/decidedtime", req);
+    mutationFn: (req: BookDecidedTimeQuery) => {
+      return apiClient.post<BookDecidedTimeResponse>("/api/decidedtime", req);
     },
 
     onSuccess: async () => {
@@ -66,27 +74,4 @@ function DeleteDecidedTime() {
   });
 }
 
-function EditDecidedTime() {
-  const query = useQueryClient();
-  return useMutation({
-    mutationFn: (req: UpdateAvailableTimeQuery) => {
-      return apiClient.patch<UpdateAvailableTimeResponse>(
-        `/api/decidedtime`,
-        req,
-      );
-    },
-
-    onSuccess: async () => {
-      await query.invalidateQueries({
-        queryKey: ["decidedTimesData"],
-      });
-    },
-  });
-}
-
-export {
-  GetAllDecidedTimes,
-  AddDecidedTime,
-  DeleteDecidedTime,
-  EditDecidedTime,
-};
+export { GetAllDecidedTimes, AddDecidedTime, DeleteDecidedTime };
