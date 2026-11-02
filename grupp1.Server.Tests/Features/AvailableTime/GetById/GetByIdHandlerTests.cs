@@ -109,7 +109,8 @@ public class GetByIdHandlerTests
         (
             k.Kindergarten.Name,
             k.KindergartenId,
-            k.Kindergarten.Location
+            k.Kindergarten.Location?.Y,
+            k.Kindergarten.Location?.X
         ))];
 
         GetByIdResponse GetByIdResponseMock = new
