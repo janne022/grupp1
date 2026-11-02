@@ -4,8 +4,8 @@ import type { GetAllAvailableTimeByManagerResponse } from "../models";
 
 export const availableTimesByManagerQuery = {
   queryKey: ["availableTimes", "byManager"] as const,
-  staleTime: 1,
-  gcTime: 1,
+  staleTime: 1000 * 60 * 5,
+  gcTime: 1000 * 60 * 10,
   retry: false,
   queryFn: ({
     signal,
