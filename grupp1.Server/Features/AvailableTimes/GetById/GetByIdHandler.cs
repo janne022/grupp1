@@ -1,3 +1,4 @@
+using System.Runtime.CompilerServices;
 using Microsoft.EntityFrameworkCore;
 using Vicaria.Server.Domain.Models;
 using Vicaria.Server.Infrastructure; // To implement IHandler
@@ -28,8 +29,9 @@ public class GetByIdHandler : IHandler<GetByIdQuery, GetByIdResponse?>
 
         AvailableTime? availableTime = await _dbContext.AvailableTimes
             .AsNoTracking()
-            .Where(at => at.UserId == userId)
-            .FirstOrDefaultAsync(at => at.Id == inputId);
+            .Include(at => at.Kindergartens)
+            .ThenInclude(kat => kat.Kindergarten)
+            .FirstOrDefaultAsync(at => at.Id == inputId && at.UserId == userId);
 
         if (availableTime is null)
         {
@@ -45,7 +47,8 @@ public class GetByIdHandler : IHandler<GetByIdQuery, GetByIdResponse?>
             (
                 k.Kindergarten.Name,
                 k.Kindergarten.Id,
-                k.Kindergarten.Location
+                k.Kindergarten.Location?.Y,
+                k.Kindergarten.Location?.X
             ))]
         );
     }
