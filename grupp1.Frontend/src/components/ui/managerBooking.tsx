@@ -97,12 +97,12 @@ export default function ManagerBooking({
       }}
     >
       <div className="max-h-72 space-y-4 overflow-y-auto">
-        {availableTimes.length === 0 ? (
+        {filtered.length === 0 ? (
           <p className="text-center text-sm text-muted-foreground">
-            Inga tillgängliga vikarier för den valda tiden.
+            Inga tillgängliga vikarier för valt datum och tid.
           </p>
         ) : (
-          availableTimes.map((kindergarten) => (
+          filtered.map((kindergarten) => (
             <section
               key={kindergarten.kindergartenId}
               className="space-y-2 rounded-lg border p-3"
@@ -120,12 +120,13 @@ export default function ManagerBooking({
                     </p>
 
                     <p className="flex flex-row gap-1 text-xs text-muted-foreground">
-                      <Phone size={16} /> {time.substitute.phoneNumber}
+                      <Phone size={16} />
+                      {time.substitute.phoneNumber}
                     </p>
 
                     <p className="flex flex-row gap-1 text-xs text-muted-foreground">
-                      <Clock size={16} /> {formatTime(time.startTime)} –{" "}
-                      {formatTime(time.endTime)}
+                      <Clock size={16} />
+                      {formatTime(time.startTime)} – {formatTime(time.endTime)}
                     </p>
                   </div>
                 ))}
