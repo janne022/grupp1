@@ -1,10 +1,10 @@
 using System.Security.Claims;
 using Microsoft.AspNetCore.Authorization;
 using Microsoft.AspNetCore.Mvc;
-using Vicaria.Server.Features.RemoveManagerFromKindergarten.DTOs;
+using Vicaria.Server.Features.Kindergarten.RemoveManagerFromKindergarten.DTOs;
 using Vicaria.Server.Infrastructure;
 
-namespace Vicaria.Server.Features.RemoveManagerFromKindergarten;
+namespace Vicaria.Server.Features.Kindergarten.RemoveManagerFromKindergarten;
 
 [Authorize(Roles = "Manager")]
 [Route("api/kindergartens")]
