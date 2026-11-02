@@ -15,13 +15,14 @@ namespace Vicaria.Server.Features.AvailableTimes.Update
         ILogger<UpdateAvailableTimeController> logger
     ) : ControllerBase
     {
-        [HttpPatch]
+        [HttpPatch("{availableTimeId:guid}")]
         public async Task<ActionResult<UpdateAvailableTimeResponse>> Patch(
-            [FromBody] UpdateAvailableTimeQuery query,
+            [FromRoute] Guid availableTimeId,
+            [FromBody] UpdateAvailableTimeRequest request,
             CancellationToken cancellationToken
         )
         {
-            if (query is null)
+            if (request is null)
             {
                 return BadRequest();
             }
@@ -33,11 +34,11 @@ namespace Vicaria.Server.Features.AvailableTimes.Update
             }
 
             var command = new UpdateAvailableTimeCommand(
-                query.AvailableTimeId,
+                availableTimeId,
                 userId,
-                query.StartTime,
-                query.EndTime,
-                query.Kindergartens?.ToHashSet()
+                request.StartTime,
+                request.EndTime,
+                request.Kindergartens?.ToHashSet()
             );
 
             var response = await handler.HandleAsync(command, cancellationToken);
