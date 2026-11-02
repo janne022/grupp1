@@ -2,10 +2,10 @@ using System.Security.Claims;
 using ErrorOr;
 using Microsoft.AspNetCore.Authorization;
 using Microsoft.AspNetCore.Mvc;
-using Vicaria.Server.Features.AddManagerToKindergarten.DTOs;
+using Vicaria.Server.Features.Kindergarten.AddManagerFromKindergarten.DTOs;
 using Vicaria.Server.Infrastructure;
 
-namespace Vicaria.Server.Features.AddManagerToKindergarten;
+namespace Vicaria.Server.Features.Kindergarten.AddManagerFromKindergarten;
 
 [Authorize(Roles = "Manager")]
 [Route("api/kindergartens")]

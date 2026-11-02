@@ -1,4 +1,4 @@
-namespace Vicaria.Server.Features.RemoveManagerFromKindergarten.DTOs;
+namespace Vicaria.Server.Features.Kindergarten.RemoveManagerFromKindergarten.DTOs;
 
 public enum ErrorType { NotFound, Conflict }
 
