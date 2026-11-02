@@ -1,5 +1,6 @@
 using Microsoft.EntityFrameworkCore;
 using Moq;
+using Vicaria.Server.Domain.Models;
 using Vicaria.Server.Features.AvailableTimes.GetById;
 using Vicaria.Server.Infrastructure;
 using Model = Vicaria.Server.Domain.Models;
@@ -30,19 +31,29 @@ public class GetByIdHandlerTests
     {
         // Arrange
 
-        var availableTimeMock = new Model.AvailableTime()
+        Model.User userMock = new()
         {
-            Id = Guid.Empty,
+            Id = Guid.Parse("01a19ba1-50fe-7724-8b0f-8184172f7200"),
+            FirstName = "Beren",
+            LastName = "Erchamion",
+            PhoneNumber = "202003"
+        };
+
+        Model.AvailableTime availableTimeMock = new()
+        {
+            Id = Guid.Parse("01a19ba1-50fe-7724-8b0f-84e13bc6f893"),
             StartTime = new(),
             EndTime = new(),
-            UserId = Guid.Empty,
-            Substitute = new(),
+            UserId = userMock.Id,
+            Substitute = userMock,
             Kindergartens = []
         };
 
+        _db.Users.Add(userMock);
         _db.AvailableTimes.Add(availableTimeMock);
+        await _db.SaveChangesAsync();
 
-        GetByIdQuery query = new(availableTimeMock.Id);
+        GetByIdQuery query = new(availableTimeMock.Id, userMock.Id);
 
         // Act
 
@@ -60,7 +71,7 @@ public class GetByIdHandlerTests
     {
         // Arrange
 
-        GetByIdQuery query = new(Guid.Empty);
+        GetByIdQuery query = new(Guid.Empty, Guid.Empty);
 
         // Act
 
@@ -76,24 +87,32 @@ public class GetByIdHandlerTests
     {
         // Arrange
 
-        var availableTimeMock = new Model.AvailableTime()
+        Model.User userMock = new()
+        {
+            Id = Guid.Parse("01a19b9c-2e4c-776e-9fd7-16e9471c9399"),
+            FirstName = "Lúthien",
+            LastName = "Tinúviel",
+            PhoneNumber = "070992"
+        };
+
+        Model.AvailableTime availableTimeMock = new()
         {
             Id = Guid.Parse("01a13ea2-cc52-75ed-9a70-9992fba8f74c"),
             StartTime = new(),
             EndTime = new(),
-            UserId = Guid.Empty,
-            Substitute = new(),
+            UserId = userMock.Id,
+            Substitute = userMock,
             Kindergartens = []
         };
 
-        var KindergartensMock = availableTimeMock.Kindergartens.Select(k => new KindergartenDto 
+        KindergartenDto[] KindergartensMock = [.. availableTimeMock.Kindergartens.Select(k => new KindergartenDto
         (
             k.Kindergarten.Name,
             k.KindergartenId,
             k.Kindergarten.Location
-        )).ToArray();
+        ))];
 
-        var GetByIdResponseMock = new GetByIdResponse
+        GetByIdResponse GetByIdResponseMock = new
         (
             Id: availableTimeMock.Id,
             StartTime: availableTimeMock.StartTime,
@@ -101,9 +120,12 @@ public class GetByIdHandlerTests
             Kindergartens: KindergartensMock
         );
 
+        _db.Users.Add(userMock);
         _db.AvailableTimes.Add(availableTimeMock);
+        await _db.SaveChangesAsync();
 
-        GetByIdQuery query = new(availableTimeMock.Id);
+
+        GetByIdQuery query = new(availableTimeMock.Id, availableTimeMock.UserId);
 
         // Act
 
