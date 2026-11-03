@@ -2,7 +2,7 @@ import { useQuery } from "@tanstack/react-query";
 import { apiClient, ApiError } from "@/lib/api";
 import type { GetAllKindergartensResponse } from "../models";
 
-function GetAllKindergartens() {
+function GetAllKindergartens(enabled = true) {
   return useQuery({
     queryKey: ["kindergartensData"],
     staleTime: 1000 * 60 * 60,
@@ -31,6 +31,7 @@ function GetAllKindergartens() {
         throw error;
       }
     },
+    enabled: enabled,
   });
 }
 

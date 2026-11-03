@@ -16,7 +16,7 @@ namespace Vicaria.Server.Features.DecidedTimes.Book;
 public class BookDecidedTimeController(
     IHandler<BookDecidedTimeCommand, BookDecidedTimeResponse> handler) : Controller
 {
-    [HttpPost("book")]
+    [HttpPost]
     public async Task<ActionResult<BookDecidedTimeResponse>> BookTime(
         [FromBody] BookDecidedTimeQuery query,
         CancellationToken cancellationToken = default
