@@ -1,5 +1,6 @@
 using Microsoft.AspNetCore.Authorization; // To use Authorize attribute
 using Microsoft.AspNetCore.Mvc; // To use Controller attributes and inherit from ControllerBase
+using Vicaria.Server.Infrastructure; // To use IHandler interface
 
 namespace Vicaria.Server.Features.DecidedTimes.Edit;
 
@@ -8,9 +9,22 @@ namespace Vicaria.Server.Features.DecidedTimes.Edit;
 [ApiController]
 [Authorize]
 [Route("api/decidedtimes")]
-public class EditDecidedTimeController : ControllerBase
+public sealed class EditDecidedTimeController : ControllerBase
 {
+    #region Fields
+    private readonly IHandler<EditDecidedTimeCommand, EditDecidedTimeResponse> _handler;
 
+    #endregion
+    #region Constructor
+
+    public EditDecidedTimeController(IHandler<EditDecidedTimeCommand, EditDecidedTimeResponse> handler)
+    {
+        _handler = handler;
+    }
+
+    #endregion
+    #region Endpoint
+    #endregion
 }
 
 #endregion
