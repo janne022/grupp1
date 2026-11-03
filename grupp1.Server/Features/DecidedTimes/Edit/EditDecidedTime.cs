@@ -39,9 +39,14 @@ public class EditDecidedTimeHandler
 #region DTOs
 
 public record class EditDecidedTimeRequest
-{
-
-}
+(
+    Guid Id,
+    Guid UserId,
+    Guid AvailableTimeId,
+    Guid? KindergartenId,
+    DateTime? StartTime,
+    DateTime? EndTime
+);
 
 public record class EditDecidedTimeCommand
 {
