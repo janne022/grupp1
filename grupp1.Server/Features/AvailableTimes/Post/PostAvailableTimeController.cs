@@ -18,7 +18,7 @@ namespace Vicaria.Server.Features.AvailableTimes.Post
         {
             var userId = User.FindFirstValue(ClaimTypes.NameIdentifier);
 
-            if(!Guid.TryParse(userId, out var userGuidId))
+            if (!Guid.TryParse(userId, out var userGuidId))
             {
                 return Unauthorized();
             }
@@ -38,7 +38,7 @@ namespace Vicaria.Server.Features.AvailableTimes.Post
                 return BadRequest(response.ErrorMessage);
             }
 
-            return Created($"/api/availabletimes/byid", response);
+            return Created($"/api/available-times/{response.Id}", response);
 
 
         }

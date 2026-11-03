@@ -13,7 +13,7 @@ namespace Vicaria.Server.Features.AvailableTimes.GetMy
         IHandler<GetMyAvailableTimesQuery, GetMyAvailableTimesResponse> handler
     ) : ControllerBase
     {
-        [HttpGet("/my")]
+        [HttpGet("me")]
         public async Task<ActionResult<GetMyAvailableTimesResponse>> GetMy(
             [FromQuery] DateTime? fromTime,
             [FromQuery] DateTime? toTime,

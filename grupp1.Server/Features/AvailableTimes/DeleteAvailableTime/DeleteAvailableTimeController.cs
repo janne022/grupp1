@@ -2,7 +2,6 @@ using Vicaria.Server.Infrastructure;
 using Vicaria.Server.Domain;
 using Microsoft.AspNetCore.Mvc;
 using Microsoft.AspNetCore.Authorization;
-using Vicaria.Server.Domain;
 using System.Security.Claims;
 
 namespace Vicaria.Server.Features.AvailableTimes.Delete;
@@ -14,7 +13,7 @@ namespace Vicaria.Server.Features.AvailableTimes.Delete;
 public class DeleteAvailableTimeController(
     IHandler<DeleteAvailableTimeCommand, DeleteAvailableTimeStatus> handler) : ControllerBase
 {
-    [HttpDelete("{id}")]
+    [HttpDelete("{id:guid}")]
     public async Task<IActionResult> Delete(
         [FromRoute(Name = "id")] string id,
         CancellationToken cancellationToken
