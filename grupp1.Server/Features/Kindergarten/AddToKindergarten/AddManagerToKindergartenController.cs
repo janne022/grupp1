@@ -14,8 +14,7 @@ public class AddManagerToKindergartenController(
     IHandler<AddManagerToKindergartenCommand, ErrorOr<AddManagerToKindergartenResult>> handler
 ) : ControllerBase
 {
-    //TODO: update controller to {kindergartenId}/managers/{managerId} when we want admins to assign managers to kindergartens
-    //This will be expanded upon later. right now any manager can go to any kindergarten they feel like
+    //TODO: right now any manager can add themselves to any kindergarten. this needs fixing but is good for testing
     [HttpPut("{kindergartenId}/managers/me")]
     public async Task<IActionResult> AddToKindergarten(
         [FromRoute] Guid kindergartenId,
