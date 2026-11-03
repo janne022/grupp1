@@ -6,7 +6,7 @@ using Vicaria.Server.Infrastructure;
 
 namespace Vicaria.Server.Features.AvailableTimes.GetMy
 {
-    [Route("api/availabletimes")]
+    [Route("api/available-times")]
     [Authorize]
     [ApiController]
     public class GetMyAvailableTimesController(

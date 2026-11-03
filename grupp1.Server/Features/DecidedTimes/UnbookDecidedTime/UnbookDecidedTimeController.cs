@@ -8,7 +8,7 @@ using Microsoft.AspNetCore.Authorization;
 namespace Vicaria.Server.Features.DecidedTimes.UnbookDecidedTime
 {
     [Authorize]
-    [Route("api/decidedtime")]
+    [Route("api/decided-times")]
     [Authorize]
     [ApiController]
     public class UnbookDecidedTimeController(IHandler<UnbookDecidedTimeCommand, UnbookDecidedTimeStatus> handler) : ControllerBase

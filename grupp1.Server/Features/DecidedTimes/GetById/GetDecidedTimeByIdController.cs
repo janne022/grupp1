@@ -7,8 +7,7 @@ using Vicaria.Server.Infrastructure;
 
 namespace Vicaria.Server.Features.DecidedTimes.GetById;
 
-[Authorize]
-[Route("api/decidedtime")]
+[Route("api/decided-times")]
 [Authorize]
 [ApiController]
 public class GetDecidedTimeByIdController(
