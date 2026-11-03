@@ -1,6 +1,7 @@
 using System.Security.Claims;
 using Microsoft.AspNetCore.Authorization; // To use Authorize attribute
 using Microsoft.AspNetCore.Mvc; // To use Controller attributes and inherit from ControllerBase
+using Vicaria.Server.Domain;
 using Vicaria.Server.Infrastructure; // To use IHandler interface
 
 namespace Vicaria.Server.Features.DecidedTimes.Edit;
@@ -8,7 +9,7 @@ namespace Vicaria.Server.Features.DecidedTimes.Edit;
 #region Controller
 
 [ApiController]
-[Authorize]
+[Authorize(Roles = VicariaUserRoles.Manager)]
 [Route("api/decidedtimes")]
 public sealed class EditDecidedTimeController : ControllerBase
 {
@@ -39,7 +40,7 @@ public sealed class EditDecidedTimeController : ControllerBase
         EditDecidedTimeCommand command = new
         (
             DecidedTimeId: request.Id,
-            UserId: request.UserId,
+            ManagerId: userId,
             NewKindergartenId: request.KindergartenId,
             NewStartTime: request.StartTime,
             NewEndTime: request.EndTime
@@ -72,7 +73,6 @@ public class EditDecidedTimeHandler
 public record class EditDecidedTimeRequest
 (
     Guid Id,
-    Guid UserId,
     Guid? KindergartenId,
     DateTime? StartTime,
     DateTime? EndTime
@@ -81,7 +81,7 @@ public record class EditDecidedTimeRequest
 public record class EditDecidedTimeCommand
 (
     Guid DecidedTimeId,
-    Guid UserId,
+    Guid ManagerId,
     Guid? NewKindergartenId,
     DateTime? NewStartTime,
     DateTime? NewEndTime
