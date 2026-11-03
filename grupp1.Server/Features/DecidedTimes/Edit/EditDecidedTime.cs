@@ -42,16 +42,19 @@ public record class EditDecidedTimeRequest
 (
     Guid Id,
     Guid UserId,
-    Guid AvailableTimeId,
     Guid? KindergartenId,
     DateTime? StartTime,
     DateTime? EndTime
 );
 
 public record class EditDecidedTimeCommand
-{
-
-}
+(
+    Guid DecidedTimeId,
+    Guid UserId,
+    Guid? NewKindergartenId,
+    DateTime? NewStartTime,
+    DateTime? NewEndTime
+);
 
 public record class EditDecidedTimeResponse
 {
