@@ -167,16 +167,6 @@
         "responses": {
           "200": {
             "description": "OK"
-          },
-          "400": {
-            "description": "Bad Request",
-            "content": {
-              "application/problem+json": {
-                "schema": {
-                  "$ref": "#/components/schemas/HttpValidationProblemDetails"
-                }
-              }
-            }
           }
         }
       }
@@ -2020,16 +2010,19 @@
             ],
             "format": "uuid"
           },
-          "success": {
-            "type": "boolean"
-          },
           "errorMessage": {
             "type": [
               "null",
               "string"
             ]
+          },
+          "status": {
+            "$ref": "#/components/schemas/PostAvailableTimeStatus"
           }
         }
+      },
+      "PostAvailableTimeStatus": {
+        "type": "integer"
       },
       "PrecisionModel": {
         "type": "object",
