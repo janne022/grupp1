@@ -7,7 +7,7 @@ using Vicaria.Server.Infrastructure;
 
 namespace Vicaria.Server.Features.AvailableTimes.Update
 {
-    [Route("api/availabletimes")]
+    [Route("api/available-times")]
     [Authorize(Roles = VicariaUserRoles.Substitute)]
     [ApiController]
     public class UpdateAvailableTimeController(

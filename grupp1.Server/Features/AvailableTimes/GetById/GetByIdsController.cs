@@ -4,8 +4,7 @@ using Microsoft.AspNetCore.Authorization;
 using System.Security.Claims; // To inherit from ControllerBase
 
 namespace Vicaria.Server.Features.AvailableTimes.GetById;
-
-[Route("api/availabletimes")]
+[Route("api/available-times")]
 [Authorize]
 [ApiController]
 public class GetAvailableTimeByIdsController : ControllerBase

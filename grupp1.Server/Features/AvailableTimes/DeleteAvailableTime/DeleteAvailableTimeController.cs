@@ -7,7 +7,7 @@ using System.Security.Claims;
 namespace Vicaria.Server.Features.AvailableTimes.Delete;
 
 [Authorize(Roles = VicariaUserRoles.Substitute)]
-[Route("api/availabletimes")]
+[Route("api/available-times")]
 [Authorize]
 [ApiController]
 public class DeleteAvailableTimeController(
