@@ -13,7 +13,7 @@ namespace Vicaria.Server.Features.AvailableTimes.Delete;
 public class DeleteAvailableTimeController(
     IHandler<DeleteAvailableTimeCommand, DeleteAvailableTimeStatus> handler) : ControllerBase
 {
-    [HttpDelete("{id}")]
+    [HttpDelete("{id:guid}")]
     public async Task<IActionResult> Delete(
         [FromRoute(Name = "id")] string id,
         CancellationToken cancellationToken

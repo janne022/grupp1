@@ -6,13 +6,13 @@ using Vicaria.Server.Infrastructure;
 
 namespace Vicaria.Server.Features.AvailableTimes.GetByManager;
 
-[Route("api/manager")]
+[Route("api/manager")] //uuuuuuuuuuuhhhhhhh maybe other folder? though that feels dumb
 [Authorize(Roles = VicariaUserRoles.Manager)]
 [ApiController]
 public class GetAllAvailableTimeByManagerController(
     IHandler<GetAllAvailableTimeByManagerQuery, GetAllAvailableTimeByManagerResponse> handler) : ControllerBase
 {
-    [HttpGet("/{id}/availabletimes")]
+    [HttpGet("me/availabletimes")]
     public async Task<ActionResult<GetAllAvailableTimeByManagerResponse>> GetByManager(
         CancellationToken cancellationToken = default
     )
