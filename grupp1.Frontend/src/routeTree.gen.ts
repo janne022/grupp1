@@ -11,7 +11,6 @@
 import { Route as rootRouteImport } from './routes/__root'
 import { Route as IndexRouteImport } from './routes/index'
 import { Route as ManagerPageRouteImport } from './routes/ManagerPage'
-import { Route as TestPageRouteImport } from './routes/TestPage'
 import { Route as LoginRouteImport } from './routes/login'
 import { Route as SignupRouteImport } from './routes/signup'
 
@@ -23,11 +22,6 @@ const IndexRoute = IndexRouteImport.update({
 const ManagerPageRoute = ManagerPageRouteImport.update({
   id: '/ManagerPage',
   path: '/ManagerPage',
-  getParentRoute: () => rootRouteImport,
-} as any)
-const TestPageRoute = TestPageRouteImport.update({
-  id: '/TestPage',
-  path: '/TestPage',
   getParentRoute: () => rootRouteImport,
 } as any)
 const LoginRoute = LoginRouteImport.update({
@@ -44,14 +38,12 @@ const SignupRoute = SignupRouteImport.update({
 export interface FileRoutesByFullPath {
   '/': typeof IndexRoute
   '/ManagerPage': typeof ManagerPageRoute
-  '/TestPage': typeof TestPageRoute
   '/login': typeof LoginRoute
   '/signup': typeof SignupRoute
 }
 export interface FileRoutesByTo {
   '/': typeof IndexRoute
   '/ManagerPage': typeof ManagerPageRoute
-  '/TestPage': typeof TestPageRoute
   '/login': typeof LoginRoute
   '/signup': typeof SignupRoute
 }
@@ -59,22 +51,20 @@ export interface FileRoutesById {
   __root__: typeof rootRouteImport
   '/': typeof IndexRoute
   '/ManagerPage': typeof ManagerPageRoute
-  '/TestPage': typeof TestPageRoute
   '/login': typeof LoginRoute
   '/signup': typeof SignupRoute
 }
 export interface FileRouteTypes {
   fileRoutesByFullPath: FileRoutesByFullPath
-  fullPaths: '/' | '/ManagerPage' | '/TestPage' | '/login' | '/signup'
+  fullPaths: '/' | '/ManagerPage' | '/login' | '/signup'
   fileRoutesByTo: FileRoutesByTo
-  to: '/' | '/ManagerPage' | '/TestPage' | '/login' | '/signup'
-  id: '__root__' | '/' | '/ManagerPage' | '/TestPage' | '/login' | '/signup'
+  to: '/' | '/ManagerPage' | '/login' | '/signup'
+  id: '__root__' | '/' | '/ManagerPage' | '/login' | '/signup'
   fileRoutesById: FileRoutesById
 }
 export interface RootRouteChildren {
   IndexRoute: typeof IndexRoute
   ManagerPageRoute: typeof ManagerPageRoute
-  TestPageRoute: typeof TestPageRoute
   LoginRoute: typeof LoginRoute
   SignupRoute: typeof SignupRoute
 }
@@ -93,13 +83,6 @@ declare module '@tanstack/react-router' {
       path: '/ManagerPage'
       fullPath: '/ManagerPage'
       preLoaderRoute: typeof ManagerPageRouteImport
-      parentRoute: typeof rootRouteImport
-    }
-    '/TestPage': {
-      id: '/TestPage'
-      path: '/TestPage'
-      fullPath: '/TestPage'
-      preLoaderRoute: typeof TestPageRouteImport
       parentRoute: typeof rootRouteImport
     }
     '/login': {
@@ -122,7 +105,6 @@ declare module '@tanstack/react-router' {
 const rootRouteChildren: RootRouteChildren = {
   IndexRoute: IndexRoute,
   ManagerPageRoute: ManagerPageRoute,
-  TestPageRoute: TestPageRoute,
   LoginRoute: LoginRoute,
   SignupRoute: SignupRoute,
 }
