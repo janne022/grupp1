@@ -1,3 +1,4 @@
+using System.Security.Claims;
 using Microsoft.AspNetCore.Authorization; // To use Authorize attribute
 using Microsoft.AspNetCore.Mvc; // To use Controller attributes and inherit from ControllerBase
 using Vicaria.Server.Infrastructure; // To use IHandler interface
@@ -24,6 +25,36 @@ public sealed class EditDecidedTimeController : ControllerBase
 
     #endregion
     #region Endpoint
+
+    [HttpPatch]
+    public async Task<ActionResult<EditDecidedTimeResponse>> EditDecidedTime([FromBody] EditDecidedTimeRequest request, CancellationToken cancellationToken = default)
+    {
+        string? userIdClaim = User.FindFirstValue(ClaimTypes.NameIdentifier);
+
+        if (!Guid.TryParse(userIdClaim, out Guid userId))
+        {
+            return Unauthorized();
+        }
+
+        EditDecidedTimeCommand command = new
+        (
+            DecidedTimeId: request.Id,
+            UserId: request.UserId,
+            NewKindergartenId: request.KindergartenId,
+            NewStartTime: request.StartTime,
+            NewEndTime: request.EndTime
+        );
+
+        EditDecidedTimeResponse? response = await _handler.HandleAsync(command, cancellationToken);
+
+        if (response is null)
+        {
+            return NotFound();
+        }
+
+        return Ok(response);
+    }
+
     #endregion
 }
 
