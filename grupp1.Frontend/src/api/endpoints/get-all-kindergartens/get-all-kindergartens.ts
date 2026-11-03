@@ -4,13 +4,27 @@
  * grupp1.Server | v1
  * OpenAPI spec version: 1.0.0
  */
+import type {
+  GetAllKindergartensResponse
+} from '../../models';
 
-export type getApiKindergartensResponse200 = {
-  data: void
+
+export type getApiKindergartensResponse200TextPlain = {
+  data: GetAllKindergartensResponse
   status: 200
 }
 
-export type getApiKindergartensResponseSuccess = (getApiKindergartensResponse200) & {
+export type getApiKindergartensResponse200ApplicationJson = {
+  data: GetAllKindergartensResponse
+  status: 200
+}
+
+export type getApiKindergartensResponse200TextJson = {
+  data: GetAllKindergartensResponse
+  status: 200
+}
+
+export type getApiKindergartensResponseSuccess = (getApiKindergartensResponse200TextPlain | getApiKindergartensResponse200ApplicationJson | getApiKindergartensResponse200TextJson) & {
   headers: Headers;
 };
 ;
@@ -36,10 +50,10 @@ export const getApiKindergartens = async ( options?: RequestInit): Promise<getAp
   }
 )
 
-
+  const contentType = (res.headers.get('content-type') ?? '').toLowerCase();
   const body = [204, 205, 304].includes(res.status) ? null : await res.text();
 
-  const data: getApiKindergartensResponse['data'] = body ? JSON.parse(body) : undefined
+  const data: getApiKindergartensResponse['data'] = body ? (contentType.includes('json') ? JSON.parse(body) : body) : {}
   return { data, status: res.status, headers: res.headers } as getApiKindergartensResponse
 }
 

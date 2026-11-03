@@ -2,8 +2,8 @@
 {
     public enum UnbookDecidedTimeStatus
     {
-        Ok,
-        NotFound,
+        Success,
+        NotFound
 
     }
 }

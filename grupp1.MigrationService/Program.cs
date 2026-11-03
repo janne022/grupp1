@@ -1,4 +1,4 @@
-using grupp1.MigrationService;
+using Vicaria.MigrationService;
 using Microsoft.EntityFrameworkCore;
 using Vicaria.Server.Infrastructure;
 

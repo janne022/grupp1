@@ -3,17 +3,17 @@ using Vicaria.Server.Infrastructure;
 using Microsoft.EntityFrameworkCore;
 
 
-namespace grupp1.Server.Features.AvailableTimes.Post
+namespace Vicaria.Server.Features.AvailableTimes.Post
 {
     public sealed class PostAvailableTimeHandler(VicariaDbContext context, ILogger<PostAvailableTimeHandler> _logger) : IHandler<PostAvailableTimeCommand, PostAvailableTimeResponse>
     {
         public async Task<PostAvailableTimeResponse> HandleAsync(PostAvailableTimeCommand command, CancellationToken cancellationToken = default)
         {
 
-            if(command.EndTime <= command.StartTime)
+            if (command.EndTime <= command.StartTime)
             {
                 _logger.LogInformation("Failed to create available time: EndTime must be later than StartTime");
-                
+
                 return new PostAvailableTimeResponse
 
                 {
@@ -35,7 +35,7 @@ namespace grupp1.Server.Features.AvailableTimes.Post
             }
 
 
-            var availableTime = new AvailableTime 
+            var availableTime = new AvailableTime
             {
                 Id = Guid.NewGuid(),
                 StartTime = command.StartTime,
@@ -45,7 +45,7 @@ namespace grupp1.Server.Features.AvailableTimes.Post
             };
 
 
-            foreach (var kindergartenId in command.Kindergartens) 
+            foreach (var kindergartenId in command.Kindergartens)
             {
                 var kindergartenExist = await context.Kindergartens.AnyAsync(k => k.Id == kindergartenId, cancellationToken);
 
@@ -58,7 +58,7 @@ namespace grupp1.Server.Features.AvailableTimes.Post
                         Success = false,
                         ErrorMessage = $"Kindergarten with Id {kindergartenId} does not exist"
                     };
-                        
+
                 }
 
                 availableTime.Kindergartens.Add(new KindergartenAvailableTime
@@ -83,10 +83,6 @@ namespace grupp1.Server.Features.AvailableTimes.Post
                 Id = availableTime.Id,
                 Success = true
             };
-                
-           
         }
     }
-
-
 }

@@ -6,7 +6,7 @@
  */
 
 export interface PostAvailableTimeRequest {
-  startTime: string;
-  endTime: string;
-  kindergartens: string[];
+  startTime?: string;
+  endTime?: string;
+  kindergartens?: string[];
 }

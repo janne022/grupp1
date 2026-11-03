@@ -10,7 +10,7 @@ using Vicaria.Server.Infrastructure;
 
 #nullable disable
 
-namespace grupp1.Server.Migrations
+namespace Vicaria.Server.Migrations
 {
     [DbContext(typeof(VicariaDbContext))]
     [Migration("20261019121140_SubstituteManagerRoles")]

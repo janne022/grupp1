@@ -1,4 +1,4 @@
-using grupp1.Server.Features.DecidedTimes.BookTime.DTOs;
+using Vicaria.Server.Features.DecidedTimes.BookTime.DTOs;
 using Microsoft.EntityFrameworkCore;
 using Vicaria.Server.Domain.Models;
 using Vicaria.Server.Features.DecidedTimes.Book.DTOs;

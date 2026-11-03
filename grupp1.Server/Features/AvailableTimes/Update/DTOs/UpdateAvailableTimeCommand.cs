@@ -1,9 +1,12 @@
+using Vicaria.Server.Domain.Models;
+
 namespace Vicaria.Server.Features.AvailableTimes.Update.DTOs;
 
 public record class UpdateAvailableTimeCommand
 (
-    Guid TimeId,
-    DateTime StartTime,
-    DateTime EndTime,
-    Guid UserId
+    Guid AvailableTimeId,
+    Guid UserId,
+    DateTime? StartTime,
+    DateTime? EndTime,
+    HashSet<Guid>? Kindergartens
 );

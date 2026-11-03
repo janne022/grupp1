@@ -5,6 +5,7 @@
  * OpenAPI spec version: 1.0.0
  */
 import type {
+  GetApiAvailabletimesParams,
   GetMyAvailableTimesResponse
 } from '../../models';
 
@@ -31,17 +32,24 @@ export type getApiAvailabletimesResponseSuccess = (getApiAvailabletimesResponse2
 
 export type getApiAvailabletimesResponse = (getApiAvailabletimesResponseSuccess)
 
-export const getGetApiAvailabletimesUrl = () => {
+export const getGetApiAvailabletimesUrl = (params?: GetApiAvailabletimesParams,) => {
+  const normalizedParams = new URLSearchParams();
 
+  Object.entries(params || {}).forEach(([key, value]) => {
 
+    if (value !== undefined) {
+      normalizedParams.append(key, value === null ? 'null' : String(value))
+    }
+  });
 
+  const stringifiedParams = normalizedParams.toString();
 
-  return `/api/availabletimes`
+  return stringifiedParams.length > 0 ? `/api/availabletimes?${stringifiedParams}` : `/api/availabletimes`
 }
 
-export const getApiAvailabletimes = async ( options?: RequestInit): Promise<getApiAvailabletimesResponse> => {
+export const getApiAvailabletimes = async (params?: GetApiAvailabletimesParams, options?: RequestInit): Promise<getApiAvailabletimesResponse> => {
 
-  const res = await fetch(getGetApiAvailabletimesUrl(),
+  const res = await fetch(getGetApiAvailabletimesUrl(params),
   {
     ...options,
     method: 'GET'

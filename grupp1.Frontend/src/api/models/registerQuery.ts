@@ -11,4 +11,5 @@ export interface RegisterQuery {
   firstName: string;
   lastName: string;
   role: string;
+  phoneNumber: string;
 }

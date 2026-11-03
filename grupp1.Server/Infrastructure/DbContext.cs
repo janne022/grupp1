@@ -20,11 +20,13 @@ public class VicariaDbContext : IdentityDbContext<User, IdentityRole<Guid>, Guid
     #endregion
 
     #region Configuration
+    public DbSet<PendingTime> PendingTimes { get; set; }
     public DbSet<AvailableTime> AvailableTimes { get; set; }
     public DbSet<DecidedTime> DecidedTimes { get; set; }
     public DbSet<Kindergarten> Kindergartens { get; set; }
     public DbSet<KindergartenAvailableTime> KindergartenAvailableTimes { get; set; }
     public DbSet<UserKinderGarten> UserKinderGartens { get; set; }
+    public DbSet<UserPendingTime> UserPendingTimes { get; set; }
 
     protected override void OnConfiguring(DbContextOptionsBuilder optionsBuilder)
     {

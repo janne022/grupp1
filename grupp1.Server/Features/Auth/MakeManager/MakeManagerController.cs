@@ -2,7 +2,7 @@ using Microsoft.AspNetCore.Authorization;
 using Microsoft.AspNetCore.Mvc;
 using Vicaria.Server.Infrastructure;
 
-namespace grupp1.Server.Features.Auth.MakeManager;
+namespace Vicaria.Server.Features.Auth.MakeManager;
 
 [Route("api/auth")]
 [ApiController]
