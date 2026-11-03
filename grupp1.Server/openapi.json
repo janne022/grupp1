@@ -1932,16 +1932,19 @@
             ],
             "format": "uuid"
           },
-          "success": {
-            "type": "boolean"
-          },
           "errorMessage": {
             "type": [
               "null",
               "string"
             ]
+          },
+          "status": {
+            "$ref": "#/components/schemas/PostAvailableTimeStatus"
           }
         }
+      },
+      "PostAvailableTimeStatus": {
+        "type": "integer"
       },
       "PrecisionModel": {
         "type": "object",

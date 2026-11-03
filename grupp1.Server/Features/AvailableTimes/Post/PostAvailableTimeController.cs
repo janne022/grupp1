@@ -33,13 +33,14 @@ namespace Vicaria.Server.Features.AvailableTimes.Post
 
             var response = await handler.HandleAsync(command, cancellationToken);
 
-            if (!response.Success)
+            return response.Status switch
             {
-                return BadRequest(response.ErrorMessage);
-            }
-
-            return Created($"/api/available-time/{response.Id}", response);
-
+                PostAvailableTimeStatus.Ok => Created($"/api/availabletimes/{response.Id}", response.Id),
+                PostAvailableTimeStatus.NotFound => NotFound(response.ErrorMessage),
+                PostAvailableTimeStatus.Conflict => Conflict(response.ErrorMessage),
+                PostAvailableTimeStatus.BadRequest => BadRequest(response.ErrorMessage),
+                _ => StatusCode(StatusCodes.Status500InternalServerError)
+            };
 
         }
     }
