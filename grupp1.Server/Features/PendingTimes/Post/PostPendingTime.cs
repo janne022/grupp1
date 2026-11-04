@@ -1,7 +1,11 @@
+using System.Collections.Immutable;
 using System.Security.Claims;
+using System.Text.RegularExpressions;
 using Microsoft.AspNetCore.Authorization;
 using Microsoft.AspNetCore.Mvc;
+using Microsoft.EntityFrameworkCore;
 using Vicaria.Server.Domain;
+using Vicaria.Server.Domain.Models;
 using Vicaria.Server.Infrastructure;
 
 namespace Vicaria.Server.Features.PendingTimes.Post;
@@ -32,7 +36,7 @@ public sealed class PostPendingTimeController : ControllerBase
         {
             return Unauthorized();
         }
-        
+
         PostPendingTimeCommand command = new
         (
             PendingTimeId: Guid.CreateVersion7(),
@@ -58,12 +62,98 @@ public sealed class PostPendingTimeController : ControllerBase
 
 #endregion
 #region Handler
-#region Fields
-#endregion
-#region Constructors
-#endregion
-#region Methods
-#endregion
+
+public sealed class PostPendingTimeHandler : IHandler<PostPendingTimeCommand, PostPendingTimeResponse?>
+{
+    #region Fields
+
+    private readonly ILogger<PostPendingTimeHandler> _logger;
+    private readonly VicariaDbContext _dbContext;
+
+    #endregion
+    #region Constructor
+    public PostPendingTimeHandler(ILogger<PostPendingTimeHandler> logger, VicariaDbContext dbContext)
+    {
+        _logger = logger;
+        _dbContext = dbContext;
+    }
+
+    #endregion
+    #region Methods
+
+    public async Task<PostPendingTimeResponse?> HandleAsync(PostPendingTimeCommand command, CancellationToken cancellationToken = default)
+    {
+        #region validation
+        
+        int matchedSubstitutes = await _dbContext.Users.Where(user => user.Id == command.ManagerId).CountAsync();
+        int actualNumbersOfSubstitutes = command.AvailableSubstituteIds.Count();
+
+        if (matchedSubstitutes != actualNumbersOfSubstitutes)
+        {
+            _logger.LogWarning("Unable to perform POST action on pending time object: All the given substitutes could not be found in the Database. Numbers found were {found}. Total number sent in was {actual}", matchedSubstitutes, actualNumbersOfSubstitutes);
+
+            return null;
+        }
+
+        if (!await _dbContext.Kindergartens.AnyAsync(kindergarten => kindergarten.Id == command.KindergartenId))
+        {
+            _logger.LogWarning("Unable to perform POST action on pending time object: no kindergarten by the id {id} could be found in the database.", command.KindergartenId);
+
+            return null;
+        }
+
+        if (command.StartTime >= command.EndTime)
+        {
+            _logger.LogWarning
+            (
+                "Unable to perform POST action on pending time object: Start time ({startTime}) cannot be equal to or later than End time ({endTime}).",
+                command.StartTime,
+                command.EndTime
+            );
+
+            return null;
+        }
+        #endregion
+
+        PendingTime newPendingTime = new()
+        {
+            Id = command.PendingTimeId,
+            IsBooked = false,
+            KindergartenId = command.KindergartenId,
+            StartTime = command.StartTime,
+            EndTime = command.EndTime,
+            AvailableSubs = [.. command.AvailableSubstituteIds.Select(subId => new UserPendingTime
+            {
+                UserId = subId,
+                PendingTimeId = command.PendingTimeId,
+            })]
+        };
+
+        await _dbContext.AddAsync(newPendingTime);
+        await _dbContext.SaveChangesAsync();
+
+        return new PostPendingTimeResponse
+        (
+            Id: newPendingTime.Id,
+            IsBooked: newPendingTime.IsBooked,
+            Kindergarten: new KindergartenDto(
+                Id: newPendingTime.KindergartenId,
+                KindergartenName: newPendingTime.Kindergarten.Name
+            ),
+            StartTime: newPendingTime.StartTime,
+            EndTime: newPendingTime.EndTime,
+            Substitutes: [.. newPendingTime.AvailableSubs.Select(userPendingTime => new SubstituteDto
+            (
+                Id: userPendingTime.UserId,
+                FullName: $"{userPendingTime.User.FirstName} {userPendingTime.User.LastName}",
+                FirstName: userPendingTime.User.FirstName,
+                LastName: userPendingTime.User.LastName
+            ))]
+        );
+    }
+
+    #endregion
+}
 
 #endregion
 #region DTOs
