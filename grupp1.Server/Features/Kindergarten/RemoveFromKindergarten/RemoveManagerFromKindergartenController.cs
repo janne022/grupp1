@@ -14,9 +14,10 @@ public class RemoveManagerFromKindergartenController(
 ) : ControllerBase
 {
     //TODO: do the same as the todo in  ADdMangerTOKindergarten file. Should the managers be able to leave on their own?
-    [HttpDelete("{kindergartenId}/managers/me")]
+    [HttpDelete("{kindergartenId:guid}/managers/{managerId:guid}")]
     public async Task<IActionResult> RemoveFromKindergarten(
-        [FromRoute] Guid kindergartenId,
+        [FromRoute(Name = "kindergartenId")] Guid kindergartenId,
+        [FromRoute(Name = "managerId")] Guid managerId,
         CancellationToken cancellationToken = default
     )
     {
@@ -26,6 +27,12 @@ public class RemoveManagerFromKindergartenController(
         {
             return Unauthorized();
         }
+        if (userId != managerId)
+        {
+            return Forbid();
+        }
+
+
         var command = new RemoveManagerFromKindergartenCommand(userId, kindergartenId);
 
         var response = await handler.HandleAsync(command, cancellationToken);

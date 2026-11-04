@@ -12,8 +12,9 @@ namespace Vicaria.Server.Features.AvailableTimes.GetByManager;
 public class GetAllAvailableTimeByManagerController(
     IHandler<GetAllAvailableTimeByManagerQuery, GetAllAvailableTimeByManagerResponse> handler) : ControllerBase
 {
-    [HttpGet("me/available-times")]
+    [HttpGet("{id:guid}/available-times")]
     public async Task<ActionResult<GetAllAvailableTimeByManagerResponse>> GetByManager(
+        [FromRoute(Name = "id")] Guid routeId,
         CancellationToken cancellationToken = default
     )
     {
@@ -21,6 +22,10 @@ public class GetAllAvailableTimeByManagerController(
         if (!Guid.TryParse(userClaim, out var userId))
         {
             return Unauthorized();
+        }
+        if (userId != routeId)
+        {
+            return Forbid();
         }
 
         var query = new GetAllAvailableTimeByManagerQuery(userId);
