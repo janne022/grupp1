@@ -1,33 +1,50 @@
+import { useState } from "react";
 import {
   GeneralBooking,
   type GeneralBookingProps,
 } from "./generalBookingModal";
-import { Field } from "./field";
-import { SubstituteDisplay, filterAvailableTimes } from "./substituteDisplay";
-import { useState } from "react";
-import type { AvailableTimesByManagerDTO } from "@/api/models";
-import ConfirmBookingModal from "../confirm-booking-modal";
-
-export interface BookingSubmitData {
-  availableTimes?: AvailableTimesByManagerDTO[];
-  date: Date | undefined;
-  startTime: string;
-  endTime: string;
-}
+import { filterAvailableTimes } from "./substituteDisplay";
+import ConfirmBookingModal from "@/components/confirm-booking-modal";
+import type {
+  AvailableTimesByKindergartenDTO,
+  BookDecidedTimeQuery,
+} from "@/api/models";
+import { Clock, Phone } from "lucide-react";
+import { AddDecidedTime } from "@/api/services/DecidedTimeService";
 
 interface BookTimeProps extends Omit<
   GeneralBookingProps,
   "onDelete" | "onSubmit" | "children" | "onStartTimeChange" | "onEndTimeChange"
 > {
-  availableTimes: AvailableTimesByManagerDTO[];
-  Loading: boolean;
+  availableTimes?: AvailableTimesByKindergartenDTO[];
+}
+
+function convertToDate(day: Date, time: string): Date {
+  const [hours, minutes] = time.split(":").map(Number);
+  const date = new Date(day);
+  date.setHours(hours, minutes, 0, 0);
+  return date;
+}
+
+function formatTime(value: string): string {
+  if (/^\d{2}:\d{2}/.test(value)) {
+    return value.slice(0, 5);
+  }
+
+  const date = new Date(value);
+
+  return Number.isNaN(date.getTime())
+    ? value
+    : date.toLocaleTimeString("sv-SE", {
+        hour: "2-digit",
+        minute: "2-digit",
+      });
 }
 
 export default function ManagerBooking({
-  availableTimes,
+  availableTimes = [],
   startTime,
   endTime,
-  Loading,
   selectedDate,
   ...rest
 }: BookTimeProps) {
@@ -35,67 +52,121 @@ export default function ManagerBooking({
   const [end, setEnd] = useState(endTime ?? "16:00");
   const [confirmOpen, setConfirmOpen] = useState(false);
 
-  function convertToDate(day: Date, time: string) {
-    const [hours, minutes] = time.split(":").map(Number);
+  const from = selectedDate ? convertToDate(selectedDate, start) : undefined;
 
-    const date = new Date(day);
-    date.setHours(hours, minutes, 0, 0);
-    return date;
+  const to = selectedDate ? convertToDate(selectedDate, end) : undefined;
+
+  const addBooking = AddDecidedTime();
+
+  // Filter each kindergarten's available times separately
+  const filtered: AvailableTimesByKindergartenDTO[] =
+    from && to && from < to
+      ? availableTimes
+          .map((kindergarten) => ({
+            ...kindergarten,
+            availableTimes: filterAvailableTimes(
+              kindergarten.availableTimes,
+              from,
+              to,
+            ),
+          }))
+          .filter((kindergarten) => kindergarten.availableTimes.length > 0)
+      : [];
+
+  const relevantKindergarten = filtered[0];
+  const relevantTime = relevantKindergarten?.availableTimes[0];
+
+  function ConfirmBooking(data: BookDecidedTimeQuery) {
+    addBooking.mutate(data);
   }
-
-  const from = convertToDate(selectedDate, start);
-  const to = convertToDate(selectedDate, end);
-
-  const placeholderSubstitute = {
-    // TODO: Get these from the AvailableTimesDTO
-    substituteFirstName: "Relevantis",
-    substituteLastName: "Vikariesson",
-  };
-  const userName = `${placeholderSubstitute.substituteFirstName} ${placeholderSubstitute.substituteLastName}`;
-
-  function ConfirmBooking(data: BookingSubmitData) {
-    setConfirmOpen(true); // TODO: add the booking api shit here. not for the mvp tho
-  }
-
-  const filtered = filterAvailableTimes(availableTimes, from, to);
 
   return (
     <>
       <GeneralBooking
         {...rest}
         selectedDate={selectedDate}
+        selectedKindergarten="Alla förskolor"
         startTime={start}
         endTime={end}
         onStartTimeChange={setStart}
         onEndTimeChange={setEnd}
-        onSubmit={() =>
-          ConfirmBooking({
-            availableTimes: filtered,
-            date: selectedDate,
-            startTime: start,
-            endTime: end,
-          })
-        }
+        submitDisabled={!from || !to || from >= to || filtered.length === 0}
+        onSubmit={() => {
+          if (!from || !to || filtered.length === 0) return;
+          setConfirmOpen(true);
+        }}
       >
-        <Field>
-          <SubstituteDisplay
-            FilteredAvailableTime={filtered}
-            Loading={Loading}
-          />
-        </Field>
+        <div className="max-h-72 space-y-4 overflow-y-auto">
+          {filtered.length === 0 ? (
+            <p className="text-center text-sm text-muted-foreground">
+              Inga tillgängliga vikarier för valt datum och tid.
+            </p>
+          ) : (
+            filtered.map((kindergarten) => (
+              <section
+                key={kindergarten.kindergartenId}
+                className="space-y-2 rounded-lg border p-3"
+              >
+                <h3 className="font-semibold">
+                  {kindergarten.kindergartenName}
+                </h3>
+
+                <div className="space-y-2">
+                  {kindergarten.availableTimes.map((time) => (
+                    <div
+                      key={time.id}
+                      className="flex flex-col gap-1.5 rounded-md bg-muted p-3"
+                    >
+                      <p className="text-sm font-medium underline">
+                        {time.substitute.firstName} {time.substitute.lastName}
+                      </p>
+
+                      <p className="flex flex-row gap-1 text-xs text-muted-foreground">
+                        <Phone size={16} />
+                        {time.substitute.phoneNumber}
+                      </p>
+
+                      <p className="flex flex-row gap-1 text-xs text-muted-foreground">
+                        <Clock size={16} />
+                        {formatTime(time.startTime)} –{" "}
+                        {formatTime(time.endTime)}
+                      </p>
+                    </div>
+                  ))}
+                </div>
+              </section>
+            ))
+          )}
+        </div>
       </GeneralBooking>
       <ConfirmBookingModal
         open={confirmOpen}
         setOpen={setConfirmOpen}
         onConfirm={() => {
-          setConfirmOpen(false); // TODO: The Booking API call. (not for MVP)
+          if (!from || !to || !relevantTime || !relevantKindergarten) return;
+
+          ConfirmBooking({
+            availableTimeGuid: relevantTime.id,
+            kindergartenId: relevantKindergarten.kindergartenId,
+            startTime: from.toISOString(),
+            endTime: to.toISOString(),
+          });
+
+          setConfirmOpen(false);
+          rest.setOpen(false);
         }}
-        userName={userName}
-        kindergartenName={rest.selectedKindergarten ?? ""}
-        date={selectedDate.toLocaleDateString("sv-SE", {
-          day: "numeric",
-          month: "long",
-        })}
+        userName={
+          relevantTime
+            ? `${relevantTime.substitute.firstName} ${relevantTime.substitute.lastName}`
+            : ""
+        }
+        kindergartenName={relevantKindergarten?.kindergartenName ?? ""}
+        date={
+          selectedDate?.toLocaleDateString("sv-SE", {
+            day: "numeric",
+            month: "long",
+          }) ?? ""
+        }
         startTime={start}
         endTime={end}
       />

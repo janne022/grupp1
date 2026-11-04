@@ -11,7 +11,6 @@ import {
 
 interface SubstituteDisplayProps {
   FilteredAvailableTime?: AvailableTimesByManagerDTO[];
-  Loading: boolean;
 }
 
 export function filterAvailableTimes(
@@ -28,14 +27,13 @@ export function filterAvailableTimes(
 
 export function SubstituteDisplay({
   FilteredAvailableTime,
-  Loading,
 }: SubstituteDisplayProps) {
   return (
     <>
       <h2 className="text-center font-semibold">Matchande vikarier</h2>
       <section className="flex h-50 overflow-y-auto flex-col rounded-2xl p">
         <div>
-          {Loading ? (
+          {FilteredAvailableTime === undefined ? (
             <p className="text-center mt-4 border rounded-2xl p-4">laddar</p>
           ) : FilteredAvailableTime == undefined ||
             FilteredAvailableTime.length === 0 ? (
@@ -46,14 +44,14 @@ export function SubstituteDisplay({
                 <TableHeader>
                   <TableHead className="w-3/5">Namn</TableHead>
                   <TableHead>Telefon</TableHead>
-                  {/* 
+                  {/*
                   <TableHead>Tillgänglig</TableHead> */}
                 </TableHeader>
                 <TableBody className="body">
                   {FilteredAvailableTime.map((b, index) => (
                     <TableRow key={index}>
                       <TableCell className="truncate">
-                        {b.substituteFirstName + " " + b.substituteLastName}
+                        {b.substitute.firstName + " " + b.substitute.lastName}
                       </TableCell>
                       <TableCell>07020022210</TableCell>
 

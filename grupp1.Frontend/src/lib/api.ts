@@ -30,10 +30,13 @@ export const apiClient = {
     apiFetch<T>(path, { ...options, method: "PATCH", json: data }),
 };
 
+type QueryParamValue = string | number | boolean | null | undefined;
+
 // Generic options for apiFetch. Includes stuff like method and headers inside RequestInit
 type ApiOptions = Omit<RequestInit, "body"> & {
   json?: unknown;
   body?: BodyInit | null;
+  params?: Record<string, QueryParamValue | QueryParamValue[]>;
 };
 
 // Generic fetch function for api
@@ -41,7 +44,27 @@ export async function apiFetch<T>(
   path: string,
   options: ApiOptions = {},
 ): Promise<T> {
-  const { json, body, headers: customHeaders, ...fetchOptions } = options;
+  const {
+    json,
+    body,
+    params,
+    headers: customHeaders,
+    ...fetchOptions
+  } = options;
+
+  const url = new URL(path, window.location.origin);
+
+  Object.entries(params ?? {}).forEach(([key, value]) => {
+    if (Array.isArray(value)) {
+      value.forEach((item) => {
+        if (item !== null && item !== undefined) {
+          url.searchParams.append(key, String(item));
+        }
+      });
+    } else if (value !== null && value !== undefined) {
+      url.searchParams.set(key, String(value));
+    }
+  });
 
   if (json !== undefined && body !== undefined) {
     throw new Error(
@@ -59,7 +82,7 @@ export async function apiFetch<T>(
     headers.set("Content-Type", "application/json");
   }
 
-  const response = await fetch(path, {
+  const response = await fetch(url, {
     ...fetchOptions,
     method: httpMethod,
     headers,

@@ -9,6 +9,16 @@ import {
   AlertDialogTitle,
 } from "@/components/ui/alert-dialog";
 
+interface ConfirmBookingModalProps {
+  open: boolean;
+  setOpen: (open: boolean) => void;
+  onConfirm: () => void;
+  userName: string;
+  startTime: string;
+  endTime: string;
+  date: string;
+  kindergartenName: string;
+}
 export default function ConfirmBookingModal({
   open,
   setOpen,
@@ -18,16 +28,7 @@ export default function ConfirmBookingModal({
   endTime,
   date,
   kindergartenName,
-}: {
-  open: boolean;
-  setOpen: (open: boolean) => void;
-  onConfirm: () => void;
-  userName: string;
-  startTime: string;
-  endTime: string;
-  date: string;
-  kindergartenName: string;
-}) {
+}: ConfirmBookingModalProps) {
   return (
     <AlertDialog open={open} onOpenChange={(isOpen) => setOpen(isOpen)}>
       <AlertDialogContent>

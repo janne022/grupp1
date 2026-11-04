@@ -1,7 +1,6 @@
 import type { BookingData } from "@/api/types/types";
 import { BookingsDisplay } from "@/components/ui/booking-display";
 import { createFileRoute } from "@tanstack/react-router";
-import { useState } from "react";
 
 export const Route = createFileRoute("/ManagerPage")({
   component: RouteComponent,
