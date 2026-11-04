@@ -9,7 +9,10 @@ import type {
   BookDecidedTimeQuery,
   GetAllDecidedTimesDTO,
 } from "@/api/models";
-import { AddDecidedTime } from "@/api/services/DecidedTimeService";
+import {
+  AddDecidedTime,
+  EditDecidedTime,
+} from "@/api/services/DecidedTimeService";
 import { filterAvailableTimes } from "./substituteDisplay";
 
 import { Button } from "./button";
@@ -35,12 +38,6 @@ import { ScrollArea } from "./scroll-area";
 import { DatePickerTime } from "../date-picker";
 import { Input } from "./input";
 
-interface EditDecidedTimeData {
-  decidedTimeId: string;
-  startTime: string | null;
-  endTime: string | null;
-}
-
 interface BookTimeProps {
   open: boolean;
   setOpen: Dispatch<SetStateAction<boolean>>;
@@ -52,7 +49,6 @@ interface BookTimeProps {
   submitLabel?: string;
 
   updateDecidedTime?: GetAllDecidedTimesDTO | null;
-  onEdit?: (data: EditDecidedTimeData) => Promise<unknown>;
 }
 
 type DateTimeValue = {
@@ -119,7 +115,6 @@ export default function ManagerBooking({
   endTime = "16:00",
   submitLabel,
   updateDecidedTime = null,
-  onEdit,
 }: BookTimeProps) {
   const [selectedKindergartenId, setSelectedKindergartenId] = useState("");
   const [isSaving, setIsSaving] = useState(false);
@@ -128,6 +123,7 @@ export default function ManagerBooking({
 
   const isEditing = !!updateDecidedTime;
   const postService = AddDecidedTime();
+  const editDecidedTimeService = EditDecidedTime();
 
   const form = useForm<FormValues>({
     resolver: zodResolver(formSchema),
@@ -230,6 +226,7 @@ export default function ManagerBooking({
 
     try {
       if (updateDecidedTime) {
+        // Edit booking
         const hasStartTimeChanged = hasDateTimeChanged(
           data.StartDateTime,
           updateDecidedTime.startTime,
@@ -245,10 +242,9 @@ export default function ManagerBooking({
           return;
         }
 
-        if (!onEdit) return;
-
-        await onEdit({
-          decidedTimeId: updateDecidedTime.timeId,
+        await editDecidedTimeService.mutateAsync({
+          id: updateDecidedTime.timeId,
+          kindergartenId: updateDecidedTime.kindergartenId,
           startTime: hasStartTimeChanged
             ? toIsoDateTime(data.StartDateTime)
             : null,
@@ -259,7 +255,7 @@ export default function ManagerBooking({
         return;
       }
 
-      // CREATE MODE
+      // Create new booking
       if (!selectedKindergarten || !selectedAvailableTime) {
         return;
       }

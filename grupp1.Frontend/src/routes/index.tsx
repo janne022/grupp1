@@ -21,6 +21,7 @@ import {
   format,
   isSameDay,
   isWithinInterval,
+  set,
   startOfDay,
 } from "date-fns";
 import { GetAllKindergartens } from "@/api/services/KindergartenService";
@@ -43,7 +44,6 @@ import ManagerBooking from "@/components/ui/managerBooking";
 import { useAvailableTimesByManager } from "@/api/services/AvailableTimeByManagerService";
 import {
   DeleteDecidedTime,
-  EditDecidedTime,
   GetAllDecidedTimes,
 } from "@/api/services/DecidedTimeService";
 import TimeEntry from "@/components/time-entry";
@@ -110,7 +110,6 @@ function RouteComponent() {
   const AvailableTimesByManagerResponse = useAvailableTimesByManager(isManager);
   const DecidedTimesResponse = GetAllDecidedTimes(undefined, isManager);
   const DeleteDecidedTimeFunction = DeleteDecidedTime();
-  const editDecidedTimeService = EditDecidedTime();
 
   // Modal handlers
   const openDialog = (day?: Date) => {
@@ -120,6 +119,7 @@ function RouteComponent() {
 
   const handleCreateTime = (day?: Date) => {
     setSelectedAvailableTime(null);
+    setSelectedDecidedTime(null);
     setPopoverOpenId(null);
     openDialog(day);
   };
