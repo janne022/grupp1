@@ -400,7 +400,8 @@ function RouteComponent() {
                               }
                               details={
                                 <p className="text-muted-foreground">
-                                  {item.original.substituteFirstName}
+                                  {item.original.substituteFirstName}{" "}
+                                  {item.original.substituteLastName}
                                 </p>
                               }
                             />
