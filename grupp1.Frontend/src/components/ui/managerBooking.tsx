@@ -33,6 +33,7 @@ import {
 import { RadioGroup, RadioGroupItem } from "./radio-group";
 import { ScrollArea } from "./scroll-area";
 import { DatePickerTime } from "../date-picker";
+import { Input } from "./input";
 
 interface EditDecidedTimeData {
   decidedTimeId: string;
@@ -116,15 +117,14 @@ export default function ManagerBooking({
   availableTimes = [],
   startTime = "08:00",
   endTime = "16:00",
-  title,
   submitLabel,
   updateDecidedTime = null,
   onEdit,
 }: BookTimeProps) {
   const [selectedKindergartenId, setSelectedKindergartenId] = useState("");
-
   const [isSaving, setIsSaving] = useState(false);
   const [submitError, setSubmitError] = useState<string | null>(null);
+  const [searchQuery, setSearchQuery] = useState("");
 
   const isEditing = !!updateDecidedTime;
   const postService = AddDecidedTime();
@@ -206,6 +206,11 @@ export default function ManagerBooking({
             ),
           }))
           .filter((kindergarten) => kindergarten.availableTimes.length > 0)
+          .filter((kindergarten) =>
+            kindergarten.kindergartenName
+              .toLowerCase()
+              .includes(searchQuery.toLowerCase()),
+          )
       : [];
 
   const totalAvailable = filtered.reduce(
@@ -218,14 +223,6 @@ export default function ManagerBooking({
   );
 
   const selectedAvailableTime = selectedKindergarten?.availableTimes[0];
-
-  const isSubmitDisabled =
-    !from ||
-    !to ||
-    from >= to ||
-    isSaving ||
-    postService.isPending ||
-    (isEditing ? !onEdit : !selectedAvailableTime);
 
   async function onSubmit(data: FormValues) {
     setSubmitError(null);
@@ -290,7 +287,7 @@ export default function ManagerBooking({
         <form className="flex flex-col gap-4" onSubmit={handleSubmit(onSubmit)}>
           <DialogHeader className="flex flex-row items-center gap-0">
             <DialogTitle className="mx-auto text-center">
-              {title ?? (isEditing ? "Ändra bokad tid" : "Boka vikarie")}
+              {isEditing ? "Ändra datum och tid" : "Boka vikarie"}
             </DialogTitle>
 
             <DialogClose
@@ -303,14 +300,9 @@ export default function ManagerBooking({
           </DialogHeader>
 
           <div className="text-center">
-            <h2 className="text-lg font-semibold">
-              {isEditing ? "Ändra datum och tid" : "Välj datum och tid"}
-            </h2>
-
             <p className="text-sm text-muted-foreground">
-              {isEditing
-                ? (updateDecidedTime.kindergartenName ?? "Befintlig bokning")
-                : "Alla förskolor"}
+              {isEditing &&
+                `Vald förskola: ${updateDecidedTime.kindergartenName ?? "Okänd"}`}
             </p>
           </div>
 
@@ -356,29 +348,35 @@ export default function ManagerBooking({
             <FieldGroup>
               <ScrollArea className="max-h-72 w-full">
                 <div className="space-y-4">
-                  {filtered.length === 0 ? (
-                    <p className="text-center text-sm text-muted-foreground">
-                      Inga tillgängliga vikarier för valt datum och tid.
-                    </p>
-                  ) : (
-                    <RadioGroup
-                      value={selectedKindergartenId}
-                      onValueChange={setSelectedKindergartenId}
-                      className="max-w-sm"
-                    >
-                      <Field orientation="horizontal">
-                        <FieldContent>
-                          <FieldTitle className="font-semibold">
-                            Alla förskolor
-                          </FieldTitle>
+                  <Field orientation="horizontal">
+                    <FieldContent>
+                      <FieldTitle className="font-semibold">
+                        Alla förskolor
+                      </FieldTitle>
+                      <FieldDescription>
+                        {totalAvailable} tillgängliga vikarier
+                      </FieldDescription>
+                    </FieldContent>
+                  </Field>
 
-                          <FieldDescription>
-                            {totalAvailable} tillgängliga vikarier
-                          </FieldDescription>
-                        </FieldContent>
-                      </Field>
+                  <Input
+                    type="search"
+                    placeholder="Sök förskola..."
+                    value={searchQuery}
+                    onChange={(e) => setSearchQuery(e.target.value)}
+                  />
 
-                      {filtered.map((kindergarten) => (
+                  <RadioGroup
+                    value={selectedKindergartenId}
+                    onValueChange={setSelectedKindergartenId}
+                    className="max-w-sm"
+                  >
+                    {filtered.length === 0 ? (
+                      <p className="text-center text-sm text-muted-foreground">
+                        Ingen förskola hittades.
+                      </p>
+                    ) : (
+                      filtered.map((kindergarten) => (
                         <FieldLabel
                           key={kindergarten.kindergartenId}
                           htmlFor={kindergarten.kindergartenId}
@@ -401,9 +399,9 @@ export default function ManagerBooking({
                             />
                           </Field>
                         </FieldLabel>
-                      ))}
-                    </RadioGroup>
-                  )}
+                      ))
+                    )}
+                  </RadioGroup>
                 </div>
               </ScrollArea>
             </FieldGroup>
@@ -424,7 +422,7 @@ export default function ManagerBooking({
               }
             />
 
-            <Button type="submit" disabled={isSubmitDisabled}>
+            <Button type="submit">
               {isSaving
                 ? "Sparar..."
                 : (submitLabel ?? (isEditing ? "Ändra" : "Bekräfta"))}
