@@ -43,6 +43,7 @@ import ManagerBooking from "@/components/ui/managerBooking";
 import { useAvailableTimesByManager } from "@/api/services/AvailableTimeByManagerService";
 import {
   DeleteDecidedTime,
+  EditDecidedTime,
   GetAllDecidedTimes,
 } from "@/api/services/DecidedTimeService";
 import TimeEntry from "@/components/time-entry";
@@ -91,6 +92,8 @@ function RouteComponent() {
   const [deleteTarget, setDeleteTarget] = React.useState<DeleteTarget | null>(
     null,
   );
+  const [selectedDecidedTime, setSelectedDecidedTime] =
+    React.useState<GetAllDecidedTimesDTO | null>(null);
 
   // User and roles
   const user = useCurrentUser();
@@ -107,6 +110,7 @@ function RouteComponent() {
   const AvailableTimesByManagerResponse = useAvailableTimesByManager(isManager);
   const DecidedTimesResponse = GetAllDecidedTimes(undefined, isManager);
   const DeleteDecidedTimeFunction = DeleteDecidedTime();
+  const editDecidedTimeService = EditDecidedTime();
 
   // Modal handlers
   const openDialog = (day?: Date) => {
@@ -128,6 +132,7 @@ function RouteComponent() {
 
   const handleEditDecidedTime = (time: GetAllDecidedTimesDTO) => {
     setPopoverOpenId(null);
+    setSelectedDecidedTime(time);
     openDialog(new Date(time.startTime));
   };
 
@@ -245,13 +250,10 @@ function RouteComponent() {
             {format(month, "MMMM yyyy", { locale: sv })}
           </h1>
         </div>
-
-        {isSubstitute && (
-          <Button variant="default" onClick={() => handleCreateTime()}>
-            <Plus />
-            Ny Tid
-          </Button>
-        )}
+        <Button variant="default" onClick={() => handleCreateTime()}>
+          <Plus />
+          Ny Tid
+        </Button>
       </header>
 
       <div className="min-h-0 flex-1">
@@ -450,7 +452,7 @@ function RouteComponent() {
             }
             submitLabel="Bekräfta Bokning"
             selectedDate={date}
-            showOnlyTime={true}
+            updateDecidedTime={selectedDecidedTime}
           />
         )}
 
