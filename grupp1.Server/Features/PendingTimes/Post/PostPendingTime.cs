@@ -64,12 +64,62 @@ public sealed class PostPendingTimeController : ControllerBase
 #endregion
 #region Methods
 #endregion
+
 #endregion
 #region DTOs
+
 #region Request
+public record class PostPendingTimeRequest
+(
+    Guid KindergartenId,
+    DateTime StartTime,
+    DateTime EndTime,
+    Guid[] AvailableSubstituteIds
+);
+
 #endregion
 #region Command
+
+public record class PostPendingTimeCommand
+(
+    Guid PendingTimeId,
+    Guid KindergartenId,
+    Guid ManagerId,
+    HashSet<Guid> AvailableSubstituteIds,
+
+    bool IsBooked,
+    DateTime StartTime,
+    DateTime EndTime
+);
+
 #endregion
 #region Response
+public record class PostPendingTimeResponse
+(
+    Guid Id,
+    bool IsBooked,
+    KindergartenDto Kindergarten,
+    DateTime StartTime,
+    DateTime EndTime,
+    SubstituteDto[] Substitutes
+);
+
 #endregion
+#region fraction DTOs
+public record class KindergartenDto
+(
+    Guid Id,
+    string KindergartenName
+);
+
+public record class SubstituteDto
+(
+    Guid Id,
+    string FullName,
+    string FirstName,
+    string LastName
+);
+
+#endregion
+
 #endregion
