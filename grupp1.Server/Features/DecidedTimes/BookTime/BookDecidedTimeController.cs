@@ -10,7 +10,7 @@ using Vicaria.Server.Domain;
 
 namespace Vicaria.Server.Features.DecidedTimes.Book;
 
-[Route("api/decided-time")]
+[Route("api/decided-times")]
 [Authorize(Roles = VicariaUserRoles.Manager)]
 [ApiController]
 public class BookDecidedTimeController(
@@ -40,6 +40,6 @@ public class BookDecidedTimeController(
 
         var createdResult = await handler.HandleAsync(command, cancellationToken);
 
-        return Created($"/api/decided-time/{createdResult.Id}", createdResult);
+        return Created($"/api/decided-times/{createdResult.Id}", createdResult);
     }
 }

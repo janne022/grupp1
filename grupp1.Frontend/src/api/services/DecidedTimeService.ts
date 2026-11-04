@@ -25,7 +25,7 @@ function GetAllDecidedTimes(
     }): Promise<GetAllDecidedTimesResponse | null> => {
       try {
         const response = await apiClient.get<GetAllDecidedTimesResponse>(
-          "/api/decidedtime",
+          "/api/decided-times",
           {
             signal,
             params,
@@ -48,7 +48,7 @@ function AddDecidedTime() {
   const query = useQueryClient();
   return useMutation({
     mutationFn: (req: BookDecidedTimeQuery) => {
-      return apiClient.post<BookDecidedTimeResponse>("/api/decidedtime", req);
+      return apiClient.post<BookDecidedTimeResponse>("/api/decided-times", req);
     },
 
     onSuccess: async () => {
@@ -63,7 +63,7 @@ function DeleteDecidedTime() {
   const query = useQueryClient();
   return useMutation({
     mutationFn: (id: string) => {
-      return apiClient.delete<void>(`/api/decidedtime/${id}`);
+      return apiClient.delete<void>(`/api/decided-times${id}`);
     },
 
     onSuccess: async () => {
