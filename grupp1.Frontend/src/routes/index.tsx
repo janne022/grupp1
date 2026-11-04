@@ -15,22 +15,20 @@ import {
   PlusIcon,
   Trash2Icon,
 } from "lucide-react";
-import { addMonths, format, isSameDay } from "date-fns";
-import { GetAllKindergartens } from "@/api/services/KindergartenService";
-
 import {
-  AlertDialog,
-  AlertDialogAction,
-  AlertDialogCancel,
-  AlertDialogContent,
-  AlertDialogDescription,
-  AlertDialogFooter,
-  AlertDialogHeader,
-  AlertDialogMedia,
-  AlertDialogTitle,
-} from "@/components/ui/alert-dialog";
+  addMonths,
+  endOfDay,
+  format,
+  isSameDay,
+  isWithinInterval,
+  startOfDay,
+} from "date-fns";
+import { GetAllKindergartens } from "@/api/services/KindergartenService";
 import { toast } from "@/components/ui/toast";
-import type { GetMyAvailableTimesDTO } from "@/api/models";
+import type {
+  GetAllDecidedTimesDTO,
+  GetMyAvailableTimesDTO,
+} from "@/api/models";
 import { cn } from "cn";
 import { Skeleton } from "@/components/ui/skeleton";
 import {
@@ -43,43 +41,150 @@ import {
 import { useCurrentUser } from "@/api/services/MeService";
 import ManagerBooking from "@/components/ui/managerBooking";
 import { useAvailableTimesByManager } from "@/api/services/AvailableTimeByManagerService";
-import { GetAllDecidedTimes } from "@/api/services/DecidedTimeService";
-import DecidedTimeEntry from "@/components/decidedTimeEntry";
-import AvailableTimeEntry from "@/components/availableTimeEntry";
+import {
+  DeleteDecidedTime,
+  GetAllDecidedTimes,
+} from "@/api/services/DecidedTimeService";
+import TimeEntry from "@/components/time-entry";
+import ConfirmDialog from "@/components/confirm-dialog";
 
 export const Route = createFileRoute("/")({
   component: RouteComponent,
 });
 
+type TimeVariant = "available" | "decided";
+
+type DeleteTarget = {
+  id: string;
+  variant: TimeVariant;
+};
+
+const deleteDialogConfig = {
+  available: {
+    title: "Radera tillgänglig tid?",
+    description:
+      "Det här kommer att radera den tillgängliga tiden. Detta går inte att ångra.",
+    confirmLabel: "Radera tid",
+  },
+  decided: {
+    title: "Radera bokad tid?",
+    description:
+      "Det här kommer att radera den bokade tiden. Detta går inte att ångra.",
+    confirmLabel: "Radera bokning",
+  },
+} satisfies Record<
+  TimeVariant,
+  {
+    title: string;
+    description: string;
+    confirmLabel: string;
+  }
+>;
+
 function RouteComponent() {
   const [date, setDate] = React.useState<Date | undefined>(new Date());
   const [openModal, setOpenModal] = React.useState(false);
   const [month, setMonth] = React.useState(new Date());
-  const [deleteTime, setDeleteTime] = React.useState(false);
   const [popoverOpenId, setPopoverOpenId] = React.useState<string | null>(null);
-  const [availableTimeId, setAvailableTimeId] = React.useState("");
   const [selectedAvailableTime, setSelectedAvailableTime] =
     React.useState<GetMyAvailableTimesDTO | null>(null);
+  const [deleteTarget, setDeleteTarget] = React.useState<DeleteTarget | null>(
+    null,
+  );
+  const [selectedDecidedTime, setSelectedDecidedTime] =
+    React.useState<GetAllDecidedTimesDTO | null>(null);
 
-  function openDialog(day?: Date) {
-    setDate(day);
-    setOpenModal(true);
-  }
-
-  // Fetch user and depending on role we choose what data to load
+  // User and roles
   const user = useCurrentUser();
 
   const isManager = user.data?.roles.includes("Manager") ?? false;
   const isSubstitute = user.data?.roles.includes("Substitute") ?? false;
 
-  // Substitute functions
+  // Substitute queries and mutations
   const AvailableTimeResponse = GetAllAvailableTimes(isSubstitute);
   const KindergartenResponse = GetAllKindergartens(isSubstitute);
   const DeleteAvailableTimeFunction = DeleteAvailableTime();
 
-  // Manager functions
+  // Manager queries
   const AvailableTimesByManagerResponse = useAvailableTimesByManager(isManager);
   const DecidedTimesResponse = GetAllDecidedTimes(undefined, isManager);
+  const DeleteDecidedTimeFunction = DeleteDecidedTime();
+
+  // Modal handlers
+  const openDialog = (day?: Date) => {
+    setDate(day);
+    setOpenModal(true);
+  };
+
+  const handleCreateTime = (day?: Date) => {
+    setSelectedAvailableTime(null);
+    setSelectedDecidedTime(null);
+    setPopoverOpenId(null);
+    openDialog(day);
+  };
+
+  const handleEditAvailableTime = (time: GetMyAvailableTimesDTO) => {
+    setPopoverOpenId(null);
+    setSelectedAvailableTime(time);
+    openDialog(new Date(time.startTime));
+  };
+
+  const handleEditDecidedTime = (time: GetAllDecidedTimesDTO) => {
+    setPopoverOpenId(null);
+    setSelectedDecidedTime(time);
+    openDialog(new Date(time.startTime));
+  };
+
+  const handleDelete = (id: string, variant: TimeVariant) => {
+    setPopoverOpenId(null);
+    setDeleteTarget({ id, variant });
+  };
+
+  const confirmDelete = () => {
+    if (!deleteTarget) return;
+
+    if (deleteTarget.variant === "available") {
+      if (DeleteAvailableTimeFunction.isPending) return;
+
+      DeleteAvailableTimeFunction.mutate(deleteTarget.id, {
+        onSuccess: () => {
+          toast.add({
+            type: "success",
+            title: "Success!",
+            description: "Din tillgängliga tid har tagits bort.",
+          });
+
+          setDeleteTarget(null);
+        },
+        onError: () => {
+          toast.add({
+            type: "error",
+            title: "Åh nej...",
+            description: "Något gick fel när tiden skulle tas bort.",
+          });
+        },
+      });
+    } else {
+      DeleteDecidedTimeFunction.mutate(deleteTarget.id, {
+        onSuccess: () => {
+          toast.add({
+            type: "success",
+            title: "Success!",
+            description: "Din bokade tid har tagits bort.",
+          });
+
+          setDeleteTarget(null);
+        },
+        onError: () => {
+          toast.add({
+            type: "error",
+            title: "Åh nej...",
+            description: "Något gick fel när tiden skulle tas bort.",
+          });
+        },
+      });
+    }
+  };
 
   if (
     AvailableTimeResponse.error ||
@@ -91,8 +196,7 @@ function RouteComponent() {
     return <div>Error!</div>;
   }
 
-  const userRoles = user.data?.roles ?? [];
-
+  // Calendar events
   const calendarEvents = isManager
     ? (DecidedTimesResponse.data?.decidedTimes ?? []).map((item) => ({
         id: item.timeId,
@@ -110,13 +214,14 @@ function RouteComponent() {
       }));
 
   const isCalendarLoading =
-    user.isPending || isManager
+    user.isPending ||
+    (isManager
       ? DecidedTimesResponse.isPending
-      : AvailableTimeResponse.isPending;
+      : AvailableTimeResponse.isPending);
 
   return (
     <div className="flex h-dvh w-full flex-col overflow-hidden">
-      <header className="flex justify-between h-16 shrink-0 items-center gap-4 border-b px-4">
+      <header className="flex h-16 shrink-0 items-center justify-between gap-4 border-b px-4">
         <div className="flex items-center gap-4">
           <Button variant="outline" onClick={() => setMonth(new Date())}>
             Idag
@@ -139,24 +244,17 @@ function RouteComponent() {
               <ChevronRight />
             </Button>
           </div>
+
           <h1 className="text-2xl font-medium capitalize">
             {format(month, "MMMM yyyy", { locale: sv })}
           </h1>
         </div>
-
-        {userRoles.includes("Substitute") && (
-          <Button
-            variant="default"
-            onClick={() => {
-              setSelectedAvailableTime(null);
-              openDialog();
-            }}
-          >
-            <Plus />
-            Ny Tid
-          </Button>
-        )}
+        <Button variant="default" onClick={() => handleCreateTime()}>
+          <Plus />
+          Ny Tid
+        </Button>
       </header>
+
       <div className="min-h-0 flex-1">
         <Calendar
           formatters={{
@@ -169,9 +267,8 @@ function RouteComponent() {
           onMonthChange={setMonth}
           selected={date}
           onSelect={setDate}
-          onDayClick={(date) => {
-            setSelectedAvailableTime(null);
-            openDialog(date);
+          onDayClick={(clickedDate) => {
+            handleCreateTime(clickedDate);
           }}
           weekStartsOn={1}
           hideNavigation
@@ -218,8 +315,7 @@ function RouteComponent() {
                             return;
                           }
 
-                          setSelectedAvailableTime(null);
-                          openDialog(day.date);
+                          handleCreateTime(day.date);
                         }}
                       >
                         {children}
@@ -237,19 +333,17 @@ function RouteComponent() {
                   <ContextMenuContent>
                     <ContextMenuGroup>
                       <ContextMenuItem
-                        onClick={() => {
-                          setSelectedAvailableTime(null);
-                          openDialog(day.date);
-                        }}
+                        onClick={() => handleCreateTime(day.date)}
                       >
                         <PlusIcon />
-                        Ny Tid
+                        {isManager ? "Boka tid" : "Ny Tid"}
                       </ContextMenuItem>
                     </ContextMenuGroup>
                   </ContextMenuContent>
                 </ContextMenu>
               );
             },
+
             DayButton: ({ children, modifiers, day, ...props }) => {
               const isSelected = date ? isSameDay(date, day.date) : false;
 
@@ -268,18 +362,15 @@ function RouteComponent() {
                       {children}
                     </CalendarDayButton>
                   )}
-                  <div className="flex flex-1 min-h-0 w-full min-w-0 flex-col gap-1 overflow-y-auto">
-                    {calendarEvents
-                      .filter((item) => {
-                        const start = new Date(
-                          item.startTime,
-                        ).toLocaleDateString("sv-SE");
-                        const end = new Date(item.endTime).toLocaleDateString(
-                          "sv-SE",
-                        );
 
-                        return start <= day.isoDate && end >= day.isoDate;
-                      })
+                  <div className="flex min-h-0 min-w-0 w-full flex-1 flex-col gap-1 overflow-y-auto">
+                    {calendarEvents
+                      .filter((item) =>
+                        isWithinInterval(day.date, {
+                          start: startOfDay(new Date(item.startTime)),
+                          end: endOfDay(new Date(item.endTime)),
+                        }),
+                      )
                       .map((item) => {
                         const uniqueKey = `${item.type}-${item.id}-${day.isoDate}`;
 
@@ -293,27 +384,53 @@ function RouteComponent() {
                           );
                         };
 
-                        return item.type === "decided" ? (
-                          <DecidedTimeEntry
+                        if (item.type === "decided") {
+                          return (
+                            <TimeEntry
+                              key={uniqueKey}
+                              variant="decided"
+                              time={item.original}
+                              open={popoverOpenId === uniqueKey}
+                              onOpenChange={onOpenChange}
+                              onEdit={() =>
+                                handleEditDecidedTime(item.original)
+                              }
+                              onDelete={() =>
+                                handleDelete(item.original.timeId, "decided")
+                              }
+                              details={
+                                <p className="text-muted-foreground">
+                                  {item.original.substituteFirstName}{" "}
+                                  {item.original.substituteLastName}
+                                </p>
+                              }
+                            />
+                          );
+                        }
+
+                        return (
+                          <TimeEntry
                             key={uniqueKey}
+                            variant="available"
                             time={item.original}
                             open={popoverOpenId === uniqueKey}
                             onOpenChange={onOpenChange}
-                          />
-                        ) : (
-                          <AvailableTimeEntry
-                            key={uniqueKey}
-                            time={item.original}
-                            open={popoverOpenId === uniqueKey}
-                            onOpenChange={onOpenChange}
-                            onEdit={(time) => {
-                              setSelectedAvailableTime(time);
-                              setOpenModal(true);
-                            }}
-                            onDelete={(id) => {
-                              setAvailableTimeId(id);
-                              setDeleteTime(true);
-                            }}
+                            onEdit={() =>
+                              handleEditAvailableTime(item.original)
+                            }
+                            onDelete={() =>
+                              handleDelete(item.original.id, "available")
+                            }
+                            details={
+                              <div>
+                                <p>Förskolor</p>
+                                <p className="text-muted-foreground">
+                                  {item.original.kindergartens
+                                    .map((kindergarten) => kindergarten.name)
+                                    .join(", ")}
+                                </p>
+                              </div>
+                            }
                           />
                         );
                       })}
@@ -324,7 +441,7 @@ function RouteComponent() {
           }}
         />
 
-        {userRoles.includes("Manager") && (
+        {isManager && (
           <ManagerBooking
             open={openModal}
             setOpen={setOpenModal}
@@ -335,11 +452,11 @@ function RouteComponent() {
             }
             submitLabel="Bekräfta Bokning"
             selectedDate={date}
-            showOnlyTime={true}
+            updateDecidedTime={selectedDecidedTime}
           />
         )}
 
-        {userRoles.includes("Substitute") && (
+        {isSubstitute && (
           <AddEditTimeModal
             open={openModal}
             setOpen={setOpenModal}
@@ -348,55 +465,33 @@ function RouteComponent() {
             selectedDate={date}
           />
         )}
-
-        <AlertDialog open={deleteTime} onOpenChange={setDeleteTime}>
-          <AlertDialogContent size="sm">
-            <AlertDialogHeader>
-              <AlertDialogMedia className="bg-destructive/10 text-destructive dark:bg-destructive/20 dark:text-destructive">
-                <Trash2Icon />
-              </AlertDialogMedia>
-              <AlertDialogTitle>Radera Tillgänlig tid?</AlertDialogTitle>
-              <AlertDialogDescription>
-                Det här kommer att radera den tillgängliga tiden. Detta går inte
-                att ångra.
-              </AlertDialogDescription>
-            </AlertDialogHeader>
-            <AlertDialogFooter>
-              <AlertDialogCancel variant="outline">Avbryt</AlertDialogCancel>
-              <AlertDialogAction
-                onClick={(e) => {
-                  e.stopPropagation();
-
-                  DeleteAvailableTimeFunction.mutate(availableTimeId, {
-                    onSuccess: () => {
-                      toast.add({
-                        type: "success",
-                        title: "Success!",
-                        description: "Din tillgängliga tid har tagits bort", // TODO: iterate here, to show more dynamic information about what was deleted
-                      });
-                    },
-
-                    onError: () => {
-                      toast.add({
-                        type: "error",
-                        title: "Åh nej...",
-                        description:
-                          "Något gick fel när tiden skulle tas bort.",
-                      });
-                    },
-                  });
-
-                  setAvailableTimeId("");
-                  setDeleteTime(false);
-                }}
-                variant="destructive"
-              >
-                Radera
-              </AlertDialogAction>
-            </AlertDialogFooter>
-          </AlertDialogContent>
-        </AlertDialog>
       </div>
+
+      <ConfirmDialog
+        open={deleteTarget !== null}
+        onOpenChange={(open) => {
+          if (!open && !DeleteAvailableTimeFunction.isPending) {
+            setDeleteTarget(null);
+          }
+        }}
+        title={
+          deleteTarget ? deleteDialogConfig[deleteTarget.variant].title : ""
+        }
+        description={
+          deleteTarget
+            ? deleteDialogConfig[deleteTarget.variant].description
+            : ""
+        }
+        confirmLabel={
+          deleteTarget
+            ? deleteDialogConfig[deleteTarget.variant].confirmLabel
+            : ""
+        }
+        pendingLabel="Raderar..."
+        isPending={DeleteAvailableTimeFunction.isPending}
+        icon={<Trash2Icon />}
+        onConfirm={confirmDelete}
+      />
     </div>
   );
 }
