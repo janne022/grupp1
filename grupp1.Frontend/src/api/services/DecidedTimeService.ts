@@ -3,6 +3,8 @@ import { apiClient, ApiError } from "@/lib/api";
 import type {
   BookDecidedTimeQuery,
   BookDecidedTimeResponse,
+  EditDecidedTimeRequest,
+  EditDecidedTimeResponse,
   GetAllDecidedTimesResponse,
 } from "../models";
 
@@ -74,12 +76,11 @@ function DeleteDecidedTime() {
   });
 }
 
-// TODO: Change to valid type when backend is implemented
 function EditDecidedTime() {
   const query = useQueryClient();
   return useMutation({
-    mutationFn: (req: BookDecidedTimeQuery) => {
-      return apiClient.put<BookDecidedTimeResponse>("/api/decidedtime", req);
+    mutationFn: (req: EditDecidedTimeRequest) => {
+      return apiClient.patch<EditDecidedTimeResponse>("/api/decidedtime", req);
     },
 
     onSuccess: async () => {
