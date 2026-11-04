@@ -1,3 +1,4 @@
+using ErrorOr;
 using Microsoft.AspNetCore.Identity;
 using Microsoft.EntityFrameworkCore;
 using Vicaria.Server.Domain.Models;
@@ -10,9 +11,9 @@ namespace Vicaria.Server.Features.AddManagerToKindergarten;
 public class AddManagerToKindergartenHandler(
     VicariaDbContext dbContext,
     ILogger<AddManagerToKindergartenHandler> _logger
-) : IHandler<AddManagerToKindergartenCommand, AddManagerToKindergartenResult>
+) : IHandler<AddManagerToKindergartenCommand, ErrorOr<AddManagerToKindergartenResult>>
 {
-    public async Task<AddManagerToKindergartenResult> HandleAsync(
+    public async Task<ErrorOr<AddManagerToKindergartenResult>> HandleAsync(
         AddManagerToKindergartenCommand command,
         CancellationToken cancellationToken = default)
     {
@@ -23,7 +24,7 @@ public class AddManagerToKindergartenHandler(
         if (user.Kindergartens.Any(k => k.KindergartenId == command.KindergartenId))
         {
             _logger.LogInformation("User tried connecting to already apart of kindergarten id:{KindergartenId}", command.KindergartenId);
-            return AddManagerToKindergartenResult.Failure(ErrorType.Conflict, "User is already a manager of this kindergarten.");
+            return Error.Conflict("Kindergarten.AlreadyManaged", "User is already a manager of this kindergarten.");
 
         }
 
@@ -32,7 +33,7 @@ public class AddManagerToKindergartenHandler(
         if (kindergarten == null)
         {
             _logger.LogWarning("Could not find Kindergarten id:{KindergartenId}", command.KindergartenId);
-            return AddManagerToKindergartenResult.Failure(ErrorType.NotFound, "Kindergarten was not found.");
+            return Error.NotFound("Kindergarten.NotFound", "Kindergarten was not found");
         }
 
         user.Kindergartens.Add(new UserKinderGarten
@@ -41,6 +42,6 @@ public class AddManagerToKindergartenHandler(
         });
         await dbContext.SaveChangesAsync(cancellationToken);
 
-        return AddManagerToKindergartenResult.Success();
+        return new AddManagerToKindergartenResult();
     }
 }
