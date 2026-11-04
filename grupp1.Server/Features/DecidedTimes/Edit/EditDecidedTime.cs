@@ -1,7 +1,9 @@
 using System.Security.Claims;
 using Microsoft.AspNetCore.Authorization; // To use Authorize attribute
 using Microsoft.AspNetCore.Mvc; // To use Controller attributes and inherit from ControllerBase
+using Microsoft.EntityFrameworkCore;
 using Vicaria.Server.Domain;
+using Vicaria.Server.Domain.Models;
 using Vicaria.Server.Infrastructure; // To use IHandler interface
 
 namespace Vicaria.Server.Features.DecidedTimes.Edit;
@@ -62,7 +64,7 @@ public sealed class EditDecidedTimeController : ControllerBase
 #endregion
 #region Handler
 
-public class EditDecidedTimeHandler : IHandler<EditDecidedTimeCommand, EditDecidedTimeResponse>
+public class EditDecidedTimeHandler : IHandler<EditDecidedTimeCommand, EditDecidedTimeResponse?>
 {
     #region Fields
 
@@ -81,9 +83,49 @@ public class EditDecidedTimeHandler : IHandler<EditDecidedTimeCommand, EditDecid
     #endregion
     #region Methods
 
-    public async Task<EditDecidedTimeResponse> HandleAsync(EditDecidedTimeCommand request, CancellationToken cancellationToken = default)
+    public async Task<EditDecidedTimeResponse?> HandleAsync(EditDecidedTimeCommand command, CancellationToken cancellationToken = default)
     {
-        throw new NotImplementedException();
+        DecidedTime? decidedTime = await _dbContext.DecidedTimes
+            .FirstOrDefaultAsync(decidedTime => decidedTime.Id == command.DecidedTimeId && decidedTime.UserId == command.ManagerId);
+
+        if (decidedTime is null)
+        {
+            _logger.LogWarning("Cannot patch edit decided time with ID {id}: does not exist in DB for user with ID {userId}", command.DecidedTimeId, command.ManagerId);
+            return null;
+        }
+
+        if (command.NewKindergartenId is not null && command.NewKindergartenId != decidedTime.KindergartenId)
+        {
+            _logger.LogInformation("Changing kindergartenId to {kindergartenId}, for DecidedTime object with ID {decidedTimeId}", command.NewKindergartenId, decidedTime.Id);
+            decidedTime.KindergartenId = (Guid)command.NewKindergartenId;
+        }
+
+        if (command.NewStartTime is not null && command.NewStartTime != decidedTime.StartTime)
+        {
+            _logger.LogInformation("Changing startTimeId to {startTimeId} in decidedTime with Id: {decidedTimeId}", command.NewStartTime, decidedTime.Id);
+            decidedTime.StartTime = (DateTime)command.NewStartTime;
+        }
+
+        if (command.NewEndTime is not null && command.NewEndTime != decidedTime.EndTime)
+        {
+            _logger.LogInformation("Changing endTimeId to {endTimeId} in decidedTime with Id: {decidedTimeId}", command.NewEndTime, decidedTime.Id);
+            decidedTime.EndTime = (DateTime)command.NewEndTime;
+        }
+
+        if (decidedTime.StartTime >= decidedTime.EndTime)
+        {
+            _logger.LogWarning("Cannot have a start time that is equal to, or after endtime");
+            return null;
+        }
+
+        await _dbContext.SaveChangesAsync();
+
+        return new EditDecidedTimeResponse
+        (
+            ChangedKindergartenId: decidedTime.KindergartenId,
+            ChangedStartTime: decidedTime.StartTime,
+            ChangedEndTime: decidedTime.EndTime
+        );
     }
 
     #endregion
