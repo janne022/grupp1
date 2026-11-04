@@ -7,8 +7,13 @@ import type {
   UpdateAvailableTimeQuery,
   UpdateAvailableTimeResponse,
 } from "../models";
+import { useCurrentUser } from "./MeService";
 
 function GetAllAvailableTimes(enabled = true) {
+
+  const { data: user } = useCurrentUser();
+  const userId = user?.id;
+  
   return useQuery({
     queryKey: ["availableTimesData"],
     queryFn: async ({
@@ -18,7 +23,7 @@ function GetAllAvailableTimes(enabled = true) {
     }): Promise<GetMyAvailableTimesResponse | null> => {
       try {
         const response = await apiClient.get<GetMyAvailableTimesResponse>(
-          "/api/available-times/me",
+          `/api/available-times/${userId}`,
           {
             signal,
           },

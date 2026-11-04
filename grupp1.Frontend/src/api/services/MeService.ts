@@ -11,7 +11,7 @@ export const currentUserQuery = {
     signal: AbortSignal;
   }): Promise<UserInfoResponse | null> => {
     try {
-      const response = await apiClient.get<UserInfoResponse>("/api/me", {
+      const response = await apiClient.get<UserInfoResponse>("/api/user-info", {
         signal,
       });
 
