@@ -16,6 +16,8 @@ export * from './coordinateSequence';
 export * from './coordinateSequenceFactory';
 export * from './deleteApiManagerRemoveFromKindergartenParams';
 export * from './dimension';
+export * from './editDecidedTimeRequest';
+export * from './editDecidedTimeResponse';
 export * from './elevationModel';
 export * from './envelope';
 export * from './forgotPasswordRequest';
