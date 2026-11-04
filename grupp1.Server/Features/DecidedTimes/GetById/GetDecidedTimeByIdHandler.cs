@@ -12,7 +12,7 @@ public class GetDecidedTimeByIdHandler(
     public async Task<GetDecidedTimeByIdResponse?> HandleAsync(
         GetDecidedTimeByIdQuery query,
         CancellationToken cancellationToken = default)
-    {   
+    {
         _logger.LogInformation("Starting to find DecidedTime {DecidedTimeId}", query.DecidedTimeGuid);
 
         var decidedTime = await dbContext.DecidedTimes
@@ -22,7 +22,7 @@ public class GetDecidedTimeByIdHandler(
             .Include(dt => dt.User)
             .Include(dt => dt.Kindergarten)
             .SingleOrDefaultAsync(dt => dt.Id == query.DecidedTimeGuid, cancellationToken);
-        
+
 
         if (decidedTime is null)
         {
