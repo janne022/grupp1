@@ -74,4 +74,25 @@ function DeleteDecidedTime() {
   });
 }
 
-export { GetAllDecidedTimes, AddDecidedTime, DeleteDecidedTime };
+// TODO: Change to valid type when backend is implemented
+function EditDecidedTime() {
+  const query = useQueryClient();
+  return useMutation({
+    mutationFn: (req: BookDecidedTimeQuery) => {
+      return apiClient.put<BookDecidedTimeResponse>("/api/decidedtime", req);
+    },
+
+    onSuccess: async () => {
+      await query.invalidateQueries({
+        queryKey: ["decidedTimesData"],
+      });
+    },
+  });
+}
+
+export {
+  GetAllDecidedTimes,
+  AddDecidedTime,
+  DeleteDecidedTime,
+  EditDecidedTime,
+};
