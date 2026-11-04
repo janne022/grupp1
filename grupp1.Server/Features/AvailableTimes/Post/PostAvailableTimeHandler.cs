@@ -34,11 +34,12 @@ namespace Vicaria.Server.Features.AvailableTimes.Post
             }
 
 
-            var requestedKindergartenIds = command.Kindergartens;
 
-            var existingCount = await context.Kindergartens.CountAsync(kg => requestedKindergartenIds.Contains(kg.Id), cancellationToken);
+            int existingCount = await context.Kindergartens.CountAsync(kg => command.Kindergartens.Contains(kg.Id), cancellationToken);
 
-            if(existingCount != requestedKindergartenIds.Count)
+            bool allExist = existingCount == command.Kindergartens.Count;
+
+            if(!allExist)
             {
                 _logger.LogInformation("Failed to create available time: One or more kindergartens could not be found");
 
@@ -49,11 +50,11 @@ namespace Vicaria.Server.Features.AvailableTimes.Post
                 };
             }
 
-            var hasOverlap = await context.AvailableTimes
+            bool hasOverlap = await context.AvailableTimes
                                            .Where(at => at.UserId == command.UserId
                                            && at.StartTime < command.EndTime
                                            && at.EndTime > command.StartTime
-                                           && at.Kindergartens.Any(kg => requestedKindergartenIds.Contains(kg.KindergartenId)))
+                                           && at.Kindergartens.Any(kg => command.Kindergartens.Contains(kg.KindergartenId)))
                                            .AnyAsync(cancellationToken);
 
             if(hasOverlap)
@@ -75,7 +76,7 @@ namespace Vicaria.Server.Features.AvailableTimes.Post
                 UserId = command.UserId
             };
 
-            foreach(var kindergartenId in requestedKindergartenIds)
+            foreach(Guid kindergartenId in command.Kindergartens)
             {
                 availableTime.Kindergartens.Add(new KindergartenAvailableTime
                 {
