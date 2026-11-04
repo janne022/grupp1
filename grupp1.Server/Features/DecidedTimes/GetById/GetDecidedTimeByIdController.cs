@@ -22,7 +22,7 @@ public class GetDecidedTimeByIdController(
     {
         var userClaim = User.FindFirstValue(ClaimTypes.NameIdentifier);
 
-        if(!Guid.TryParse(userClaim, out var userId))
+        if (!Guid.TryParse(userClaim, out var userId))
         {
             return Unauthorized();
         }
@@ -35,7 +35,7 @@ public class GetDecidedTimeByIdController(
 
         var result = await handler.HandleAsync(query, cancellationToken);
 
-        if(result is null)
+        if (result is null)
         {
             return NotFound();
         }
