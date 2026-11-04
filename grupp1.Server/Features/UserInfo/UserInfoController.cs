@@ -6,14 +6,14 @@ using Vicaria.Server.Infrastructure;
 
 namespace Vicaria.Server.Features.UserInfo
 {
-    [Route("api")]
+    [Route("api/user-info")]
     [Authorize]
     [ApiController]
     public class UserInfoController(IHandler<UserInfoQuery, UserInfoResponse?> handler,
     ILogger<UserInfoController> _logger)
         : ControllerBase
     {
-        [HttpGet("me")]
+        [HttpGet]
         public async Task<ActionResult<UserInfoResponse?>> UserInfo(CancellationToken ct)
         {
             var userClaim = User.FindFirstValue(ClaimTypes.NameIdentifier);
