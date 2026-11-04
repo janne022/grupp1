@@ -3,6 +3,8 @@ import { apiClient, ApiError } from "@/lib/api";
 import type {
   BookDecidedTimeQuery,
   BookDecidedTimeResponse,
+  EditDecidedTimeRequest,
+  EditDecidedTimeResponse,
   GetAllDecidedTimesResponse,
 } from "../models";
 
@@ -74,4 +76,24 @@ function DeleteDecidedTime() {
   });
 }
 
-export { GetAllDecidedTimes, AddDecidedTime, DeleteDecidedTime };
+function EditDecidedTime() {
+  const query = useQueryClient();
+  return useMutation({
+    mutationFn: (req: EditDecidedTimeRequest) => {
+      return apiClient.patch<EditDecidedTimeResponse>("/api/decidedtimes", req);
+    },
+
+    onSuccess: async () => {
+      await query.invalidateQueries({
+        queryKey: ["decidedTimesData"],
+      });
+    },
+  });
+}
+
+export {
+  GetAllDecidedTimes,
+  AddDecidedTime,
+  DeleteDecidedTime,
+  EditDecidedTime,
+};
