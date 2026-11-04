@@ -62,9 +62,31 @@ public sealed class EditDecidedTimeController : ControllerBase
 #endregion
 #region Handler
 
-public class EditDecidedTimeHandler
+public class EditDecidedTimeHandler : IHandler<EditDecidedTimeCommand, EditDecidedTimeResponse>
 {
+    #region Fields
 
+    private readonly ILogger<EditDecidedTimeHandler> _logger;
+    private readonly VicariaDbContext _dbContext;
+
+    #endregion
+    #region Constructors
+
+    public EditDecidedTimeHandler(ILogger<EditDecidedTimeHandler> logger, VicariaDbContext dbContext)
+    {
+        _logger = logger;
+        _dbContext = dbContext;
+    }
+
+    #endregion
+    #region Methods
+
+    public async Task<EditDecidedTimeResponse> HandleAsync(EditDecidedTimeCommand request, CancellationToken cancellationToken = default)
+    {
+        throw new NotImplementedException();
+    }
+
+    #endregion
 }
 
 #endregion
