@@ -1,5 +1,5 @@
 import { useEffect, useState, type Dispatch, type SetStateAction } from "react";
-import { XIcon } from "lucide-react";
+import { School, User, XIcon } from "lucide-react";
 import { Controller, useForm, useWatch } from "react-hook-form";
 import { zodResolver } from "@hookform/resolvers/zod";
 import * as z from "zod";
@@ -209,13 +209,20 @@ export default function ManagerBooking({
           )
       : [];
 
+  const effectiveSelectedKindergartenId = filtered.some(
+    (kindergarten) => kindergarten.kindergartenId === selectedKindergartenId,
+  )
+    ? selectedKindergartenId
+    : (filtered[0]?.kindergartenId ?? "");
+
   const totalAvailable = filtered.reduce(
     (total, kindergarten) => total + kindergarten.availableTimes.length,
     0,
   );
 
   const selectedKindergarten = filtered.find(
-    (kindergarten) => kindergarten.kindergartenId === selectedKindergartenId,
+    (kindergarten) =>
+      kindergarten.kindergartenId === effectiveSelectedKindergartenId,
   );
 
   const selectedAvailableTime = selectedKindergarten?.availableTimes[0];
@@ -295,12 +302,19 @@ export default function ManagerBooking({
             />
           </DialogHeader>
 
-          <div className="text-center">
-            <p className="text-sm text-muted-foreground">
-              {isEditing &&
-                `Vald förskola: ${updateDecidedTime.kindergartenName ?? "Okänd"}`}
-            </p>
-          </div>
+          {isEditing && (
+            <div className="text-center">
+              <p className="text-lg flex flex-row items-center justify-center gap-1 my-0">
+                {isEditing &&
+                  `${updateDecidedTime.kindergartenName ?? "Okänd"}`}
+              </p>
+              <p className="text-sm text-muted-foreground flex flex-row items-center justify-center gap-1">
+                <User />
+                {isEditing &&
+                  `${updateDecidedTime.substituteFirstName} ${updateDecidedTime.substituteLastName}`}
+              </p>
+            </div>
+          )}
 
           <FieldGroup>
             <Controller
@@ -363,7 +377,7 @@ export default function ManagerBooking({
                   />
 
                   <RadioGroup
-                    value={selectedKindergartenId}
+                    value={effectiveSelectedKindergartenId}
                     onValueChange={setSelectedKindergartenId}
                     className="max-w-sm"
                   >
