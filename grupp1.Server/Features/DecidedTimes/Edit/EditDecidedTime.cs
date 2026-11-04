@@ -153,9 +153,9 @@ public record class EditDecidedTimeCommand
 
 public record class EditDecidedTimeResponse
 (
-    Guid? ChangedKindergartenId,
-    DateTime? ChangedStartTime,
-    DateTime? ChangedEndTime
+    Guid ChangedKindergartenId,
+    DateTime ChangedStartTime,
+    DateTime ChangedEndTime
 );
 
 #endregion
