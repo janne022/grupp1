@@ -1,4 +1,4 @@
-﻿namespace grupp1.Server.Features.DecidedTimes.BookTime.DTOs
+﻿namespace Vicaria.Server.Features.DecidedTimes.BookTime.DTOs
 {
     public record class BookDecidedTimeCommand
     {

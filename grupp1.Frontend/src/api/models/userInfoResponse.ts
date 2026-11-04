@@ -12,4 +12,5 @@ export interface UserInfoResponse {
   /** @nullable */
   email: string | null;
   roles: string[];
+  phoneNumber: string;
 }

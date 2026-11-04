@@ -1,9 +1,10 @@
 using Vicaria.Server.Infrastructure;
-using Microsoft.AspNetCore.Mvc; // To inherit from ControllerBase
+using Microsoft.AspNetCore.Mvc;
+using Microsoft.AspNetCore.Authorization; // To inherit from ControllerBase
 
 namespace Vicaria.Server.Features.AvailableTimes.GetById;
-
 [Route("api/availabletimes")]
+[Authorize]
 [ApiController]
 public class GetAvailableTimeByIdsController : ControllerBase
 {

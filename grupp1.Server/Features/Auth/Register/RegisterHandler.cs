@@ -5,7 +5,7 @@ using Vicaria.Server.Domain;
 using Vicaria.Server.Domain.Models;
 using Vicaria.Server.Infrastructure;
 
-namespace grupp1.Server.Features.Auth.Register;
+namespace Vicaria.Server.Features.Auth.Register;
 
 public class RegisterHandler(UserManager<User> userManager, ILogger<RegisterHandler> _logger)
     : IHandler<RegisterQuery, RegisterResponse>
