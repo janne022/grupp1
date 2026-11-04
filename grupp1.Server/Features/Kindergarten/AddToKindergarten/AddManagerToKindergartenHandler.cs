@@ -2,11 +2,10 @@ using ErrorOr;
 using Microsoft.AspNetCore.Identity;
 using Microsoft.EntityFrameworkCore;
 using Vicaria.Server.Domain.Models;
-using Vicaria.Server.Features.DecidedTimes.Book;
-using Vicaria.Server.Features.Kindergarten.AddManagerFromKindergarten.DTOs;
+using Vicaria.Server.Features.Kindergarten.AddManagerToKindergarten.DTOs;
 using Vicaria.Server.Infrastructure;
 
-namespace Vicaria.Server.Features.Kindergarten.AddManagerFromKindergarten;
+namespace Vicaria.Server.Features.Kindergarten.AddManagerToKindergarten;
 
 public class AddManagerToKindergartenHandler(
     VicariaDbContext dbContext,
