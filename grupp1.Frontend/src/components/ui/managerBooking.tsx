@@ -1,5 +1,5 @@
 import { useEffect, useState, type Dispatch, type SetStateAction } from "react";
-import { School, User, XIcon } from "lucide-react";
+import { User, XIcon } from "lucide-react";
 import { Controller, useForm, useWatch } from "react-hook-form";
 import { zodResolver } from "@hookform/resolvers/zod";
 import * as z from "zod";
