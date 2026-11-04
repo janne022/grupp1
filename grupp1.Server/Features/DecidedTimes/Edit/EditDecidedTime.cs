@@ -94,22 +94,22 @@ public class EditDecidedTimeHandler : IHandler<EditDecidedTimeCommand, EditDecid
             return null;
         }
 
-        if (command.NewKindergartenId is not null && command.NewKindergartenId != decidedTime.KindergartenId)
+        if (command.NewKindergartenId is Guid id && id != default && id != decidedTime.KindergartenId)
         {
             _logger.LogInformation("Changing kindergartenId to {kindergartenId}, for DecidedTime object with ID {decidedTimeId}", command.NewKindergartenId, decidedTime.Id);
-            decidedTime.KindergartenId = (Guid)command.NewKindergartenId;
+            decidedTime.KindergartenId = id;
         }
 
-        if (command.NewStartTime is not null && command.NewStartTime != decidedTime.StartTime)
+        if (command.NewStartTime is DateTime startTime && startTime != decidedTime.StartTime)
         {
             _logger.LogInformation("Changing startTimeId to {startTimeId} in decidedTime with Id: {decidedTimeId}", command.NewStartTime, decidedTime.Id);
-            decidedTime.StartTime = (DateTime)command.NewStartTime;
+            decidedTime.StartTime = startTime;
         }
 
-        if (command.NewEndTime is not null && command.NewEndTime != decidedTime.EndTime)
+        if (command.NewEndTime is DateTime endTime && endTime != decidedTime.EndTime)
         {
             _logger.LogInformation("Changing endTimeId to {endTimeId} in decidedTime with Id: {decidedTimeId}", command.NewEndTime, decidedTime.Id);
-            decidedTime.EndTime = (DateTime)command.NewEndTime;
+            decidedTime.EndTime = endTime;
         }
 
         if (decidedTime.StartTime >= decidedTime.EndTime)
