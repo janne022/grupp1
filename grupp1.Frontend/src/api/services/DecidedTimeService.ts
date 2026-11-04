@@ -80,7 +80,7 @@ function EditDecidedTime() {
   const query = useQueryClient();
   return useMutation({
     mutationFn: (req: EditDecidedTimeRequest) => {
-      return apiClient.patch<EditDecidedTimeResponse>("/api/decidedtime", req);
+      return apiClient.patch<EditDecidedTimeResponse>("/api/decidedtimes", req);
     },
 
     onSuccess: async () => {
