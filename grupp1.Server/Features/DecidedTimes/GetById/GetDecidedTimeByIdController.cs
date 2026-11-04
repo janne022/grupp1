@@ -16,7 +16,7 @@ public class GetDecidedTimeByIdController(
 {
     [HttpGet("{id:guid}")]
     public async Task<ActionResult<GetDecidedTimeByIdResponse>> GetById(
-    [FromRoute] Guid id,
+    [FromRoute(Name = "id")] Guid decidedTimeId,
     CancellationToken cancellationToken = default)
     {
         var userClaim = User.FindFirstValue(ClaimTypes.NameIdentifier);
@@ -28,7 +28,7 @@ public class GetDecidedTimeByIdController(
 
         var query = new GetDecidedTimeByIdQuery
         (
-            id,
+            decidedTimeId,
             userId
         );
 
