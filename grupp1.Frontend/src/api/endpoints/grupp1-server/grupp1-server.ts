@@ -247,12 +247,19 @@ export type postApiResendConfirmationEmailResponse200 = {
   status: 200
 }
 
+export type postApiResendConfirmationEmailResponse400 = {
+  data: HttpValidationProblemDetails
+  status: 400
+}
+
 export type postApiResendConfirmationEmailResponseSuccess = (postApiResendConfirmationEmailResponse200) & {
   headers: Headers;
 };
-;
+export type postApiResendConfirmationEmailResponseError = (postApiResendConfirmationEmailResponse400) & {
+  headers: Headers;
+};
 
-export type postApiResendConfirmationEmailResponse = (postApiResendConfirmationEmailResponseSuccess)
+export type postApiResendConfirmationEmailResponse = (postApiResendConfirmationEmailResponseSuccess | postApiResendConfirmationEmailResponseError)
 
 export const getPostApiResendConfirmationEmailUrl = () => {
 
