@@ -1,6 +1,8 @@
 using ErrorOr;
 using Microsoft.AspNetCore.Mvc;
+using Microsoft.AspNetCore.Mvc.ModelBinding;
 namespace Vicaria.Server.Infrastructure;
+
 public static class ErrorOrExtensions
 {
     public static ActionResult ToProblem(this ControllerBase controller, List<Error> errors)
