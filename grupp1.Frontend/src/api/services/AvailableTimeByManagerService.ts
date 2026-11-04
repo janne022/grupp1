@@ -13,7 +13,7 @@ export const availableTimesByManagerQuery = {
     signal: AbortSignal;
   }): Promise<GetAllAvailableTimeByManagerResponse> => {
     return apiClient.get<GetAllAvailableTimeByManagerResponse>(
-      "/api/availabletimes/bymanager",
+      "/api/managers/me/available-times",
       {
         signal,
       },
