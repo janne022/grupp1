@@ -7,20 +7,20 @@ using System.Security.Claims;
 namespace Vicaria.Server.Features.AvailableTimes.Delete;
 
 [Authorize(Roles = VicariaUserRoles.Substitute)]
-[Route("api/availabletimes")]
+[Route("api/available-times")]
 [Authorize]
 [ApiController]
 public class DeleteAvailableTimeController(
     IHandler<DeleteAvailableTimeCommand, DeleteAvailableTimeStatus> handler) : ControllerBase
 {
-    [HttpDelete("{id}")]
+    [HttpDelete("{id:guid}")]
     public async Task<IActionResult> Delete(
         [FromRoute(Name = "id")] string id,
         CancellationToken cancellationToken
     )
     {
         ArgumentNullException.ThrowIfNullOrEmpty(id);
-        
+
         string? userId = User.FindFirstValue(ClaimTypes.NameIdentifier);
 
         if (userId is null || !Guid.TryParse(id, out var guidFormattedId) || !Guid.TryParse(userId, out var userGuidId))
