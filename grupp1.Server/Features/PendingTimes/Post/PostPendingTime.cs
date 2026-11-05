@@ -99,8 +99,8 @@ public sealed class PostPendingTimeHandler : IHandler<PostPendingTimeCommand, Po
 
         HashSet<UserPendingTime>? availableSubstitutes = await _dbContext.AvailableTimes
             .Where(availableTime =>
-                availableTime.StartTime >= command.StartTime &&
-                availableTime.EndTime <= command.EndTime &&
+                availableTime.StartTime <= command.StartTime &&
+                availableTime.EndTime >= command.EndTime &&
                 availableTime.Kindergartens.Any(kat => kat.KindergartenId == command.KindergartenId)
             )
             .Select(availableTime => new UserPendingTime()
