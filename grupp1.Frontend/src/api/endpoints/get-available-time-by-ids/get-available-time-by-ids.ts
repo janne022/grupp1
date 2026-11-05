@@ -9,39 +9,39 @@ import type {
 } from '../../models';
 
 
-export type getApiAvailabletimesAvailableTimeIdResponse200TextPlain = {
+export type getApiAvailableTimesAvailableTimeIdResponse200TextPlain = {
   data: GetByIdResponse
   status: 200
 }
 
-export type getApiAvailabletimesAvailableTimeIdResponse200ApplicationJson = {
+export type getApiAvailableTimesAvailableTimeIdResponse200ApplicationJson = {
   data: GetByIdResponse
   status: 200
 }
 
-export type getApiAvailabletimesAvailableTimeIdResponse200TextJson = {
+export type getApiAvailableTimesAvailableTimeIdResponse200TextJson = {
   data: GetByIdResponse
   status: 200
 }
 
-export type getApiAvailabletimesAvailableTimeIdResponseSuccess = (getApiAvailabletimesAvailableTimeIdResponse200TextPlain | getApiAvailabletimesAvailableTimeIdResponse200ApplicationJson | getApiAvailabletimesAvailableTimeIdResponse200TextJson) & {
+export type getApiAvailableTimesAvailableTimeIdResponseSuccess = (getApiAvailableTimesAvailableTimeIdResponse200TextPlain | getApiAvailableTimesAvailableTimeIdResponse200ApplicationJson | getApiAvailableTimesAvailableTimeIdResponse200TextJson) & {
   headers: Headers;
 };
 ;
 
-export type getApiAvailabletimesAvailableTimeIdResponse = (getApiAvailabletimesAvailableTimeIdResponseSuccess)
+export type getApiAvailableTimesAvailableTimeIdResponse = (getApiAvailableTimesAvailableTimeIdResponseSuccess)
 
-export const getGetApiAvailabletimesAvailableTimeIdUrl = (availableTimeId: string,) => {
-
-
+export const getGetApiAvailableTimesAvailableTimeIdUrl = (availableTimeId: string,) => {
 
 
-  return `/api/availabletimes/${availableTimeId}`
+
+
+  return `/api/available-times/${availableTimeId}`
 }
 
-export const getApiAvailabletimesAvailableTimeId = async (availableTimeId: string, options?: RequestInit): Promise<getApiAvailabletimesAvailableTimeIdResponse> => {
+export const getApiAvailableTimesAvailableTimeId = async (availableTimeId: string, options?: RequestInit): Promise<getApiAvailableTimesAvailableTimeIdResponse> => {
 
-  const res = await fetch(getGetApiAvailabletimesAvailableTimeIdUrl(availableTimeId),
+  const res = await fetch(getGetApiAvailableTimesAvailableTimeIdUrl(availableTimeId),
   {
     ...options,
     method: 'GET'
@@ -53,8 +53,8 @@ export const getApiAvailabletimesAvailableTimeId = async (availableTimeId: strin
   const contentType = (res.headers.get('content-type') ?? '').toLowerCase();
   const body = [204, 205, 304].includes(res.status) ? null : await res.text();
 
-  const data: getApiAvailabletimesAvailableTimeIdResponse['data'] = body ? (contentType.includes('json') ? JSON.parse(body) : body) : {}
-  return { data, status: res.status, headers: res.headers } as getApiAvailabletimesAvailableTimeIdResponse
+  const data: getApiAvailableTimesAvailableTimeIdResponse['data'] = body ? (contentType.includes('json') ? JSON.parse(body) : body) : {}
+  return { data, status: res.status, headers: res.headers } as getApiAvailableTimesAvailableTimeIdResponse
 }
 
 

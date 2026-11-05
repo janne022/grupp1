@@ -5,34 +5,35 @@
  * OpenAPI spec version: 1.0.0
  */
 import type {
-  GetApiAvailabletimesParams,
+  GetApiAvailableTimesIdParams,
   GetMyAvailableTimesResponse
 } from '../../models';
 
 
-export type getApiAvailabletimesResponse200TextPlain = {
+export type getApiAvailableTimesIdResponse200TextPlain = {
   data: GetMyAvailableTimesResponse
   status: 200
 }
 
-export type getApiAvailabletimesResponse200ApplicationJson = {
+export type getApiAvailableTimesIdResponse200ApplicationJson = {
   data: GetMyAvailableTimesResponse
   status: 200
 }
 
-export type getApiAvailabletimesResponse200TextJson = {
+export type getApiAvailableTimesIdResponse200TextJson = {
   data: GetMyAvailableTimesResponse
   status: 200
 }
 
-export type getApiAvailabletimesResponseSuccess = (getApiAvailabletimesResponse200TextPlain | getApiAvailabletimesResponse200ApplicationJson | getApiAvailabletimesResponse200TextJson) & {
+export type getApiAvailableTimesIdResponseSuccess = (getApiAvailableTimesIdResponse200TextPlain | getApiAvailableTimesIdResponse200ApplicationJson | getApiAvailableTimesIdResponse200TextJson) & {
   headers: Headers;
 };
 ;
 
-export type getApiAvailabletimesResponse = (getApiAvailabletimesResponseSuccess)
+export type getApiAvailableTimesIdResponse = (getApiAvailableTimesIdResponseSuccess)
 
-export const getGetApiAvailabletimesUrl = (params?: GetApiAvailabletimesParams,) => {
+export const getGetApiAvailableTimesIdUrl = (id: string,
+    params?: GetApiAvailableTimesIdParams,) => {
   const normalizedParams = new URLSearchParams();
 
   Object.entries(params || {}).forEach(([key, value]) => {
@@ -44,12 +45,13 @@ export const getGetApiAvailabletimesUrl = (params?: GetApiAvailabletimesParams,)
 
   const stringifiedParams = normalizedParams.toString();
 
-  return stringifiedParams.length > 0 ? `/api/availabletimes?${stringifiedParams}` : `/api/availabletimes`
+  return stringifiedParams.length > 0 ? `/api/available-times/${id}?${stringifiedParams}` : `/api/available-times/${id}`
 }
 
-export const getApiAvailabletimes = async (params?: GetApiAvailabletimesParams, options?: RequestInit): Promise<getApiAvailabletimesResponse> => {
+export const getApiAvailableTimesId = async (id: string,
+    params?: GetApiAvailableTimesIdParams, options?: RequestInit): Promise<getApiAvailableTimesIdResponse> => {
 
-  const res = await fetch(getGetApiAvailabletimesUrl(params),
+  const res = await fetch(getGetApiAvailableTimesIdUrl(id,params),
   {
     ...options,
     method: 'GET'
@@ -61,8 +63,8 @@ export const getApiAvailabletimes = async (params?: GetApiAvailabletimesParams, 
   const contentType = (res.headers.get('content-type') ?? '').toLowerCase();
   const body = [204, 205, 304].includes(res.status) ? null : await res.text();
 
-  const data: getApiAvailabletimesResponse['data'] = body ? (contentType.includes('json') ? JSON.parse(body) : body) : {}
-  return { data, status: res.status, headers: res.headers } as getApiAvailabletimesResponse
+  const data: getApiAvailableTimesIdResponse['data'] = body ? (contentType.includes('json') ? JSON.parse(body) : body) : {}
+  return { data, status: res.status, headers: res.headers } as getApiAvailableTimesIdResponse
 }
 
 

@@ -5,8 +5,4 @@
  * OpenAPI spec version: 1.0.0
  */
 
-export type GetApiDecidedtimeParams = {
-kindergartenIds?: string[];
-fromTime?: string;
-toTime?: string;
-};
+export type PostAvailableTimeStatus = number;

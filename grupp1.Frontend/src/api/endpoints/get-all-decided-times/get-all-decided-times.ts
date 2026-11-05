@@ -6,33 +6,33 @@
  */
 import type {
   GetAllDecidedTimesResponse,
-  GetApiDecidedtimeParams
+  GetApiDecidedTimesParams
 } from '../../models';
 
 
-export type getApiDecidedtimeResponse200TextPlain = {
+export type getApiDecidedTimesResponse200TextPlain = {
   data: GetAllDecidedTimesResponse
   status: 200
 }
 
-export type getApiDecidedtimeResponse200ApplicationJson = {
+export type getApiDecidedTimesResponse200ApplicationJson = {
   data: GetAllDecidedTimesResponse
   status: 200
 }
 
-export type getApiDecidedtimeResponse200TextJson = {
+export type getApiDecidedTimesResponse200TextJson = {
   data: GetAllDecidedTimesResponse
   status: 200
 }
 
-export type getApiDecidedtimeResponseSuccess = (getApiDecidedtimeResponse200TextPlain | getApiDecidedtimeResponse200ApplicationJson | getApiDecidedtimeResponse200TextJson) & {
+export type getApiDecidedTimesResponseSuccess = (getApiDecidedTimesResponse200TextPlain | getApiDecidedTimesResponse200ApplicationJson | getApiDecidedTimesResponse200TextJson) & {
   headers: Headers;
 };
 ;
 
-export type getApiDecidedtimeResponse = (getApiDecidedtimeResponseSuccess)
+export type getApiDecidedTimesResponse = (getApiDecidedTimesResponseSuccess)
 
-export const getGetApiDecidedtimeUrl = (params?: GetApiDecidedtimeParams,) => {
+export const getGetApiDecidedTimesUrl = (params?: GetApiDecidedTimesParams,) => {
   const normalizedParams = new URLSearchParams();
 
   Object.entries(params || {}).forEach(([key, value]) => {
@@ -52,12 +52,12 @@ export const getGetApiDecidedtimeUrl = (params?: GetApiDecidedtimeParams,) => {
 
   const stringifiedParams = normalizedParams.toString();
 
-  return stringifiedParams.length > 0 ? `/api/decidedtime?${stringifiedParams}` : `/api/decidedtime`
+  return stringifiedParams.length > 0 ? `/api/decided-times?${stringifiedParams}` : `/api/decided-times`
 }
 
-export const getApiDecidedtime = async (params?: GetApiDecidedtimeParams, options?: RequestInit): Promise<getApiDecidedtimeResponse> => {
+export const getApiDecidedTimes = async (params?: GetApiDecidedTimesParams, options?: RequestInit): Promise<getApiDecidedTimesResponse> => {
 
-  const res = await fetch(getGetApiDecidedtimeUrl(params),
+  const res = await fetch(getGetApiDecidedTimesUrl(params),
   {
     ...options,
     method: 'GET'
@@ -69,8 +69,8 @@ export const getApiDecidedtime = async (params?: GetApiDecidedtimeParams, option
   const contentType = (res.headers.get('content-type') ?? '').toLowerCase();
   const body = [204, 205, 304].includes(res.status) ? null : await res.text();
 
-  const data: getApiDecidedtimeResponse['data'] = body ? (contentType.includes('json') ? JSON.parse(body) : body) : {}
-  return { data, status: res.status, headers: res.headers } as getApiDecidedtimeResponse
+  const data: getApiDecidedTimesResponse['data'] = body ? (contentType.includes('json') ? JSON.parse(body) : body) : {}
+  return { data, status: res.status, headers: res.headers } as getApiDecidedTimesResponse
 }
 
 

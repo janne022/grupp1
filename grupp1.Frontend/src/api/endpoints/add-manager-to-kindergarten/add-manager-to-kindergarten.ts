@@ -4,41 +4,32 @@
  * grupp1.Server | v1
  * OpenAPI spec version: 1.0.0
  */
-import type {
-  PatchApiManagerAddtokindergartenParams
-} from '../../models';
 
-
-export type patchApiManagerAddtokindergartenResponse200 = {
+export type patchApiKindergartensKindergartenIdManagersManagerIdResponse200 = {
   data: void
   status: 200
 }
 
-export type patchApiManagerAddtokindergartenResponseSuccess = (patchApiManagerAddtokindergartenResponse200) & {
+export type patchApiKindergartensKindergartenIdManagersManagerIdResponseSuccess = (patchApiKindergartensKindergartenIdManagersManagerIdResponse200) & {
   headers: Headers;
 };
 ;
 
-export type patchApiManagerAddtokindergartenResponse = (patchApiManagerAddtokindergartenResponseSuccess)
+export type patchApiKindergartensKindergartenIdManagersManagerIdResponse = (patchApiKindergartensKindergartenIdManagersManagerIdResponseSuccess)
 
-export const getPatchApiManagerAddtokindergartenUrl = (params?: PatchApiManagerAddtokindergartenParams,) => {
-  const normalizedParams = new URLSearchParams();
+export const getPatchApiKindergartensKindergartenIdManagersManagerIdUrl = (kindergartenId: string,
+    managerId: string,) => {
 
-  Object.entries(params || {}).forEach(([key, value]) => {
 
-    if (value !== undefined) {
-      normalizedParams.append(key, value === null ? 'null' : String(value))
-    }
-  });
 
-  const stringifiedParams = normalizedParams.toString();
 
-  return stringifiedParams.length > 0 ? `/api/manager/addtokindergarten?${stringifiedParams}` : `/api/manager/addtokindergarten`
+  return `/api/kindergartens/${kindergartenId}/managers/${managerId}`
 }
 
-export const patchApiManagerAddtokindergarten = async (params?: PatchApiManagerAddtokindergartenParams, options?: RequestInit): Promise<patchApiManagerAddtokindergartenResponse> => {
+export const patchApiKindergartensKindergartenIdManagersManagerId = async (kindergartenId: string,
+    managerId: string, options?: RequestInit): Promise<patchApiKindergartensKindergartenIdManagersManagerIdResponse> => {
 
-  const res = await fetch(getPatchApiManagerAddtokindergartenUrl(params),
+  const res = await fetch(getPatchApiKindergartensKindergartenIdManagersManagerIdUrl(kindergartenId,managerId),
   {
     ...options,
     method: 'PATCH'
@@ -50,8 +41,8 @@ export const patchApiManagerAddtokindergarten = async (params?: PatchApiManagerA
 
   const body = [204, 205, 304].includes(res.status) ? null : await res.text();
 
-  const data: patchApiManagerAddtokindergartenResponse['data'] = body ? JSON.parse(body) : undefined
-  return { data, status: res.status, headers: res.headers } as patchApiManagerAddtokindergartenResponse
+  const data: patchApiKindergartensKindergartenIdManagersManagerIdResponse['data'] = body ? JSON.parse(body) : undefined
+  return { data, status: res.status, headers: res.headers } as patchApiKindergartensKindergartenIdManagersManagerIdResponse
 }
 
 

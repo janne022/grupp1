@@ -5,29 +5,29 @@
  * OpenAPI spec version: 1.0.0
  */
 
-export type deleteApiAvailabletimesIdResponse200 = {
+export type deleteApiAvailableTimesIdResponse200 = {
   data: void
   status: 200
 }
 
-export type deleteApiAvailabletimesIdResponseSuccess = (deleteApiAvailabletimesIdResponse200) & {
+export type deleteApiAvailableTimesIdResponseSuccess = (deleteApiAvailableTimesIdResponse200) & {
   headers: Headers;
 };
 ;
 
-export type deleteApiAvailabletimesIdResponse = (deleteApiAvailabletimesIdResponseSuccess)
+export type deleteApiAvailableTimesIdResponse = (deleteApiAvailableTimesIdResponseSuccess)
 
-export const getDeleteApiAvailabletimesIdUrl = (id: string,) => {
-
-
+export const getDeleteApiAvailableTimesIdUrl = (id: string,) => {
 
 
-  return `/api/availabletimes/${id}`
+
+
+  return `/api/available-times/${id}`
 }
 
-export const deleteApiAvailabletimesId = async (id: string, options?: RequestInit): Promise<deleteApiAvailabletimesIdResponse> => {
+export const deleteApiAvailableTimesId = async (id: string, options?: RequestInit): Promise<deleteApiAvailableTimesIdResponse> => {
 
-  const res = await fetch(getDeleteApiAvailabletimesIdUrl(id),
+  const res = await fetch(getDeleteApiAvailableTimesIdUrl(id),
   {
     ...options,
     method: 'DELETE'
@@ -39,8 +39,8 @@ export const deleteApiAvailabletimesId = async (id: string, options?: RequestIni
 
   const body = [204, 205, 304].includes(res.status) ? null : await res.text();
 
-  const data: deleteApiAvailabletimesIdResponse['data'] = body ? JSON.parse(body) : undefined
-  return { data, status: res.status, headers: res.headers } as deleteApiAvailabletimesIdResponse
+  const data: deleteApiAvailableTimesIdResponse['data'] = body ? JSON.parse(body) : undefined
+  return { data, status: res.status, headers: res.headers } as deleteApiAvailableTimesIdResponse
 }
 
 

@@ -9,39 +9,39 @@ import type {
 } from '../../models';
 
 
-export type getApiDecidedtimeIdResponse200TextPlain = {
+export type getApiDecidedTimesIdResponse200TextPlain = {
   data: GetDecidedTimeByIdResponse
   status: 200
 }
 
-export type getApiDecidedtimeIdResponse200ApplicationJson = {
+export type getApiDecidedTimesIdResponse200ApplicationJson = {
   data: GetDecidedTimeByIdResponse
   status: 200
 }
 
-export type getApiDecidedtimeIdResponse200TextJson = {
+export type getApiDecidedTimesIdResponse200TextJson = {
   data: GetDecidedTimeByIdResponse
   status: 200
 }
 
-export type getApiDecidedtimeIdResponseSuccess = (getApiDecidedtimeIdResponse200TextPlain | getApiDecidedtimeIdResponse200ApplicationJson | getApiDecidedtimeIdResponse200TextJson) & {
+export type getApiDecidedTimesIdResponseSuccess = (getApiDecidedTimesIdResponse200TextPlain | getApiDecidedTimesIdResponse200ApplicationJson | getApiDecidedTimesIdResponse200TextJson) & {
   headers: Headers;
 };
 ;
 
-export type getApiDecidedtimeIdResponse = (getApiDecidedtimeIdResponseSuccess)
+export type getApiDecidedTimesIdResponse = (getApiDecidedTimesIdResponseSuccess)
 
-export const getGetApiDecidedtimeIdUrl = (id: string,) => {
-
-
+export const getGetApiDecidedTimesIdUrl = (id: string,) => {
 
 
-  return `/api/decidedtime/${id}`
+
+
+  return `/api/decided-times/${id}`
 }
 
-export const getApiDecidedtimeId = async (id: string, options?: RequestInit): Promise<getApiDecidedtimeIdResponse> => {
+export const getApiDecidedTimesId = async (id: string, options?: RequestInit): Promise<getApiDecidedTimesIdResponse> => {
 
-  const res = await fetch(getGetApiDecidedtimeIdUrl(id),
+  const res = await fetch(getGetApiDecidedTimesIdUrl(id),
   {
     ...options,
     method: 'GET'
@@ -53,8 +53,8 @@ export const getApiDecidedtimeId = async (id: string, options?: RequestInit): Pr
   const contentType = (res.headers.get('content-type') ?? '').toLowerCase();
   const body = [204, 205, 304].includes(res.status) ? null : await res.text();
 
-  const data: getApiDecidedtimeIdResponse['data'] = body ? (contentType.includes('json') ? JSON.parse(body) : body) : {}
-  return { data, status: res.status, headers: res.headers } as getApiDecidedtimeIdResponse
+  const data: getApiDecidedTimesIdResponse['data'] = body ? (contentType.includes('json') ? JSON.parse(body) : body) : {}
+  return { data, status: res.status, headers: res.headers } as getApiDecidedTimesIdResponse
 }
 
 

@@ -5,6 +5,8 @@
  * OpenAPI spec version: 1.0.0
  */
 
-export type DeleteApiManagerRemoveFromKindergartenParams = {
-kindergartenId?: string;
-};
+export interface PostPendingTimeRequest {
+  kindergartenId: string;
+  startTime: string;
+  endTime: string;
+}

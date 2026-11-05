@@ -12,6 +12,7 @@ export * from './grupp1-server/grupp1-server';
 export * from './log-out/log-out';
 export * from './make-manager/make-manager';
 export * from './post-available-time/post-available-time';
+export * from './post-pending-time/post-pending-time';
 export * from './register/register';
 export * from './remove-manager-from-kindergarten/remove-manager-from-kindergarten';
 export * from './unbook-decided-time/unbook-decided-time';
