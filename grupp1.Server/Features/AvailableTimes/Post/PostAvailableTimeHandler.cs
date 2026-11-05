@@ -51,7 +51,7 @@ namespace Vicaria.Server.Features.AvailableTimes.Post
             }
 
             bool hasOverlap = await context.AvailableTimes
-                                           .Where(at => at.UserId == command.UserId
+                                           .Where(at => at.SubstituteId == command.SubstituteId
                                            && at.StartTime < command.EndTime
                                            && at.EndTime > command.StartTime
                                            && at.Kindergartens.Any(kg => command.Kindergartens.Contains(kg.KindergartenId)))
@@ -59,7 +59,7 @@ namespace Vicaria.Server.Features.AvailableTimes.Post
 
             if(hasOverlap)
             {
-                _logger.LogInformation("Failed to create available time: User {UserId} already has an overlapping available time", command.UserId);
+                _logger.LogInformation("Failed to create available time: User {UserId} already has an overlapping available time", command.SubstituteId);
 
                 return new PostAvailableTimeResponse
                 {
@@ -73,7 +73,7 @@ namespace Vicaria.Server.Features.AvailableTimes.Post
                 Id = Guid.NewGuid(),
                 StartTime = command.StartTime,
                 EndTime = command.EndTime,
-                UserId = command.UserId
+                SubstituteId = command.SubstituteId
             };
 
             foreach(Guid kindergartenId in command.Kindergartens)
