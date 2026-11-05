@@ -18,7 +18,7 @@ namespace Vicaria.Server.Migrations
         {
 #pragma warning disable 612, 618
             modelBuilder
-                .HasAnnotation("ProductVersion", "10.0.12")
+                .HasAnnotation("ProductVersion", "10.0.14")
                 .HasAnnotation("Relational:MaxIdentifierLength", 63);
 
             NpgsqlModelBuilderExtensions.HasPostgresExtension(modelBuilder, "postgis");
@@ -273,12 +273,17 @@ namespace Vicaria.Server.Migrations
                     b.Property<Guid>("KindergartenId")
                         .HasColumnType("uuid");
 
+                    b.Property<Guid>("ManagerId")
+                        .HasColumnType("uuid");
+
                     b.Property<DateTime>("StartTime")
                         .HasColumnType("timestamp with time zone");
 
                     b.HasKey("Id");
 
                     b.HasIndex("KindergartenId");
+
+                    b.HasIndex("ManagerId");
 
                     b.ToTable("PendingTimes");
                 });
@@ -504,7 +509,15 @@ namespace Vicaria.Server.Migrations
                         .OnDelete(DeleteBehavior.Cascade)
                         .IsRequired();
 
+                    b.HasOne("Vicaria.Server.Domain.Models.User", "Manager")
+                        .WithMany()
+                        .HasForeignKey("ManagerId")
+                        .OnDelete(DeleteBehavior.Restrict)
+                        .IsRequired();
+
                     b.Navigation("Kindergarten");
+
+                    b.Navigation("Manager");
                 });
 
             modelBuilder.Entity("Vicaria.Server.Domain.Models.UserKinderGarten", b =>
@@ -529,7 +542,7 @@ namespace Vicaria.Server.Migrations
             modelBuilder.Entity("Vicaria.Server.Domain.Models.UserPendingTime", b =>
                 {
                     b.HasOne("Vicaria.Server.Domain.Models.PendingTime", "PendingTime")
-                        .WithMany("Users")
+                        .WithMany("AvailableSubs")
                         .HasForeignKey("PendingTimeId")
                         .OnDelete(DeleteBehavior.Cascade)
                         .IsRequired();
@@ -563,7 +576,7 @@ namespace Vicaria.Server.Migrations
 
             modelBuilder.Entity("Vicaria.Server.Domain.Models.PendingTime", b =>
                 {
-                    b.Navigation("Users");
+                    b.Navigation("AvailableSubs");
                 });
 
             modelBuilder.Entity("Vicaria.Server.Domain.Models.User", b =>
