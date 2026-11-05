@@ -1,4 +1,5 @@
 using System.Collections.Immutable;
+using System.ComponentModel.DataAnnotations;
 using System.Reflection.Metadata.Ecma335;
 using System.Security.Claims;
 using System.Text.RegularExpressions;
@@ -84,17 +85,6 @@ public sealed class PostPendingTimeHandler : IHandler<PostPendingTimeCommand, Po
     public async Task<PostPendingTimeResponse?> HandleAsync(PostPendingTimeCommand command, CancellationToken cancellationToken = default)
     {
         #region validation
-
-        // rework validation and fetching of substitutes here
-
-
-        if (!await _dbContext.Kindergartens.AnyAsync(kindergarten => kindergarten.Id == command.KindergartenId))
-        {
-            _logger.LogWarning("Unable to perform POST action on pending time object: no kindergarten by the id {id} could be found in the database.", command.KindergartenId);
-
-            return null;
-        }
-
         if (command.StartTime >= command.EndTime)
         {
             _logger.LogWarning
@@ -102,6 +92,29 @@ public sealed class PostPendingTimeHandler : IHandler<PostPendingTimeCommand, Po
                 "Unable to perform POST action on pending time object: Start time ({startTime}) cannot be equal to or later than End time ({endTime}).",
                 command.StartTime,
                 command.EndTime
+            );
+
+            return null;
+        }
+
+        HashSet<UserPendingTime>? availableSubstitutes = await _dbContext.AvailableTimes
+            .Where(availableTime =>
+                availableTime.StartTime >= command.StartTime &&
+                availableTime.EndTime <= command.EndTime &&
+                availableTime.Kindergartens.Any(kat => kat.KindergartenId == command.KindergartenId)
+            )
+            .Select(availableTime => new UserPendingTime()
+            {
+                UserId = availableTime.UserId,
+                PendingTimeId = command.PendingTimeId
+            })
+            .ToHashSetAsync();
+
+        if (availableSubstitutes is null)
+        {
+            _logger.LogWarning
+            (
+                "Unable to perform POST action on pending time object: available substitute object returned as null from the database."
             );
 
             return null;
@@ -115,7 +128,7 @@ public sealed class PostPendingTimeHandler : IHandler<PostPendingTimeCommand, Po
             KindergartenId = command.KindergartenId,
             StartTime = command.StartTime,
             EndTime = command.EndTime,
-            AvailableSubs = []
+            AvailableSubs = availableSubstitutes
         };
 
         await _dbContext.AddAsync(newPendingTime);
