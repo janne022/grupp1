@@ -62,6 +62,26 @@ public class VicariaDbContext : IdentityDbContext<User, IdentityRole<Guid>, Guid
             );
 
         builder
+            .Entity<DecidedTime>()
+            .HasOne(dt => dt.User)
+            .WithMany(user => user.DecidedTimes)
+            .HasForeignKey(dt => dt.UserId);
+
+        builder
+            .Entity<DecidedTime>()
+            .HasOne(dt => dt.Manager)
+            .WithMany()
+            .HasForeignKey(dt => dt.ManagerId)
+            .OnDelete(DeleteBehavior.Restrict);
+
+        builder
+            .Entity<DecidedTime>()
+            .HasOne(dt => dt.PendingTime)
+            .WithOne()
+            .HasForeignKey<DecidedTime>(dt => dt.PendingTimeId)
+            .OnDelete(DeleteBehavior.Restrict);
+
+        builder
             .Entity<PendingTime>()
             .HasOne(pt => pt.Manager)
             .WithMany()

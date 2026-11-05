@@ -9,6 +9,8 @@ public class DecidedTime
     public User User { get; set; } = null!;
     public Guid KindergartenId { get; set; }
     public Kindergarten Kindergarten { get; set; } = null!;
-    public Guid AvailableTimeId { get; set; }
-    public AvailableTime AvailableTime { get; set; } = null!;
+    public Guid PendingTimeId { get; set; }
+    public PendingTime PendingTime { get; set; } = null!;
+    public Guid ManagerId { get; set; }
+    public User Manager { get; set; } = null!;
 }
