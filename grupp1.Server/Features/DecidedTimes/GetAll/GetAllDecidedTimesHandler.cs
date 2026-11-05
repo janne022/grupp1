@@ -1,3 +1,4 @@
+using ErrorOr;
 using Microsoft.EntityFrameworkCore;
 using Vicaria.Server.Features.DecidedTimes.GetAll.DTOs;
 using Vicaria.Server.Infrastructure;
@@ -7,9 +8,9 @@ namespace Vicaria.Server.Features.DecidedTimes.GetAll;
 public class GetAllDecidedTimesHandler(
     VicariaDbContext DbContext,
     ILogger<GetAllDecidedTimesHandler> _logger
-) : IHandler<GetAllDecidedTimesQuery, GetAllDecidedTimesResponse>
+) : IHandler<GetAllDecidedTimesQuery, ErrorOr<GetAllDecidedTimesResponse>>
 {
-    public async Task<GetAllDecidedTimesResponse> HandleAsync(
+    public async Task<ErrorOr<GetAllDecidedTimesResponse>> HandleAsync(
         GetAllDecidedTimesQuery query,
         CancellationToken cancellationToken = default
     )
@@ -72,10 +73,7 @@ public class GetAllDecidedTimesHandler(
                 query.KindergartenIds,
                 query.ManagerId
             );
-            return new GetAllDecidedTimesResponse(
-                [],
-                GetAllDecidedTimesStatus.NotManagerOfKindergarten
-            );
+            return Error.NotFound("Kindergarten.NotManaged","Not manager of kindergarten");
         }
 
         #endregion
@@ -109,7 +107,7 @@ public class GetAllDecidedTimesHandler(
             ))
             .ToListAsync(cancellationToken);
 
-        return new GetAllDecidedTimesResponse(decidedTimes, GetAllDecidedTimesStatus.Ok);
+        return new GetAllDecidedTimesResponse(decidedTimes);
 
         #endregion
     }
