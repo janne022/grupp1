@@ -1,4 +1,5 @@
 using System.Collections.Immutable;
+using System.Reflection.Metadata.Ecma335;
 using System.Security.Claims;
 using System.Text.RegularExpressions;
 using Microsoft.AspNetCore.Authorization;
@@ -42,7 +43,6 @@ public sealed class PostPendingTimeController : ControllerBase
             PendingTimeId: Guid.CreateVersion7(),
             KindergartenId: request.KindergartenId,
             ManagerId: managerId,
-            AvailableSubstituteIds: [.. request.AvailableSubstituteIds],
             IsBooked: false,
             StartTime: request.StartTime,
             EndTime: request.EndTime
@@ -84,16 +84,9 @@ public sealed class PostPendingTimeHandler : IHandler<PostPendingTimeCommand, Po
     public async Task<PostPendingTimeResponse?> HandleAsync(PostPendingTimeCommand command, CancellationToken cancellationToken = default)
     {
         #region validation
-        
-        int matchedSubstitutes = await _dbContext.Users.Where(user => user.Id == command.ManagerId).CountAsync();
-        int actualNumbersOfSubstitutes = command.AvailableSubstituteIds.Count();
 
-        if (matchedSubstitutes != actualNumbersOfSubstitutes)
-        {
-            _logger.LogWarning("Unable to perform POST action on pending time object: All the given substitutes could not be found in the Database. Numbers found were {found}. Total number sent in was {actual}", matchedSubstitutes, actualNumbersOfSubstitutes);
+        // rework validation and fetching of substitutes here
 
-            return null;
-        }
 
         if (!await _dbContext.Kindergartens.AnyAsync(kindergarten => kindergarten.Id == command.KindergartenId))
         {
@@ -122,27 +115,37 @@ public sealed class PostPendingTimeHandler : IHandler<PostPendingTimeCommand, Po
             KindergartenId = command.KindergartenId,
             StartTime = command.StartTime,
             EndTime = command.EndTime,
-            AvailableSubs = [.. command.AvailableSubstituteIds.Select(subId => new UserPendingTime
-            {
-                UserId = subId,
-                PendingTimeId = command.PendingTimeId,
-            })]
+            AvailableSubs = []
         };
 
         await _dbContext.AddAsync(newPendingTime);
         await _dbContext.SaveChangesAsync();
 
+        PendingTime? fetchedNewPendingTime = await _dbContext.PendingTimes
+            .Include(pendingTime => pendingTime.Kindergarten)
+            .Include(pendingTime => pendingTime.AvailableSubs)
+            .ThenInclude(availableSub => availableSub.User)
+            .FirstOrDefaultAsync(pendingTime => pendingTime.Id == command.PendingTimeId)
+        ;
+
+        if (fetchedNewPendingTime is null)
+        {
+            _logger.LogWarning("Could not fetch newly created and added PendingTime with ID {id} from Database", newPendingTime.Id);
+
+            return null;
+        }
+
         return new PostPendingTimeResponse
         (
-            Id: newPendingTime.Id,
-            IsBooked: newPendingTime.IsBooked,
+            Id: fetchedNewPendingTime.Id,
+            IsBooked: fetchedNewPendingTime.IsBooked,
             Kindergarten: new KindergartenDto(
-                Id: newPendingTime.KindergartenId,
-                KindergartenName: newPendingTime.Kindergarten.Name
+                Id: fetchedNewPendingTime.KindergartenId,
+                KindergartenName: fetchedNewPendingTime.Kindergarten.Name
             ),
-            StartTime: newPendingTime.StartTime,
-            EndTime: newPendingTime.EndTime,
-            Substitutes: [.. newPendingTime.AvailableSubs.Select(userPendingTime => new SubstituteDto
+            StartTime: fetchedNewPendingTime.StartTime,
+            EndTime: fetchedNewPendingTime.EndTime,
+            Substitutes: [.. fetchedNewPendingTime.AvailableSubs.Select(userPendingTime => new SubstituteDto
             (
                 Id: userPendingTime.UserId,
                 FullName: $"{userPendingTime.User.FirstName} {userPendingTime.User.LastName}",
@@ -163,8 +166,7 @@ public record class PostPendingTimeRequest
 (
     Guid KindergartenId,
     DateTime StartTime,
-    DateTime EndTime,
-    Guid[] AvailableSubstituteIds
+    DateTime EndTime
 );
 
 #endregion
@@ -175,7 +177,6 @@ public record class PostPendingTimeCommand
     Guid PendingTimeId,
     Guid KindergartenId,
     Guid ManagerId,
-    HashSet<Guid> AvailableSubstituteIds,
 
     bool IsBooked,
     DateTime StartTime,
