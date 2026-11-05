@@ -49,7 +49,7 @@ public class BookDecidedTimeHandler(
             throw new KeyNotFoundException($"Kindergarten id:{command.KindergartenId} was not found.");
         }
 
-        var kindergartenInfo = await dbContext.Kindergartens.Where(k => k.Id == command.KindergartenId).Select(k => new KindergartenDTO
+        var kindergartenInfo = await dbContext.Kindergartens.Where(k => k.Id == command.KindergartenId).Select(k => new BookTimeKindergartenDTO
         (
             k.Id,
             k.Name,

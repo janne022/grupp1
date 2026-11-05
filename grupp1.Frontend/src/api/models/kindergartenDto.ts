@@ -5,7 +5,7 @@
  * OpenAPI spec version: 1.0.0
  */
 
-export interface KindergartenDTO {
+export interface KindergartenDto {
   id: string;
   name: string;
   /**
@@ -20,7 +20,7 @@ export interface KindergartenDTO {
   longitude: number | string | null;
 }
 
-export interface KindergartenDto {
+export interface KindergartenDTO {
   id: string;
   name: string;
   /**

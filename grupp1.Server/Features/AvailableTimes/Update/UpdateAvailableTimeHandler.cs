@@ -122,7 +122,7 @@ public class UpdateAvailableTimeHandler(
         var kindergartenDtos = await DbContext.KindergartenAvailableTimes
            .AsNoTracking()
            .Where(kat => kat.AvailableTimeId == availableTime.Id)
-           .Select(kat => new KindergartenDto(
+           .Select(kat => new UpdateAvailableTimeKindergartenDTO(
                kat.KindergartenId,
                kat.Kindergarten.Name,
                kat.Kindergarten.Location != null
