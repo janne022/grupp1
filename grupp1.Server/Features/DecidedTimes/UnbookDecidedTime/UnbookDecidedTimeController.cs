@@ -8,13 +8,13 @@ using Microsoft.AspNetCore.Authorization;
 namespace Vicaria.Server.Features.DecidedTimes.UnbookDecidedTime
 {
     [Authorize]
-    [Route("api/decidedtime")]
+    [Route("api/decided-times")]
     [Authorize]
     [ApiController]
     public class UnbookDecidedTimeController(IHandler<UnbookDecidedTimeCommand, UnbookDecidedTimeStatus> handler) : ControllerBase
     {
         [HttpDelete("{id:guid}")]
-        public async Task<IActionResult> UnbookDecidedTime([FromRoute] Guid id, CancellationToken cancellationToken)
+        public async Task<IActionResult> UnbookDecidedTime([FromRoute]Guid id, CancellationToken cancellationToken)
         {
             var userClaim = User.FindFirstValue(ClaimTypes.NameIdentifier);
 
