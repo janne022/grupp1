@@ -121,6 +121,7 @@ public sealed class PostPendingTimeHandler : IHandler<PostPendingTimeCommand, Er
         {
             Id = command.PendingTimeId,
             IsBooked = false,
+            ManagerId = command.ManagerId,
             KindergartenId = command.KindergartenId,
             StartTime = command.StartTime,
             EndTime = command.EndTime,
