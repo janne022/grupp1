@@ -7,6 +7,6 @@ public record class UpdateAvailableTimeResponse
     Guid? TimeId,
     DateTime? StartTime,
     DateTime? EndTime,
-    KindergartenDto[]? Kindergartens,
+    UpdateAvailableTimeKindergartenDTO[]? Kindergartens,
     UpdateAvailableTimeStatus StatusMessage
 );
