@@ -1,14 +1,11 @@
-using System.Collections.Immutable;
-using System.ComponentModel.DataAnnotations;
-using System.Reflection.Metadata.Ecma335;
 using System.Security.Claims;
-using System.Text.RegularExpressions;
 using Microsoft.AspNetCore.Authorization;
 using Microsoft.AspNetCore.Mvc;
 using Microsoft.EntityFrameworkCore;
 using Vicaria.Server.Domain;
 using Vicaria.Server.Domain.Models;
 using Vicaria.Server.Infrastructure;
+using ErrorOr;
 
 namespace Vicaria.Server.Features.PendingTimes.Post;
 
@@ -19,10 +16,10 @@ namespace Vicaria.Server.Features.PendingTimes.Post;
 public sealed class PostPendingTimeController : ControllerBase
 {
     #region Fields
-    private readonly IHandler<PostPendingTimeCommand, PostPendingTimeResponse?> _handler;
+    private readonly IHandler<PostPendingTimeCommand, ErrorOr<PostPendingTimeResponse>> _handler;
     #endregion
     #region Constructors
-    public PostPendingTimeController(IHandler<PostPendingTimeCommand, PostPendingTimeResponse?> handler)
+    public PostPendingTimeController(IHandler<PostPendingTimeCommand, ErrorOr<PostPendingTimeResponse>> handler)
     {
         _handler = handler;
     }
@@ -49,14 +46,13 @@ public sealed class PostPendingTimeController : ControllerBase
             EndTime: request.EndTime
         );
 
-        PostPendingTimeResponse? response = await _handler.HandleAsync(command, cancellationToken);
+        ErrorOr<PostPendingTimeResponse> response = await _handler.HandleAsync(command, cancellationToken);
 
-        if (response is null)
-        {
-            return NotFound();
-        }
-
-        return Ok(response);
+        return response.Match<ActionResult<PostPendingTimeResponse>>
+        (
+            value => Ok(value),
+            errors => this.ToProblem(errors)
+        );
     }
     #endregion
 }
@@ -64,7 +60,7 @@ public sealed class PostPendingTimeController : ControllerBase
 #endregion
 #region Handler
 
-public sealed class PostPendingTimeHandler : IHandler<PostPendingTimeCommand, PostPendingTimeResponse?>
+public sealed class PostPendingTimeHandler : IHandler<PostPendingTimeCommand, ErrorOr<PostPendingTimeResponse>>
 {
     #region Fields
 
@@ -82,7 +78,7 @@ public sealed class PostPendingTimeHandler : IHandler<PostPendingTimeCommand, Po
     #endregion
     #region Methods
 
-    public async Task<PostPendingTimeResponse?> HandleAsync(PostPendingTimeCommand command, CancellationToken cancellationToken = default)
+    public async Task<ErrorOr<PostPendingTimeResponse>> HandleAsync(PostPendingTimeCommand command, CancellationToken cancellationToken = default)
     {
         #region validation
         if (command.StartTime >= command.EndTime)
@@ -94,7 +90,7 @@ public sealed class PostPendingTimeHandler : IHandler<PostPendingTimeCommand, Po
                 command.EndTime
             );
 
-            return null;
+            return Error.Validation("Start time cannot be equal to or later than end time");
         }
 
         HashSet<UserPendingTime>? availableSubstitutes = await _dbContext.AvailableTimes
@@ -117,7 +113,7 @@ public sealed class PostPendingTimeHandler : IHandler<PostPendingTimeCommand, Po
                 "Unable to perform POST action on pending time object: available substitute object returned as null from the database."
             );
 
-            return null;
+            return Error.Unexpected("available substitute object returned as null from the database.");
         }
         #endregion
 
@@ -145,7 +141,7 @@ public sealed class PostPendingTimeHandler : IHandler<PostPendingTimeCommand, Po
         {
             _logger.LogWarning("Could not fetch newly created and added PendingTime with ID {id} from Database", newPendingTime.Id);
 
-            return null;
+            return Error.Unexpected("Could not fetch newly created and added PendingTime from database");
         }
 
         return new PostPendingTimeResponse
