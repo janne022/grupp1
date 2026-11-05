@@ -4,7 +4,7 @@
  * grupp1.Server | v1
  * OpenAPI spec version: 1.0.0
  */
-import type { KindergartenDTO } from './kindergartenDTO';
+import type { KindergartenDTO } from './kindergartenDto';
 import type { SubstituteDTO } from './substituteDTO';
 
 export interface GetDecidedTimeByIdResponse {

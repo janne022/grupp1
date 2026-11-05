@@ -3,6 +3,8 @@ import { apiClient, ApiError } from "@/lib/api";
 import type {
   BookDecidedTimeQuery,
   BookDecidedTimeResponse,
+  EditDecidedTimeRequest,
+  EditDecidedTimeResponse,
   GetAllDecidedTimesResponse,
 } from "../models";
 
@@ -25,7 +27,7 @@ function GetAllDecidedTimes(
     }): Promise<GetAllDecidedTimesResponse | null> => {
       try {
         const response = await apiClient.get<GetAllDecidedTimesResponse>(
-          "/api/decidedtime",
+          "/api/decided-times",
           {
             signal,
             params,
@@ -48,7 +50,7 @@ function AddDecidedTime() {
   const query = useQueryClient();
   return useMutation({
     mutationFn: (req: BookDecidedTimeQuery) => {
-      return apiClient.post<BookDecidedTimeResponse>("/api/decidedtime", req);
+      return apiClient.post<BookDecidedTimeResponse>("/api/decided-times", req);
     },
 
     onSuccess: async () => {
@@ -63,7 +65,7 @@ function DeleteDecidedTime() {
   const query = useQueryClient();
   return useMutation({
     mutationFn: (id: string) => {
-      return apiClient.delete<void>(`/api/decidedtime/${id}`);
+      return apiClient.delete<void>(`/api/decided-times${id}`);
     },
 
     onSuccess: async () => {
@@ -74,4 +76,24 @@ function DeleteDecidedTime() {
   });
 }
 
-export { GetAllDecidedTimes, AddDecidedTime, DeleteDecidedTime };
+function EditDecidedTime() {
+  const query = useQueryClient();
+  return useMutation({
+    mutationFn: (req: EditDecidedTimeRequest) => {
+      return apiClient.patch<EditDecidedTimeResponse>("/api/decidedtimes", req);
+    },
+
+    onSuccess: async () => {
+      await query.invalidateQueries({
+        queryKey: ["decidedTimesData"],
+      });
+    },
+  });
+}
+
+export {
+  GetAllDecidedTimes,
+  AddDecidedTime,
+  DeleteDecidedTime,
+  EditDecidedTime,
+};
