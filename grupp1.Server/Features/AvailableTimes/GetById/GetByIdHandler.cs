@@ -1,3 +1,6 @@
+using System.Runtime.CompilerServices;
+using Microsoft.EntityFrameworkCore;
+using Vicaria.Server.Domain.Models;
 using Vicaria.Server.Infrastructure; // To implement IHandler
 
 namespace Vicaria.Server.Features.AvailableTimes.GetById;
@@ -19,11 +22,16 @@ public class GetByIdHandler : IHandler<GetByIdQuery, GetByIdResponse?>
     #endregion
     #region Methods
 
-    public async Task<GetByIdResponse?> HandleAsync(GetByIdQuery request, CancellationToken cancellationToken = default)
+    public async Task<GetByIdResponse?> HandleAsync(GetByIdQuery query, CancellationToken cancellationToken = default)
     {
-        Guid inputId = request.AvailableTimeId;
+        Guid inputId = query.AvailableTimeId;
+        Guid userId = query.UserId;
 
-        var availableTime = await _dbContext.AvailableTimes.FindAsync(inputId);
+        AvailableTime? availableTime = await _dbContext.AvailableTimes
+            .AsNoTracking()
+            .Include(at => at.Kindergartens)
+            .ThenInclude(kat => kat.Kindergarten)
+            .FirstOrDefaultAsync(at => at.Id == inputId && at.UserId == userId);
 
         if (availableTime is null)
         {
@@ -39,7 +47,8 @@ public class GetByIdHandler : IHandler<GetByIdQuery, GetByIdResponse?>
             (
                 k.Kindergarten.Name,
                 k.Kindergarten.Id,
-                k.Kindergarten.Location
+                k.Kindergarten.Location?.Y,
+                k.Kindergarten.Location?.X
             ))]
         );
     }

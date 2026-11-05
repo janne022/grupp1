@@ -7,7 +7,7 @@ using Vicaria.Server.Infrastructure;
 
 namespace Vicaria.Server.Features.AvailableTimes.Post
 {
-    [Route("api/availabletimes")]
+    [Route("api/available-times")]
     [Authorize(Roles = VicariaUserRoles.Substitute)]
     [ApiController]
     public class PostAvailableTimeController(IHandler<PostAvailableTimeCommand, PostAvailableTimeResponse> handler) : ControllerBase
@@ -18,7 +18,7 @@ namespace Vicaria.Server.Features.AvailableTimes.Post
         {
             var userId = User.FindFirstValue(ClaimTypes.NameIdentifier);
 
-            if(!Guid.TryParse(userId, out var userGuidId))
+            if (!Guid.TryParse(userId, out var userGuidId))
             {
                 return Unauthorized();
             }
@@ -38,7 +38,7 @@ namespace Vicaria.Server.Features.AvailableTimes.Post
                 return BadRequest(response.ErrorMessage);
             }
 
-            return Created($"/api/availabletimes/byid", response);
+            return Created($"/api/available-time/{response.Id}", response);
 
 
         }
