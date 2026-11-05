@@ -6,6 +6,7 @@ import type {
   EditDecidedTimeRequest,
   EditDecidedTimeResponse,
   GetAllDecidedTimesResponse,
+  PostPendingTimeRequest,
 } from "../models";
 
 type GetAllDecidedTimesParams = {
@@ -46,11 +47,11 @@ function GetAllDecidedTimes(
   });
 }
 
-function AddDecidedTime() {
+function PostPendingTime() {
   const query = useQueryClient();
   return useMutation({
     mutationFn: (req: BookDecidedTimeQuery) => {
-      return apiClient.post<BookDecidedTimeResponse>("/api/decided-times", req);
+      return apiClient.post<PostPendingTimeRequest>("/api/pending-times", req);
     },
 
     onSuccess: async () => {
@@ -93,7 +94,7 @@ function EditDecidedTime() {
 
 export {
   GetAllDecidedTimes,
-  AddDecidedTime,
+  PostPendingTime as AddDecidedTime,
   DeleteDecidedTime,
   EditDecidedTime,
 };

@@ -4,11 +4,12 @@
  * grupp1.Server | v1
  * OpenAPI spec version: 1.0.0
  */
+import type { PostAvailableTimeStatus } from './postAvailableTimeStatus';
 
 export interface PostAvailableTimeResponse {
   /** @nullable */
   id?: string | null;
-  success?: boolean;
   /** @nullable */
   errorMessage?: string | null;
+  status?: PostAvailableTimeStatus;
 }

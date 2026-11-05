@@ -9,39 +9,39 @@ import type {
 } from '../../models';
 
 
-export type getApiUserinfoResponse200TextPlain = {
+export type getApiUserInfoResponse200TextPlain = {
   data: UserInfoResponse
   status: 200
 }
 
-export type getApiUserinfoResponse200ApplicationJson = {
+export type getApiUserInfoResponse200ApplicationJson = {
   data: UserInfoResponse
   status: 200
 }
 
-export type getApiUserinfoResponse200TextJson = {
+export type getApiUserInfoResponse200TextJson = {
   data: UserInfoResponse
   status: 200
 }
 
-export type getApiUserinfoResponseSuccess = (getApiUserinfoResponse200TextPlain | getApiUserinfoResponse200ApplicationJson | getApiUserinfoResponse200TextJson) & {
+export type getApiUserInfoResponseSuccess = (getApiUserInfoResponse200TextPlain | getApiUserInfoResponse200ApplicationJson | getApiUserInfoResponse200TextJson) & {
   headers: Headers;
 };
 ;
 
-export type getApiUserinfoResponse = (getApiUserinfoResponseSuccess)
+export type getApiUserInfoResponse = (getApiUserInfoResponseSuccess)
 
-export const getGetApiUserinfoUrl = () => {
-
-
+export const getGetApiUserInfoUrl = () => {
 
 
-  return `/api/userinfo`
+
+
+  return `/api/user-info`
 }
 
-export const getApiUserinfo = async ( options?: RequestInit): Promise<getApiUserinfoResponse> => {
+export const getApiUserInfo = async ( options?: RequestInit): Promise<getApiUserInfoResponse> => {
 
-  const res = await fetch(getGetApiUserinfoUrl(),
+  const res = await fetch(getGetApiUserInfoUrl(),
   {
     ...options,
     method: 'GET'
@@ -53,8 +53,8 @@ export const getApiUserinfo = async ( options?: RequestInit): Promise<getApiUser
   const contentType = (res.headers.get('content-type') ?? '').toLowerCase();
   const body = [204, 205, 304].includes(res.status) ? null : await res.text();
 
-  const data: getApiUserinfoResponse['data'] = body ? (contentType.includes('json') ? JSON.parse(body) : body) : {}
-  return { data, status: res.status, headers: res.headers } as getApiUserinfoResponse
+  const data: getApiUserInfoResponse['data'] = body ? (contentType.includes('json') ? JSON.parse(body) : body) : {}
+  return { data, status: res.status, headers: res.headers } as getApiUserInfoResponse
 }
 
 

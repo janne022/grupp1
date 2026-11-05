@@ -5,42 +5,43 @@
  * OpenAPI spec version: 1.0.0
  */
 import type {
-  UpdateAvailableTimeQuery,
+  UpdateAvailableTimeRequest,
   UpdateAvailableTimeResponse
 } from '../../models';
 
 
-export type patchApiAvailabletimesResponse200TextPlain = {
+export type patchApiAvailableTimesAvailableTimeIdResponse200TextPlain = {
   data: UpdateAvailableTimeResponse
   status: 200
 }
 
-export type patchApiAvailabletimesResponse200ApplicationJson = {
+export type patchApiAvailableTimesAvailableTimeIdResponse200ApplicationJson = {
   data: UpdateAvailableTimeResponse
   status: 200
 }
 
-export type patchApiAvailabletimesResponse200TextJson = {
+export type patchApiAvailableTimesAvailableTimeIdResponse200TextJson = {
   data: UpdateAvailableTimeResponse
   status: 200
 }
 
-export type patchApiAvailabletimesResponseSuccess = (patchApiAvailabletimesResponse200TextPlain | patchApiAvailabletimesResponse200ApplicationJson | patchApiAvailabletimesResponse200TextJson) & {
+export type patchApiAvailableTimesAvailableTimeIdResponseSuccess = (patchApiAvailableTimesAvailableTimeIdResponse200TextPlain | patchApiAvailableTimesAvailableTimeIdResponse200ApplicationJson | patchApiAvailableTimesAvailableTimeIdResponse200TextJson) & {
   headers: Headers;
 };
 ;
 
-export type patchApiAvailabletimesResponse = (patchApiAvailabletimesResponseSuccess)
+export type patchApiAvailableTimesAvailableTimeIdResponse = (patchApiAvailableTimesAvailableTimeIdResponseSuccess)
 
-export const getPatchApiAvailabletimesUrl = () => {
-
-
+export const getPatchApiAvailableTimesAvailableTimeIdUrl = (availableTimeId: string,) => {
 
 
-  return `/api/availabletimes`
+
+
+  return `/api/available-times/${availableTimeId}`
 }
 
-export const patchApiAvailabletimes = async (updateAvailableTimeQuery: UpdateAvailableTimeQuery, options?: RequestInit): Promise<patchApiAvailabletimesResponse> => {
+export const patchApiAvailableTimesAvailableTimeId = async (availableTimeId: string,
+    updateAvailableTimeRequest: UpdateAvailableTimeRequest, options?: RequestInit): Promise<patchApiAvailableTimesAvailableTimeIdResponse> => {
 
     const getHeaders = (h?: NonNullable<RequestInit['headers']>): Record<string, string | readonly string[]> => {
     if (!h) return {};
@@ -56,20 +57,20 @@ export const patchApiAvailabletimes = async (updateAvailableTimeQuery: UpdateAva
     }
     return headers;
   };
-const res = await fetch(getPatchApiAvailabletimesUrl(),
+const res = await fetch(getPatchApiAvailableTimesAvailableTimeIdUrl(availableTimeId),
   {
     ...options,
     method: 'PATCH',
     headers: { 'Content-Type': 'application/json', ...getHeaders(options?.headers) },
-    body: JSON.stringify(updateAvailableTimeQuery)
+    body: JSON.stringify(updateAvailableTimeRequest)
   }
 )
 
   const contentType = (res.headers.get('content-type') ?? '').toLowerCase();
   const body = [204, 205, 304].includes(res.status) ? null : await res.text();
 
-  const data: patchApiAvailabletimesResponse['data'] = body ? (contentType.includes('json') ? JSON.parse(body) : body) : {}
-  return { data, status: res.status, headers: res.headers } as patchApiAvailabletimesResponse
+  const data: patchApiAvailableTimesAvailableTimeIdResponse['data'] = body ? (contentType.includes('json') ? JSON.parse(body) : body) : {}
+  return { data, status: res.status, headers: res.headers } as patchApiAvailableTimesAvailableTimeIdResponse
 }
 
 

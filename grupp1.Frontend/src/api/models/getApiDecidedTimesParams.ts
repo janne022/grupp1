@@ -5,7 +5,8 @@
  * OpenAPI spec version: 1.0.0
  */
 
-export type GetApiAvailabletimesParams = {
+export type GetApiDecidedTimesParams = {
+kindergartenIds?: string[];
 fromTime?: string;
 toTime?: string;
 };

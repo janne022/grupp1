@@ -5,6 +5,7 @@
  * OpenAPI spec version: 1.0.0
  */
 
-export type PatchApiManagerAddtokindergartenParams = {
-kindergartenId?: string;
+export type GetApiAvailableTimesIdParams = {
+fromTime?: string;
+toTime?: string;
 };

@@ -10,37 +10,37 @@ import type {
 } from '../../models';
 
 
-export type postApiDecidedtimeResponse200TextPlain = {
+export type postApiDecidedTimesResponse200TextPlain = {
   data: BookDecidedTimeResponse
   status: 200
 }
 
-export type postApiDecidedtimeResponse200ApplicationJson = {
+export type postApiDecidedTimesResponse200ApplicationJson = {
   data: BookDecidedTimeResponse
   status: 200
 }
 
-export type postApiDecidedtimeResponse200TextJson = {
+export type postApiDecidedTimesResponse200TextJson = {
   data: BookDecidedTimeResponse
   status: 200
 }
 
-export type postApiDecidedtimeResponseSuccess = (postApiDecidedtimeResponse200TextPlain | postApiDecidedtimeResponse200ApplicationJson | postApiDecidedtimeResponse200TextJson) & {
+export type postApiDecidedTimesResponseSuccess = (postApiDecidedTimesResponse200TextPlain | postApiDecidedTimesResponse200ApplicationJson | postApiDecidedTimesResponse200TextJson) & {
   headers: Headers;
 };
 ;
 
-export type postApiDecidedtimeResponse = (postApiDecidedtimeResponseSuccess)
+export type postApiDecidedTimesResponse = (postApiDecidedTimesResponseSuccess)
 
-export const getPostApiDecidedtimeUrl = () => {
-
-
+export const getPostApiDecidedTimesUrl = () => {
 
 
-  return `/api/decidedtime`
+
+
+  return `/api/decided-times`
 }
 
-export const postApiDecidedtime = async (bookDecidedTimeQuery: BookDecidedTimeQuery, options?: RequestInit): Promise<postApiDecidedtimeResponse> => {
+export const postApiDecidedTimes = async (bookDecidedTimeQuery: BookDecidedTimeQuery, options?: RequestInit): Promise<postApiDecidedTimesResponse> => {
 
     const getHeaders = (h?: NonNullable<RequestInit['headers']>): Record<string, string | readonly string[]> => {
     if (!h) return {};
@@ -56,7 +56,7 @@ export const postApiDecidedtime = async (bookDecidedTimeQuery: BookDecidedTimeQu
     }
     return headers;
   };
-const res = await fetch(getPostApiDecidedtimeUrl(),
+const res = await fetch(getPostApiDecidedTimesUrl(),
   {
     ...options,
     method: 'POST',
@@ -68,8 +68,8 @@ const res = await fetch(getPostApiDecidedtimeUrl(),
   const contentType = (res.headers.get('content-type') ?? '').toLowerCase();
   const body = [204, 205, 304].includes(res.status) ? null : await res.text();
 
-  const data: postApiDecidedtimeResponse['data'] = body ? (contentType.includes('json') ? JSON.parse(body) : body) : {}
-  return { data, status: res.status, headers: res.headers } as postApiDecidedtimeResponse
+  const data: postApiDecidedTimesResponse['data'] = body ? (contentType.includes('json') ? JSON.parse(body) : body) : {}
+  return { data, status: res.status, headers: res.headers } as postApiDecidedTimesResponse
 }
 
 

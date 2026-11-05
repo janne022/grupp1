@@ -9,39 +9,39 @@ import type {
 } from '../../models';
 
 
-export type getApiAvailabletimesBymanagerResponse200TextPlain = {
+export type getApiManagersIdAvailableTimesResponse200TextPlain = {
   data: GetAllAvailableTimeByManagerResponse
   status: 200
 }
 
-export type getApiAvailabletimesBymanagerResponse200ApplicationJson = {
+export type getApiManagersIdAvailableTimesResponse200ApplicationJson = {
   data: GetAllAvailableTimeByManagerResponse
   status: 200
 }
 
-export type getApiAvailabletimesBymanagerResponse200TextJson = {
+export type getApiManagersIdAvailableTimesResponse200TextJson = {
   data: GetAllAvailableTimeByManagerResponse
   status: 200
 }
 
-export type getApiAvailabletimesBymanagerResponseSuccess = (getApiAvailabletimesBymanagerResponse200TextPlain | getApiAvailabletimesBymanagerResponse200ApplicationJson | getApiAvailabletimesBymanagerResponse200TextJson) & {
+export type getApiManagersIdAvailableTimesResponseSuccess = (getApiManagersIdAvailableTimesResponse200TextPlain | getApiManagersIdAvailableTimesResponse200ApplicationJson | getApiManagersIdAvailableTimesResponse200TextJson) & {
   headers: Headers;
 };
 ;
 
-export type getApiAvailabletimesBymanagerResponse = (getApiAvailabletimesBymanagerResponseSuccess)
+export type getApiManagersIdAvailableTimesResponse = (getApiManagersIdAvailableTimesResponseSuccess)
 
-export const getGetApiAvailabletimesBymanagerUrl = () => {
-
-
+export const getGetApiManagersIdAvailableTimesUrl = (id: string,) => {
 
 
-  return `/api/availabletimes/bymanager`
+
+
+  return `/api/managers/${id}/available-times`
 }
 
-export const getApiAvailabletimesBymanager = async ( options?: RequestInit): Promise<getApiAvailabletimesBymanagerResponse> => {
+export const getApiManagersIdAvailableTimes = async (id: string, options?: RequestInit): Promise<getApiManagersIdAvailableTimesResponse> => {
 
-  const res = await fetch(getGetApiAvailabletimesBymanagerUrl(),
+  const res = await fetch(getGetApiManagersIdAvailableTimesUrl(id),
   {
     ...options,
     method: 'GET'
@@ -53,8 +53,8 @@ export const getApiAvailabletimesBymanager = async ( options?: RequestInit): Pro
   const contentType = (res.headers.get('content-type') ?? '').toLowerCase();
   const body = [204, 205, 304].includes(res.status) ? null : await res.text();
 
-  const data: getApiAvailabletimesBymanagerResponse['data'] = body ? (contentType.includes('json') ? JSON.parse(body) : body) : {}
-  return { data, status: res.status, headers: res.headers } as getApiAvailabletimesBymanagerResponse
+  const data: getApiManagersIdAvailableTimesResponse['data'] = body ? (contentType.includes('json') ? JSON.parse(body) : body) : {}
+  return { data, status: res.status, headers: res.headers } as getApiManagersIdAvailableTimesResponse
 }
 
 

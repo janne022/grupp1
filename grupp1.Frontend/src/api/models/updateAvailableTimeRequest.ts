@@ -5,8 +5,7 @@
  * OpenAPI spec version: 1.0.0
  */
 
-export interface UpdateAvailableTimeQuery {
-  availableTimeId: string;
+export interface UpdateAvailableTimeRequest {
   /** @nullable */
   startTime: string | null;
   /** @nullable */

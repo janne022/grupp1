@@ -10,37 +10,37 @@ import type {
 } from '../../models';
 
 
-export type postApiAvailabletimesResponse200TextPlain = {
+export type postApiAvailableTimesResponse200TextPlain = {
   data: PostAvailableTimeResponse
   status: 200
 }
 
-export type postApiAvailabletimesResponse200ApplicationJson = {
+export type postApiAvailableTimesResponse200ApplicationJson = {
   data: PostAvailableTimeResponse
   status: 200
 }
 
-export type postApiAvailabletimesResponse200TextJson = {
+export type postApiAvailableTimesResponse200TextJson = {
   data: PostAvailableTimeResponse
   status: 200
 }
 
-export type postApiAvailabletimesResponseSuccess = (postApiAvailabletimesResponse200TextPlain | postApiAvailabletimesResponse200ApplicationJson | postApiAvailabletimesResponse200TextJson) & {
+export type postApiAvailableTimesResponseSuccess = (postApiAvailableTimesResponse200TextPlain | postApiAvailableTimesResponse200ApplicationJson | postApiAvailableTimesResponse200TextJson) & {
   headers: Headers;
 };
 ;
 
-export type postApiAvailabletimesResponse = (postApiAvailabletimesResponseSuccess)
+export type postApiAvailableTimesResponse = (postApiAvailableTimesResponseSuccess)
 
-export const getPostApiAvailabletimesUrl = () => {
-
-
+export const getPostApiAvailableTimesUrl = () => {
 
 
-  return `/api/availabletimes`
+
+
+  return `/api/available-times`
 }
 
-export const postApiAvailabletimes = async (postAvailableTimeRequest: PostAvailableTimeRequest, options?: RequestInit): Promise<postApiAvailabletimesResponse> => {
+export const postApiAvailableTimes = async (postAvailableTimeRequest: PostAvailableTimeRequest, options?: RequestInit): Promise<postApiAvailableTimesResponse> => {
 
     const getHeaders = (h?: NonNullable<RequestInit['headers']>): Record<string, string | readonly string[]> => {
     if (!h) return {};
@@ -56,7 +56,7 @@ export const postApiAvailabletimes = async (postAvailableTimeRequest: PostAvaila
     }
     return headers;
   };
-const res = await fetch(getPostApiAvailabletimesUrl(),
+const res = await fetch(getPostApiAvailableTimesUrl(),
   {
     ...options,
     method: 'POST',
@@ -68,8 +68,8 @@ const res = await fetch(getPostApiAvailabletimesUrl(),
   const contentType = (res.headers.get('content-type') ?? '').toLowerCase();
   const body = [204, 205, 304].includes(res.status) ? null : await res.text();
 
-  const data: postApiAvailabletimesResponse['data'] = body ? (contentType.includes('json') ? JSON.parse(body) : body) : {}
-  return { data, status: res.status, headers: res.headers } as postApiAvailabletimesResponse
+  const data: postApiAvailableTimesResponse['data'] = body ? (contentType.includes('json') ? JSON.parse(body) : body) : {}
+  return { data, status: res.status, headers: res.headers } as postApiAvailableTimesResponse
 }
 
 

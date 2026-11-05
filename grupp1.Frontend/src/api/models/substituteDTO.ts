@@ -10,3 +10,10 @@ export interface SubstituteDTO {
   firstName: string;
   lastName: string;
 }
+
+export interface SubstituteDto {
+  id: string;
+  fullName: string;
+  firstName: string;
+  lastName: string;
+}
