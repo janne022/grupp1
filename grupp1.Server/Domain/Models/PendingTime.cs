@@ -1,6 +1,3 @@
-using System.ComponentModel;
-using System.ComponentModel.DataAnnotations.Schema;
-
 namespace Vicaria.Server.Domain.Models;
 
 public class PendingTime
