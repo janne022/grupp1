@@ -28,14 +28,14 @@ namespace Vicaria.Server.Features.AvailableTimes.Update
             }
 
             var userClaim = User.FindFirstValue(ClaimTypes.NameIdentifier);
-            if (!Guid.TryParse(userClaim, out var userId))
+            if (!Guid.TryParse(userClaim, out var substituteId))
             {
                 return Unauthorized();
             }
 
             var command = new UpdateAvailableTimeCommand(
                 availableTimeId,
-                userId,
+                substituteId,
                 request.StartTime,
                 request.EndTime,
                 request.Kindergartens?.ToHashSet()

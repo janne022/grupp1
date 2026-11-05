@@ -2,7 +2,7 @@ namespace Vicaria.Server.Features.AvailableTimes.GetMy.DTOs;
 
 public record class GetMyAvailableTimesQuery
 (
-    Guid UserId,
+    Guid SubstituteId,
     DateTime? FromTime,
     DateTime? ToTime
 );

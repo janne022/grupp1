@@ -5,6 +5,6 @@
         public DateTime StartTime { get; init; }
         public DateTime EndTime { get; init; }
         public HashSet<Guid> Kindergartens { get; init; } = [];
-        public Guid UserId { get; init; }
+        public Guid SubstituteId { get; init; }
     }
 }

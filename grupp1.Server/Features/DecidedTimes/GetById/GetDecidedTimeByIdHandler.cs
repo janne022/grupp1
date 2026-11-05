@@ -18,8 +18,8 @@ public class GetDecidedTimeByIdHandler(
         var decidedTime = await dbContext.DecidedTimes
             .AsNoTracking()
             .Where(dt => dt.Kindergarten.Managers
-            .Any(m => m.UserId == query.UserId) || dt.UserId == query.UserId)
-            .Include(dt => dt.User)
+            .Any(m => m.UserId == query.UserId) || dt.SubstituteId == query.UserId)
+            .Include(dt => dt.Substitute)
             .Include(dt => dt.Kindergarten)
             .SingleOrDefaultAsync(dt => dt.Id == query.DecidedTimeGuid, cancellationToken);
 
@@ -36,9 +36,9 @@ public class GetDecidedTimeByIdHandler(
             EndTime: decidedTime.EndTime,
 
             SubstituteInfo: new SubstituteDTO(
-                Id: decidedTime.UserId,
-                FirstName: decidedTime.User.FirstName,
-                LastName: decidedTime.User.LastName
+                Id: decidedTime.SubstituteId,
+                FirstName: decidedTime.Substitute.FirstName,
+                LastName: decidedTime.Substitute.LastName
             ),
             KindergartenInfo: new KindergartenDTO(
                 Id: decidedTime.KindergartenId,

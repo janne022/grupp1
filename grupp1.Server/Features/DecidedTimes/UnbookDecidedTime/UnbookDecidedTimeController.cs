@@ -18,12 +18,12 @@ namespace Vicaria.Server.Features.DecidedTimes.UnbookDecidedTime
         {
             var userClaim = User.FindFirstValue(ClaimTypes.NameIdentifier);
 
-            if (!Guid.TryParse(userClaim, out var userId))
+            if (!Guid.TryParse(userClaim, out var managerId))
             {
                 return Unauthorized();
             }
 
-            var command = new UnbookDecidedTimeCommand(id, userId);
+            var command = new UnbookDecidedTimeCommand(id, managerId);
 
             var response = await handler.HandleAsync(command, cancellationToken);
 

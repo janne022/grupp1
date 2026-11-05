@@ -25,13 +25,13 @@ public class GetByIdHandler : IHandler<GetByIdQuery, GetByIdResponse?>
     public async Task<GetByIdResponse?> HandleAsync(GetByIdQuery query, CancellationToken cancellationToken = default)
     {
         Guid inputId = query.AvailableTimeId;
-        Guid userId = query.UserId;
+        Guid substituteId = query.SubstituteId;
 
         AvailableTime? availableTime = await _dbContext.AvailableTimes
             .AsNoTracking()
             .Include(at => at.Kindergartens)
             .ThenInclude(kat => kat.Kindergarten)
-            .FirstOrDefaultAsync(at => at.Id == inputId && at.UserId == userId);
+            .FirstOrDefaultAsync(at => at.Id == inputId && at.SubstituteId == substituteId);
 
         if (availableTime is null)
         {

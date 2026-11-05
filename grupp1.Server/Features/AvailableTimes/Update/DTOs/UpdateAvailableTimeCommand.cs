@@ -5,7 +5,7 @@ namespace Vicaria.Server.Features.AvailableTimes.Update.DTOs;
 public record class UpdateAvailableTimeCommand
 (
     Guid AvailableTimeId,
-    Guid UserId,
+    Guid SubstituteId,
     DateTime? StartTime,
     DateTime? EndTime,
     HashSet<Guid>? Kindergartens

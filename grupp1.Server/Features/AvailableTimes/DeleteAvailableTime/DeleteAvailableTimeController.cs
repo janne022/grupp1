@@ -21,9 +21,9 @@ public class DeleteAvailableTimeController(
     {
         ArgumentNullException.ThrowIfNullOrEmpty(id);
 
-        string? userId = User.FindFirstValue(ClaimTypes.NameIdentifier);
+        string? substituteId = User.FindFirstValue(ClaimTypes.NameIdentifier);
 
-        if (userId is null || !Guid.TryParse(id, out var guidFormattedId) || !Guid.TryParse(userId, out var userGuidId))
+        if (substituteId is null || !Guid.TryParse(id, out var guidFormattedId) || !Guid.TryParse(substituteId, out var userGuidId))
         {
             return BadRequest();
         }
