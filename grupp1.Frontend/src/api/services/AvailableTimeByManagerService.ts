@@ -1,8 +1,9 @@
 import { apiClient } from "@/lib/api";
 import { useQuery } from "@tanstack/react-query";
 import type { GetAllAvailableTimeByManagerResponse } from "../models";
+import { useCurrentUser } from "./MeService";
 
-export const availableTimesByManagerQuery = {
+export const availableTimesByManagerQuery = (managerId: string) => ({
   queryKey: ["availableTimes", "byManager"] as const,
   staleTime: 1000 * 60 * 5,
   gcTime: 1000 * 60 * 10,
@@ -13,13 +14,19 @@ export const availableTimesByManagerQuery = {
     signal: AbortSignal;
   }): Promise<GetAllAvailableTimeByManagerResponse> => {
     return apiClient.get<GetAllAvailableTimeByManagerResponse>(
-      "/api/availabletimes/bymanager",
+      `/api/managers/${managerId}/available-times`,
       {
         signal,
       },
     );
   },
-};
+});
 export function useAvailableTimesByManager(enabled = true) {
-  return useQuery({ ...availableTimesByManagerQuery, enabled });
+  const { data: user } = useCurrentUser();
+  const managerId = user?.id;
+
+  return useQuery({
+    ...availableTimesByManagerQuery(managerId!),
+    enabled: enabled && !!managerId,
+  });
 }

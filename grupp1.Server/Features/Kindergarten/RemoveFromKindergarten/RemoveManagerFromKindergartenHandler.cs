@@ -1,5 +1,5 @@
 using Microsoft.EntityFrameworkCore;
-using Vicaria.Server.Features.RemoveManagerFromKindergarten.DTOs;
+using Vicaria.Server.Features.Kindergarten.RemoveManagerFromKindergarten.DTOs;
 using Vicaria.Server.Infrastructure;
 
 namespace Vicaria.Server.Features.RemoveManagerFromKindergarten;
