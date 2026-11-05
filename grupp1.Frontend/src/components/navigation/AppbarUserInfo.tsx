@@ -16,6 +16,7 @@ export default function AppbarUserInfo() {
             <span className="text-sm font-medium">
               {user.firstName} {user.lastName}
             </span>
+            <span className="text-xs text-muted-foreground">{user.roles}</span>
           </div>
         </div>
       </SidebarMenuItem>
