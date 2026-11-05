@@ -1,21 +1,23 @@
 using System.Security.Claims;
 using Microsoft.AspNetCore.Authorization;
 using Microsoft.AspNetCore.Mvc;
-using Vicaria.Server.Features.RemoveManagerFromKindergarten.DTOs;
+using Vicaria.Server.Features.Kindergarten.RemoveManagerFromKindergarten.DTOs;
 using Vicaria.Server.Infrastructure;
 
-namespace Vicaria.Server.Features.RemoveManagerFromKindergarten;
+namespace Vicaria.Server.Features.Kindergarten.RemoveManagerFromKindergarten;
 
 [Authorize(Roles = "Manager")]
-[Route("api/manager")]
+[Route("api/kindergartens")]
 [ApiController]
 public class RemoveManagerFromKindergartenController(
     IHandler<RemoveManagerFromKindergartenCommand, RemoveManagerFromKindergartenResult> handler
 ) : ControllerBase
 {
-    [HttpDelete("remove-from-kindergarten")]
+    //TODO: do the same as the todo in  ADdMangerTOKindergarten file. Should the managers be able to leave on their own?
+    [HttpDelete("{kindergartenId:guid}/managers/{managerId:guid}")]
     public async Task<IActionResult> RemoveFromKindergarten(
-        [FromQuery] Guid kindergartenId,
+        [FromRoute(Name = "kindergartenId")] Guid kindergartenId,
+        [FromRoute(Name = "managerId")] Guid managerId,
         CancellationToken cancellationToken = default
     )
     {
@@ -25,6 +27,12 @@ public class RemoveManagerFromKindergartenController(
         {
             return Unauthorized();
         }
+        if (userId != managerId)
+        {
+            return Forbid();
+        }
+
+
         var command = new RemoveManagerFromKindergartenCommand(userId, kindergartenId);
 
         var response = await handler.HandleAsync(command, cancellationToken);
