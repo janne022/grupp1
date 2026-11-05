@@ -6,9 +6,12 @@
  */
 
 export interface GetAllDecidedTimesDTO {
-  id: string;
+  timeId: string;
   startTime: string;
   endTime: string;
+  substituteId: string;
+  substituteFirstName: string;
+  substituteLastName: string;
   kindergartenId: string;
   kindergartenName: string;
 }

@@ -128,7 +128,6 @@ export default function AddEditTimeModal({
   function onSubmit(data: z.infer<typeof formSchema>) {
     if (updateAvailableTime) {
       // Check if any of the fields have changed
-
       const hasStartTimeChanged = hasDateTimeChanged(
         data.StartDateTime,
         updateAvailableTime.startTime,

@@ -5,7 +5,8 @@
  * OpenAPI spec version: 1.0.0
  */
 import type {
-  GetAllDecidedTimesResponse
+  GetAllDecidedTimesResponse,
+  GetApiDecidedtimeParams
 } from '../../models';
 
 
@@ -31,17 +32,32 @@ export type getApiDecidedtimeResponseSuccess = (getApiDecidedtimeResponse200Text
 
 export type getApiDecidedtimeResponse = (getApiDecidedtimeResponseSuccess)
 
-export const getGetApiDecidedtimeUrl = () => {
+export const getGetApiDecidedtimeUrl = (params?: GetApiDecidedtimeParams,) => {
+  const normalizedParams = new URLSearchParams();
 
+  Object.entries(params || {}).forEach(([key, value]) => {
+    const explodeParameters = ["kindergartenIds"];
 
+    if (Array.isArray(value) && explodeParameters.includes(key)) {
+      value.forEach((v) => {
+        normalizedParams.append(key, v === null ? 'null' : String(v));
+      });
+      return;
+    }
 
+    if (value !== undefined) {
+      normalizedParams.append(key, value === null ? 'null' : String(value))
+    }
+  });
 
-  return `/api/decidedtime`
+  const stringifiedParams = normalizedParams.toString();
+
+  return stringifiedParams.length > 0 ? `/api/decidedtime?${stringifiedParams}` : `/api/decidedtime`
 }
 
-export const getApiDecidedtime = async ( options?: RequestInit): Promise<getApiDecidedtimeResponse> => {
+export const getApiDecidedtime = async (params?: GetApiDecidedtimeParams, options?: RequestInit): Promise<getApiDecidedtimeResponse> => {
 
-  const res = await fetch(getGetApiDecidedtimeUrl(),
+  const res = await fetch(getGetApiDecidedtimeUrl(params),
   {
     ...options,
     method: 'GET'

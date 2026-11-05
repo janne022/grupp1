@@ -1,4 +1,5 @@
 using System.Security.Claims;
+using ErrorOr;
 using Microsoft.AspNetCore.Authorization;
 using Microsoft.AspNetCore.Mvc;
 using Vicaria.Server.Domain;
@@ -8,11 +9,10 @@ using Vicaria.Server.Infrastructure;
 namespace Vicaria.Server.Features.DecidedTimes.GetAll
 {
     [Authorize(Roles = VicariaUserRoles.Manager)]
-    [Route("api/decidedtime")]
-    [Authorize]
+    [Route("api/decided-times")]
     [ApiController]
     public class GetAllDecidedTimesController(
-        IHandler<GetAllDecidedTimesQuery, GetAllDecidedTimesResponse> handler
+        IHandler<GetAllDecidedTimesQuery, ErrorOr<GetAllDecidedTimesResponse>> handler
     ) : ControllerBase
     {
         [HttpGet]
@@ -38,12 +38,10 @@ namespace Vicaria.Server.Features.DecidedTimes.GetAll
 
             var response = await handler.HandleAsync(query, cancellationToken);
 
-            return response.Report switch
-            {
-                GetAllDecidedTimesStatus.Ok => Ok(response),
-                GetAllDecidedTimesStatus.NotManagerOfKindergarten => Forbid(),
-                _ => Problem(),
-            };
+            return response.Match<ActionResult<GetAllDecidedTimesResponse>>(
+                value => Ok(value),
+                errors => this.ToProblem(errors)
+            );
         }
     }
 }

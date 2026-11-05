@@ -10,13 +10,13 @@ using Vicaria.Server.Domain;
 
 namespace Vicaria.Server.Features.DecidedTimes.Book;
 
-[Route("api/decidedtime")]
+[Route("api/decided-times")]
 [Authorize(Roles = VicariaUserRoles.Manager)]
 [ApiController]
 public class BookDecidedTimeController(
     IHandler<BookDecidedTimeCommand, BookDecidedTimeResponse> handler) : Controller
 {
-    [HttpPost("book")]
+    [HttpPost]
     public async Task<ActionResult<BookDecidedTimeResponse>> BookTime(
         [FromBody] BookDecidedTimeQuery query,
         CancellationToken cancellationToken = default
@@ -40,6 +40,6 @@ public class BookDecidedTimeController(
 
         var createdResult = await handler.HandleAsync(command, cancellationToken);
 
-        return Created("", createdResult); //TODO: add get api path here when we have it
+        return Created($"/api/decided-times/{createdResult.Id}", createdResult);
     }
 }
