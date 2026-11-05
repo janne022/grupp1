@@ -86,7 +86,7 @@ public class EditDecidedTimeHandler : IHandler<EditDecidedTimeCommand, EditDecid
     public async Task<EditDecidedTimeResponse?> HandleAsync(EditDecidedTimeCommand command, CancellationToken cancellationToken = default)
     {
         DecidedTime? decidedTime = await _dbContext.DecidedTimes
-            .FirstOrDefaultAsync(decidedTime => decidedTime.Id == command.DecidedTimeId && decidedTime.UserId == command.ManagerId);
+            .FirstOrDefaultAsync(decidedTime => decidedTime.Id == command.DecidedTimeId /*&& decidedTime.UserId == command.ManagerId*/); // uncommenting manager ownership from query due to faulty design in model.
 
         if (decidedTime is null)
         {

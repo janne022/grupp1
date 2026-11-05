@@ -1,6 +1,7 @@
 using Vicaria.Server.Infrastructure;
 using Microsoft.AspNetCore.Mvc;
-using Microsoft.AspNetCore.Authorization; // To inherit from ControllerBase
+using Microsoft.AspNetCore.Authorization;
+using System.Security.Claims; // To inherit from ControllerBase
 
 namespace Vicaria.Server.Features.AvailableTimes.GetById;
 [Route("api/available-times")]
@@ -24,24 +25,29 @@ public class GetAvailableTimeByIdsController : ControllerBase
     #endregion
     #region Endpoints
 
-    [HttpGet("{id}")]
-    public async Task<ActionResult<GetByIdResponse>> GetById([FromRoute(Name = "id")] Guid id, CancellationToken ct)
+    [HttpGet("{availableTimeId}")]
+    public async Task<ActionResult<GetByIdResponse>> GetById([FromRoute(Name = "availableTimeId")] Guid atId, CancellationToken ct)
     {
-        GetByIdQuery request = new(id);
+        string? stringUserId = User.FindFirstValue(ClaimTypes.NameIdentifier);
 
-        _logger.LogInformation($"Starting to fetch AvailableTime by id with  ID: {request.AvailableTimeId}");
+        if (!Guid.TryParse(stringUserId, out var guidUserId))
+        {
+            _logger.LogWarning($"Could not find user with ID {stringUserId} - ID was not a GUID.");
+            return Unauthorized();
+        }
 
-        var responseDto = await _handler.HandleAsync(request, ct);
+        GetByIdQuery query = new(atId, guidUserId);
+        _logger.LogInformation($"Starting to fetch AvailableTime by id with  ID: {query.AvailableTimeId} and user ID: {query.UserId}.");
+
+        GetByIdResponse? responseDto = await _handler.HandleAsync(query, ct);
 
         if (responseDto is null)
         {
-            _logger.LogWarning($"No AvailableTime object could be found with ID: {request.AvailableTimeId}");
-
+            _logger.LogWarning($"No AvailableTime object could be found with ID: {query.AvailableTimeId}.");
             return NotFound();
         }
 
-        _logger.LogInformation($"AvailableTime object successfully fetched with ID: {request.AvailableTimeId}");
-
+        _logger.LogInformation($"AvailableTime object successfully fetched with ID: {query.AvailableTimeId} for user {query.UserId}.");
         return Ok(responseDto);
     }
 

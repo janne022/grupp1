@@ -1,6 +1,7 @@
 export * from './add-manager-to-kindergarten/add-manager-to-kindergarten';
 export * from './book-decided-time/book-decided-time';
 export * from './delete-available-time/delete-available-time';
+export * from './edit-decided-time/edit-decided-time';
 export * from './get-all-available-time-by-manager/get-all-available-time-by-manager';
 export * from './get-all-decided-times/get-all-decided-times';
 export * from './get-all-kindergartens/get-all-kindergartens';
