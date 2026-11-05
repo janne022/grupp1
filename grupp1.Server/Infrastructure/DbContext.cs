@@ -63,9 +63,9 @@ public class VicariaDbContext : IdentityDbContext<User, IdentityRole<Guid>, Guid
 
         builder
             .Entity<DecidedTime>()
-            .HasOne(dt => dt.User)
+            .HasOne(dt => dt.Substitute)
             .WithMany(user => user.DecidedTimes)
-            .HasForeignKey(dt => dt.UserId);
+            .HasForeignKey(dt => dt.SubstituteId);
 
         builder
             .Entity<DecidedTime>()
