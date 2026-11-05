@@ -12,4 +12,6 @@ public class PendingTime
     public DateTime StartTime { get; set; }
     public DateTime EndTime { get; set; }
     public HashSet<UserPendingTime> AvailableSubs { get; set; } = null!;
+    public Guid ManagerId { get; set; }
+    public User Manager { get; set; } = null!;
 }
