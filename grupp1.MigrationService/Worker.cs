@@ -63,11 +63,15 @@ namespace Vicaria.MigrationService
 
             #region user seed data
 
+            Random random = new Random();
+
             // Fucking PISS RETARD HACK!!! Kill my ASS
             User seedUser = new()
             {
                 FirstName = "Fucking",
-                LastName = "Hack!"
+                LastName = "Hack!",
+                PhoneNumber = new string("07" + random.Next(10000000, 100000000).ToString())
+                // please don't kill your ass for merely seeding a bit
             };
 
             var existingUsers = (await dbContext.Users.Select(u => u.Id)
@@ -97,13 +101,13 @@ namespace Vicaria.MigrationService
 
             List<AvailableTime> availableTimes =
             [
-                new() { StartTime = new(2026, 10, 1, 0, 0, 0, DateTimeKind.Utc), EndTime = new(2026, 10, 5, 23, 59, 59, DateTimeKind.Utc), UserId = seedUser.Id, Kindergartens = [], DecidedTimes = [] },
-                new() { StartTime = new(2026, 10, 10, 0, 0, 0, DateTimeKind.Utc), EndTime = new(2026, 10, 15, 23, 59, 59, DateTimeKind.Utc), UserId = seedUser.Id, Kindergartens = [], DecidedTimes = [] },
-                new() { StartTime = new(2026, 10, 12, 0, 0, 0, DateTimeKind.Utc), EndTime = new(2026, 10, 20, 23, 59, 59, DateTimeKind.Utc), UserId = seedUser.Id, Kindergartens = [], DecidedTimes = [] },
-                new() { StartTime = new(2026, 10, 16, 0, 0, 0, DateTimeKind.Utc), EndTime = new(2026, 10, 16, 23, 59, 59, DateTimeKind.Utc), UserId = seedUser.Id, Kindergartens = [], DecidedTimes = [] },
-                new() { StartTime = new(2026, 10, 16, 0, 0, 0, DateTimeKind.Utc), EndTime = new(2026, 10, 25, 23, 59, 59, DateTimeKind.Utc), UserId = seedUser.Id, Kindergartens = [], DecidedTimes = [] },
-                new() { StartTime = new(2026, 10, 17, 0, 0, 0, DateTimeKind.Utc), EndTime = new(2026, 10, 22, 23, 59, 59, DateTimeKind.Utc), UserId = seedUser.Id, Kindergartens = [], DecidedTimes = [] },
-                new() { StartTime = new(2026, 11, 1, 0, 0, 0, DateTimeKind.Utc), EndTime = new(2026, 11, 15, 23, 59, 59, DateTimeKind.Utc), UserId = seedUser.Id, Kindergartens = [], DecidedTimes = [] },
+                new() { StartTime = new(2026, 10, 1, 0, 0, 0, DateTimeKind.Utc), EndTime = new(2026, 10, 5, 23, 59, 59, DateTimeKind.Utc), UserId = seedUser.Id, Kindergartens = [] },
+                new() { StartTime = new(2026, 10, 10, 0, 0, 0, DateTimeKind.Utc), EndTime = new(2026, 10, 15, 23, 59, 59, DateTimeKind.Utc), UserId = seedUser.Id, Kindergartens = [] },
+                new() { StartTime = new(2026, 10, 12, 0, 0, 0, DateTimeKind.Utc), EndTime = new(2026, 10, 20, 23, 59, 59, DateTimeKind.Utc), UserId = seedUser.Id, Kindergartens = [] },
+                new() { StartTime = new(2026, 10, 16, 0, 0, 0, DateTimeKind.Utc), EndTime = new(2026, 10, 16, 23, 59, 59, DateTimeKind.Utc), UserId = seedUser.Id, Kindergartens = [] },
+                new() { StartTime = new(2026, 10, 16, 0, 0, 0, DateTimeKind.Utc), EndTime = new(2026, 10, 25, 23, 59, 59, DateTimeKind.Utc), UserId = seedUser.Id, Kindergartens = [] },
+                new() { StartTime = new(2026, 10, 17, 0, 0, 0, DateTimeKind.Utc), EndTime = new(2026, 10, 22, 23, 59, 59, DateTimeKind.Utc), UserId = seedUser.Id, Kindergartens = [] },
+                new() { StartTime = new(2026, 11, 1, 0, 0, 0, DateTimeKind.Utc), EndTime = new(2026, 11, 15, 23, 59, 59, DateTimeKind.Utc), UserId = seedUser.Id, Kindergartens = [] },
             ];
 
             var existingAvailableTimes = (await dbContext.AvailableTimes
