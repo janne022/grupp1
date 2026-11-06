@@ -156,12 +156,14 @@ export default function AddEditTimeModal({
       }
 
       editService.mutate({
+        req: {
+          startTime: hasStartTimeChanged
+            ? toIsoDateTime(data.StartDateTime)
+            : null,
+          endTime: hasEndTimeChanged ? toIsoDateTime(data.EndDateTime) : null,
+          kindergartens: hasKindergartensChanged ? data.kindergartens : null,
+        },
         availableTimeId: updateAvailableTime.id,
-        startTime: hasStartTimeChanged
-          ? toIsoDateTime(data.StartDateTime)
-          : null,
-        endTime: hasEndTimeChanged ? toIsoDateTime(data.EndDateTime) : null,
-        kindergartens: hasKindergartensChanged ? data.kindergartens : null,
       });
       setOpen(false);
       return;

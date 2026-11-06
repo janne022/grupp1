@@ -69,6 +69,7 @@ export function SignupForm({
       email: data.email,
       password: data.password,
       role: data.role,
+      phoneNumber: "1234567890",
     });
   }
 

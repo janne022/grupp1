@@ -10,8 +10,8 @@ import type {
   GetAllDecidedTimesDTO,
 } from "@/api/models";
 import {
-  AddDecidedTime,
   EditDecidedTime,
+  PostPendingTime,
 } from "@/api/services/DecidedTimeService";
 import { filterAvailableTimes } from "./substituteDisplay";
 
@@ -122,7 +122,7 @@ export default function ManagerBooking({
   const [searchQuery, setSearchQuery] = useState("");
 
   const isEditing = !!updateDecidedTime;
-  const postService = AddDecidedTime();
+  const postService = PostPendingTime();
   const editDecidedTimeService = EditDecidedTime();
 
   const form = useForm<FormValues>({
