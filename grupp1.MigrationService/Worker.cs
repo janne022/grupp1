@@ -83,7 +83,7 @@ namespace Vicaria.MigrationService
             [
                 new() { Id = Guid.CreateVersion7(), Name = "Korven", Location = new Point(18.0763706, 59.2919783), Managers = [] },
                 new() { Id = Guid.CreateVersion7(), Name = "Chas Academy", Location = new Point(18.0788231, 59.293051), Managers = [] },
-                new() { Id = Guid.CreateVersion7(), Name = "Solrosen", Location = new Point(18.0788231, 59.293051), Managers = [] },
+                new() { Id = Guid.CreateVersion7(), Name = "Solrosen", Location = new Point(39.0292426, 125.6597113), Managers = [] },
                 .. SeedFakers.CreateFakeKindergartens().Generate(generateKindergartens),
             ];
 
