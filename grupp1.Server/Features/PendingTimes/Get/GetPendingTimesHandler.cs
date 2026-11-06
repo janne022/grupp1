@@ -1,14 +1,14 @@
 using Microsoft.EntityFrameworkCore;
-using Vicaria.Server.Features.PendingTimes.GetMy.DTOs;
+using Vicaria.Server.Features.PendingTimes.Get.DTOs;
 using Vicaria.Server.Infrastructure;
 
-namespace Vicaria.Server.Features.PendingTimes.GetMy;
+namespace Vicaria.Server.Features.PendingTimes.Get;
 
-public class GetMyPendingTimesHandler(VicariaDbContext DbContext)
-    : IHandler<GetMyPendingTimesQuery, GetMyPendingTimesResponse>
+public class GetPendingTimesHandler(VicariaDbContext DbContext)
+    : IHandler<GetPendingTimesQuery, GetPendingTimesResponse>
 {
-    public async Task<GetMyPendingTimesResponse> HandleAsync(
-        GetMyPendingTimesQuery query,
+    public async Task<GetPendingTimesResponse> HandleAsync(
+        GetPendingTimesQuery query,
         CancellationToken cancellationToken = default
     )
     {
@@ -27,11 +27,11 @@ public class GetMyPendingTimesHandler(VicariaDbContext DbContext)
         }
 
         var filteredPendingTimes = await relevantTimes
-            .Select(pt => new GetMyPendingTimesDTO(
+            .Select(pt => new GetPendingTimesDTO(
                 pt.Id,
                 pt.StartTime,
                 pt.EndTime,
-                new GetMyPendingTimesKindergartensDTO(
+                new GetPendingTimesKindergartensDTO(
                     pt.Kindergarten.Id,
                     pt.Kindergarten.Name,
                     pt.Kindergarten.Location != null ? pt.Kindergarten.Location.Y : null,
@@ -40,6 +40,6 @@ public class GetMyPendingTimesHandler(VicariaDbContext DbContext)
             ))
             .ToListAsync(cancellationToken);
 
-        return new GetMyPendingTimesResponse(filteredPendingTimes);
+        return new GetPendingTimesResponse(filteredPendingTimes);
     }
 }
