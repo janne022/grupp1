@@ -14,8 +14,7 @@ var cache = builder.AddAzureManagedRedis("cache")
 
 var postgres = builder.AddAzurePostgresFlexibleServer("databaseServer")
     .RunAsContainer(db => db.WithLifetime(ContainerLifetime.Persistent)
-    .WithImage("postgis/postgis", "17-3.5")
-
+    .WithImage("postgis/postgis")
     .WithDataVolume()
     .WithPgAdmin());
 
