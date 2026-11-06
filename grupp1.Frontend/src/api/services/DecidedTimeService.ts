@@ -2,7 +2,6 @@ import { useMutation, useQuery, useQueryClient } from "@tanstack/react-query";
 import { apiClient, ApiError } from "@/lib/api";
 import type {
   BookDecidedTimeQuery,
-  BookDecidedTimeResponse,
   EditDecidedTimeRequest,
   EditDecidedTimeResponse,
   GetAllDecidedTimesResponse,
@@ -66,7 +65,7 @@ function DeleteDecidedTime() {
   const query = useQueryClient();
   return useMutation({
     mutationFn: (id: string) => {
-      return apiClient.delete<void>(`/api/decided-times${id}`);
+      return apiClient.delete<void>(`/api/decided-times/${id}`);
     },
 
     onSuccess: async () => {
@@ -94,7 +93,7 @@ function EditDecidedTime() {
 
 export {
   GetAllDecidedTimes,
-  PostPendingTime as AddDecidedTime,
+  PostPendingTime,
   DeleteDecidedTime,
   EditDecidedTime,
 };

@@ -4,16 +4,15 @@ import type {
   GetMyAvailableTimesResponse,
   PostAvailableTimeRequest,
   PostAvailableTimeResponse,
-  UpdateAvailableTimeQuery,
+  UpdateAvailableTimeRequest,
   UpdateAvailableTimeResponse,
 } from "../models";
 import { useCurrentUser } from "./MeService";
 
 function GetAllAvailableTimes(enabled = true) {
-
   const { data: user } = useCurrentUser();
   const userId = user?.id;
-  
+
   return useQuery({
     queryKey: ["availableTimesData"],
     queryFn: async ({
@@ -77,9 +76,15 @@ function DeleteAvailableTime() {
 function EditAvailableTime() {
   const query = useQueryClient();
   return useMutation({
-    mutationFn: (req: UpdateAvailableTimeQuery) => {
+    mutationFn: ({
+      req,
+      availableTimeId,
+    }: {
+      req: UpdateAvailableTimeRequest;
+      availableTimeId: string;
+    }): Promise<UpdateAvailableTimeResponse> => {
       return apiClient.patch<UpdateAvailableTimeResponse>(
-        `/api/available-times/${req.availableTimeId}`,
+        `/api/available-times/${availableTimeId}`,
         req,
       );
     },
