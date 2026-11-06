@@ -4,7 +4,7 @@
  * grupp1.Server | v1
  * OpenAPI spec version: 1.0.0
  */
-import type { KindergartenDTO } from './kindergartenDTO';
+import type { BookTimeKindergartenDTO } from './bookTimeKindergartenDTO';
 import type { SubstituteDTO } from './substituteDTO';
 
 export interface BookDecidedTimeResponse {
@@ -14,5 +14,5 @@ export interface BookDecidedTimeResponse {
   /** @nullable */
   endTime: string | null;
   substituteInfo: SubstituteDTO;
-  kindergartenInfo: KindergartenDTO;
+  kindergartenInfo: BookTimeKindergartenDTO;
 }

@@ -1,6 +1,6 @@
-﻿using Vicaria.Server.Domain.Models;
+﻿using Microsoft.EntityFrameworkCore;
+using Vicaria.Server.Domain.Models;
 using Vicaria.Server.Infrastructure;
-using Microsoft.EntityFrameworkCore;
 
 
 namespace Vicaria.Server.Features.AvailableTimes.Post
@@ -15,10 +15,9 @@ namespace Vicaria.Server.Features.AvailableTimes.Post
                 _logger.LogInformation("Failed to create available time: EndTime must be later than StartTime");
 
                 return new PostAvailableTimeResponse
-
                 {
-                    Success = false,
-                    ErrorMessage = "EndTime must be later than StartTime"
+                    ErrorMessage = "EndTime must be later than StartTime",
+                    Status = PostAvailableTimeStatus.BadRequest
                 };
             }
 
@@ -29,11 +28,45 @@ namespace Vicaria.Server.Features.AvailableTimes.Post
 
                 return new PostAvailableTimeResponse
                 {
-                    Success = false,
-                    ErrorMessage = "At least one kindergarten must be provided"
+                    ErrorMessage = "At least one kindergarten must be provided",
+                    Status = PostAvailableTimeStatus.BadRequest
                 };
             }
 
+
+
+            int existingCount = await context.Kindergartens.CountAsync(kg => command.Kindergartens.Contains(kg.Id), cancellationToken);
+
+            bool allExist = existingCount == command.Kindergartens.Count;
+
+            if(!allExist)
+            {
+                _logger.LogInformation("Failed to create available time: One or more kindergartens could not be found");
+
+                return new PostAvailableTimeResponse
+                {
+                    ErrorMessage = "Kindergarten could not be found",
+                    Status = PostAvailableTimeStatus.NotFound
+                };
+            }
+
+            bool hasOverlap = await context.AvailableTimes
+                                           .Where(at => at.UserId == command.UserId
+                                           && at.StartTime < command.EndTime
+                                           && at.EndTime > command.StartTime
+                                           && at.Kindergartens.Any(kg => command.Kindergartens.Contains(kg.KindergartenId)))
+                                           .AnyAsync(cancellationToken);
+
+            if(hasOverlap)
+            {
+                _logger.LogInformation("Failed to create available time: User {UserId} already has an overlapping available time", command.UserId);
+
+                return new PostAvailableTimeResponse
+                {
+                    ErrorMessage = "You already have an available time overlapping this period for one or more of the selected kindergartens",
+                    Status = PostAvailableTimeStatus.Conflict
+                };
+            }
 
             var availableTime = new AvailableTime
             {
@@ -41,47 +74,28 @@ namespace Vicaria.Server.Features.AvailableTimes.Post
                 StartTime = command.StartTime,
                 EndTime = command.EndTime,
                 UserId = command.UserId
-
             };
 
-
-            foreach (var kindergartenId in command.Kindergartens)
+            foreach(Guid kindergartenId in command.Kindergartens)
             {
-                var kindergartenExist = await context.Kindergartens.AnyAsync(k => k.Id == kindergartenId, cancellationToken);
-
-                if (!kindergartenExist)
-                {
-                    _logger.LogInformation($"Failed to create available time: Kindergarten with Id {kindergartenId} does not exist");
-
-                    return new PostAvailableTimeResponse
-                    {
-                        Success = false,
-                        ErrorMessage = $"Kindergarten with Id {kindergartenId} does not exist"
-                    };
-
-                }
-
                 availableTime.Kindergartens.Add(new KindergartenAvailableTime
                 {
-
                     KindergartenId = kindergartenId,
                     AvailableTimeId = availableTime.Id
-
                 });
             }
 
 
             await context.AvailableTimes.AddAsync(availableTime, cancellationToken);
 
-
             await context.SaveChangesAsync(cancellationToken);
 
-            _logger.LogInformation($"Available time {availableTime.Id} created successfully");
+            _logger.LogInformation("Available time {availableTimeId} created successfully", availableTime.Id);
 
             return new PostAvailableTimeResponse
             {
                 Id = availableTime.Id,
-                Success = true
+                Status = PostAvailableTimeStatus.Ok
             };
         }
     }
