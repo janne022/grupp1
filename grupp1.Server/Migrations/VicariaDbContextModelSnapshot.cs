@@ -198,28 +198,34 @@ namespace Vicaria.Server.Migrations
                         .ValueGeneratedOnAdd()
                         .HasColumnType("uuid");
 
-                    b.Property<Guid>("AvailableTimeId")
-                        .HasColumnType("uuid");
-
                     b.Property<DateTime>("EndTime")
                         .HasColumnType("timestamp with time zone");
 
                     b.Property<Guid>("KindergartenId")
                         .HasColumnType("uuid");
 
+                    b.Property<Guid>("ManagerId")
+                        .HasColumnType("uuid");
+
+                    b.Property<Guid>("PendingTimeId")
+                        .HasColumnType("uuid");
+
                     b.Property<DateTime>("StartTime")
                         .HasColumnType("timestamp with time zone");
 
-                    b.Property<Guid>("UserId")
+                    b.Property<Guid>("SubstituteId")
                         .HasColumnType("uuid");
 
                     b.HasKey("Id");
 
-                    b.HasIndex("AvailableTimeId");
-
                     b.HasIndex("KindergartenId");
 
-                    b.HasIndex("UserId");
+                    b.HasIndex("ManagerId");
+
+                    b.HasIndex("PendingTimeId")
+                        .IsUnique();
+
+                    b.HasIndex("SubstituteId");
 
                     b.ToTable("DecidedTimes");
                 });
@@ -457,29 +463,37 @@ namespace Vicaria.Server.Migrations
 
             modelBuilder.Entity("Vicaria.Server.Domain.Models.DecidedTime", b =>
                 {
-                    b.HasOne("Vicaria.Server.Domain.Models.AvailableTime", "AvailableTime")
-                        .WithMany("DecidedTimes")
-                        .HasForeignKey("AvailableTimeId")
-                        .OnDelete(DeleteBehavior.Cascade)
-                        .IsRequired();
-
                     b.HasOne("Vicaria.Server.Domain.Models.Kindergarten", "Kindergarten")
                         .WithMany("DecidedTimes")
                         .HasForeignKey("KindergartenId")
                         .OnDelete(DeleteBehavior.Cascade)
                         .IsRequired();
 
-                    b.HasOne("Vicaria.Server.Domain.Models.User", "User")
+                    b.HasOne("Vicaria.Server.Domain.Models.User", "Manager")
+                        .WithMany()
+                        .HasForeignKey("ManagerId")
+                        .OnDelete(DeleteBehavior.Restrict)
+                        .IsRequired();
+
+                    b.HasOne("Vicaria.Server.Domain.Models.PendingTime", "PendingTime")
+                        .WithOne()
+                        .HasForeignKey("Vicaria.Server.Domain.Models.DecidedTime", "PendingTimeId")
+                        .OnDelete(DeleteBehavior.Restrict)
+                        .IsRequired();
+
+                    b.HasOne("Vicaria.Server.Domain.Models.User", "Substitute")
                         .WithMany("DecidedTimes")
-                        .HasForeignKey("UserId")
+                        .HasForeignKey("SubstituteId")
                         .OnDelete(DeleteBehavior.Cascade)
                         .IsRequired();
 
-                    b.Navigation("AvailableTime");
-
                     b.Navigation("Kindergarten");
 
-                    b.Navigation("User");
+                    b.Navigation("Manager");
+
+                    b.Navigation("PendingTime");
+
+                    b.Navigation("Substitute");
                 });
 
             modelBuilder.Entity("Vicaria.Server.Domain.Models.KindergartenAvailableTime", b =>
@@ -560,8 +574,6 @@ namespace Vicaria.Server.Migrations
 
             modelBuilder.Entity("Vicaria.Server.Domain.Models.AvailableTime", b =>
                 {
-                    b.Navigation("DecidedTimes");
-
                     b.Navigation("Kindergartens");
                 });
 
