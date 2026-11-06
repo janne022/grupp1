@@ -99,9 +99,9 @@ public class GetAllDecidedTimesHandler(
                 dt.Id,
                 dt.StartTime,
                 dt.EndTime,
-                dt.UserId,
-                dt.User.FirstName,
-                dt.User.LastName,
+                dt.SubstituteId,
+                dt.Substitute.FirstName,
+                dt.Substitute.LastName,
                 dt.KindergartenId,
                 dt.Kindergarten.Name
             ))
