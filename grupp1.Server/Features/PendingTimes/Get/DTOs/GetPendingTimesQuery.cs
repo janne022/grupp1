@@ -4,5 +4,6 @@ public record class GetPendingTimesQuery
 (
     Guid UserId,
     DateTime? FromTime,
-    DateTime? ToTime
+    DateTime? ToTime,
+    bool IncludeBookedTimes
 );

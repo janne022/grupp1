@@ -18,6 +18,7 @@ namespace Vicaria.Server.Features.PendingTimes.Get
         public async Task<ActionResult<GetPendingTimesResponse>> GetPendingTimes(
             [FromQuery] DateTime? fromTime,
             [FromQuery] DateTime? toTime,
+            [FromQuery] bool includeBookedTimes,
             CancellationToken cancellationToken
         )
         {
@@ -36,7 +37,8 @@ namespace Vicaria.Server.Features.PendingTimes.Get
             (
                 userId,
                 fromTime,
-                toTime
+                toTime,
+                includeBookedTimes
             );
 
             ErrorOr<GetPendingTimesResponse> response = await Handler.HandleAsync(query, cancellationToken);
