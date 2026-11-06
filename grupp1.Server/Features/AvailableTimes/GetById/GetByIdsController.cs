@@ -28,16 +28,16 @@ public class GetAvailableTimeByIdsController : ControllerBase
     [HttpGet("{availableTimeId}")]
     public async Task<ActionResult<GetByIdResponse>> GetById([FromRoute(Name = "availableTimeId")] Guid atId, CancellationToken ct)
     {
-        string? stringSubstituteId = User.FindFirstValue(ClaimTypes.NameIdentifier);
+        string? stringUserId = User.FindFirstValue(ClaimTypes.NameIdentifier);
 
-        if (!Guid.TryParse(stringSubstituteId, out var guidUserId))
+        if (!Guid.TryParse(stringUserId, out var guidUserId))
         {
-            _logger.LogWarning($"Could not find user with ID {stringSubstituteId} - ID was not a GUID.");
+            _logger.LogWarning($"Could not find user with ID {stringUserId} - ID was not a GUID.");
             return Unauthorized();
         }
 
         GetByIdQuery query = new(atId, guidUserId);
-        _logger.LogInformation($"Starting to fetch AvailableTime by id with  ID: {query.AvailableTimeId} and user ID: {query.SubstituteId}.");
+        _logger.LogInformation($"Starting to fetch AvailableTime by id with  ID: {query.AvailableTimeId} and user ID: {query.UserId}.");
 
         GetByIdResponse? responseDto = await _handler.HandleAsync(query, ct);
 
@@ -47,7 +47,7 @@ public class GetAvailableTimeByIdsController : ControllerBase
             return NotFound();
         }
 
-        _logger.LogInformation($"AvailableTime object successfully fetched with ID: {query.AvailableTimeId} for user {query.SubstituteId}.");
+        _logger.LogInformation($"AvailableTime object successfully fetched with ID: {query.AvailableTimeId} for user {query.UserId}.");
         return Ok(responseDto);
     }
 

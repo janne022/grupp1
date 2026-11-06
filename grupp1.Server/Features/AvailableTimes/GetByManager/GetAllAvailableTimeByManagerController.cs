@@ -19,16 +19,16 @@ public class GetAllAvailableTimeByManagerController(
     )
     {
         var userClaim = User.FindFirstValue(ClaimTypes.NameIdentifier);
-        if (!Guid.TryParse(userClaim, out var managerId))
+        if (!Guid.TryParse(userClaim, out var userId))
         {
             return Unauthorized();
         }
-        if (managerId != routeId)
+        if (userId != routeId)
         {
             return Forbid();
         }
 
-        var query = new GetAllAvailableTimeByManagerQuery(managerId);
+        var query = new GetAllAvailableTimeByManagerQuery(userId);
 
         var response = await handler.HandleAsync(query, cancellationToken);
 

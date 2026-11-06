@@ -28,7 +28,7 @@ namespace Vicaria.Server.Features.AvailableTimes.Post
                 StartTime = request.StartTime,
                 EndTime = request.EndTime,
                 Kindergartens = request.Kindergartens,
-                SubstituteId = userGuidId
+                UserId = userGuidId
             };
 
             var response = await handler.HandleAsync(command, cancellationToken);

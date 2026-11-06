@@ -29,16 +29,16 @@ namespace Vicaria.Server.Features.AvailableTimes.GetMy
             // do time comparison first since it doesn't need hit the database.
 
             var userIdClaim = User.FindFirstValue(ClaimTypes.NameIdentifier);
-            if (!Guid.TryParse(userIdClaim, out var substituteId))
+            if (!Guid.TryParse(userIdClaim, out var userId))
             {
                 return Unauthorized();
             }
-            if (substituteId != routeId)
+            if (userId != routeId)
             {
                 return Forbid();
             }
 
-            var query = new GetMyAvailableTimesQuery(substituteId, fromTime, toTime);
+            var query = new GetMyAvailableTimesQuery(userId, fromTime, toTime);
 
             var response = await handler.HandleAsync(query, cancellationToken);
 

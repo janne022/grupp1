@@ -16,7 +16,7 @@ public class UpdateAvailableTimeHandler(
     )
     {
         var availableTime = await DbContext.AvailableTimes.FirstOrDefaultAsync(
-            at => at.Id == command.AvailableTimeId && at.UserId == command.SubstituteId,
+            at => at.Id == command.AvailableTimeId && at.UserId == command.UserId,
             ct
         );
 
@@ -25,7 +25,7 @@ public class UpdateAvailableTimeHandler(
             _logger.LogWarning(
                 "AvailableTime {TimeId} not found or not owned by user {UserId}",
                 command.AvailableTimeId,
-                command.SubstituteId
+                command.UserId
             );
 
             return new UpdateAvailableTimeResponse(
