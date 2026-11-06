@@ -128,7 +128,10 @@ public sealed class PostPendingTimeHandler : IHandler<PostPendingTimeCommand, Er
             AvailableSubs = availableSubstitutes
         };
 
-        if (await _dbContext.PendingTimes.AnyAsync(pendingTime => pendingTime.Id == newPendingTime.Id))
+        if (await _dbContext.PendingTimes.AnyAsync(pendingTime =>
+            pendingTime.KindergartenId == newPendingTime.KindergartenId &&
+            pendingTime.StartTime == newPendingTime.StartTime &&
+            pendingTime.EndTime == newPendingTime.EndTime))
         {
             return Error.Conflict("pendingTime for this kindergarten and this exact timeframe already exists.");
         }
