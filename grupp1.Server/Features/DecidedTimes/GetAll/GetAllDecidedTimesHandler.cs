@@ -39,7 +39,7 @@ public class GetAllDecidedTimesHandler(
         #region Belonging check
 
         var managedKindergartenIds = await DbContext
-            .UserKinderGartens.Where(uk => uk.SubstituteId == query.ManagerId)
+            .UserKinderGartens.Where(uk => uk.UserId == query.ManagerId)
             .Select(uk => uk.KindergartenId)
             .ToListAsync(cancellationToken);
 
@@ -99,9 +99,9 @@ public class GetAllDecidedTimesHandler(
                 dt.Id,
                 dt.StartTime,
                 dt.EndTime,
-                dt.SubstituteId,
-                dt.Substitute.FirstName,
-                dt.Substitute.LastName,
+                dt.UserId,
+                dt.User.FirstName,
+                dt.User.LastName,
                 dt.KindergartenId,
                 dt.Kindergarten.Name
             ))

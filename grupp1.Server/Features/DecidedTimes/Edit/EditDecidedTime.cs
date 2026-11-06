@@ -34,7 +34,7 @@ public sealed class EditDecidedTimeController : ControllerBase
     {
         string? userIdClaim = User.FindFirstValue(ClaimTypes.NameIdentifier);
 
-        if (!Guid.TryParse(userIdClaim, out Guid managerId))
+        if (!Guid.TryParse(userIdClaim, out Guid userId))
         {
             return Unauthorized();
         }
@@ -42,7 +42,7 @@ public sealed class EditDecidedTimeController : ControllerBase
         EditDecidedTimeCommand command = new
         (
             DecidedTimeId: request.Id,
-            ManagerId: managerId,
+            ManagerId: userId,
             NewKindergartenId: request.KindergartenId,
             NewStartTime: request.StartTime,
             NewEndTime: request.EndTime
