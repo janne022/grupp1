@@ -51,7 +51,7 @@ namespace Vicaria.Server.Features.AvailableTimes.Post
             }
 
             bool hasOverlap = await context.AvailableTimes
-                                           .Where(at => at.SubstituteId == command.SubstituteId
+                                           .Where(at => at.UserId == command.SubstituteId
                                            && at.StartTime < command.EndTime
                                            && at.EndTime > command.StartTime
                                            && at.Kindergartens.Any(kg => command.Kindergartens.Contains(kg.KindergartenId)))
@@ -73,7 +73,7 @@ namespace Vicaria.Server.Features.AvailableTimes.Post
                 Id = Guid.NewGuid(),
                 StartTime = command.StartTime,
                 EndTime = command.EndTime,
-                SubstituteId = command.SubstituteId
+                UserId = command.SubstituteId
             };
 
             foreach(Guid kindergartenId in command.Kindergartens)

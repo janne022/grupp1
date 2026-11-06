@@ -101,7 +101,7 @@ public sealed class PostPendingTimeHandler : IHandler<PostPendingTimeCommand, Er
             )
             .Select(availableTime => new UserPendingTime()
             {
-                UserId = availableTime.SubstituteId,
+                UserId = availableTime.UserId,
                 PendingTimeId = command.PendingTimeId
             })
             .ToHashSetAsync();

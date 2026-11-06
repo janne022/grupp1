@@ -31,7 +31,7 @@ public class GetByIdHandler : IHandler<GetByIdQuery, GetByIdResponse?>
             .AsNoTracking()
             .Include(at => at.Kindergartens)
             .ThenInclude(kat => kat.Kindergarten)
-            .FirstOrDefaultAsync(at => at.Id == inputId && at.SubstituteId == substituteId);
+            .FirstOrDefaultAsync(at => at.Id == inputId && at.UserId == substituteId);
 
         if (availableTime is null)
         {
