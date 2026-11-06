@@ -9,10 +9,7 @@ import type {
   BookDecidedTimeQuery,
   GetAllDecidedTimesDTO,
 } from "@/api/models";
-import {
-  EditDecidedTime,
-  PostPendingTime,
-} from "@/api/services/DecidedTimeService";
+import { EditDecidedTime } from "@/api/services/DecidedTimeService";
 import { filterAvailableTimes } from "./substituteDisplay";
 
 import { Button } from "./button";
@@ -37,6 +34,7 @@ import { RadioGroup, RadioGroupItem } from "./radio-group";
 import { ScrollArea } from "./scroll-area";
 import { DatePickerTime } from "../date-picker";
 import { Input } from "./input";
+import { PostPendingTime } from "@/api/services/PendingTimeService";
 
 interface BookTimeProps {
   open: boolean;
