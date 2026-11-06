@@ -13,9 +13,9 @@ public static class SeedFakers
 
     public static Faker<Kindergarten> CreateFakeKindergartens()
     {
-        return new Faker<Kindergarten>()
+        return new Faker<Kindergarten>("sv")
             .RuleFor(k => k.Id, _ => Guid.CreateVersion7())
-            .RuleFor(k => k.Name, f => $"Förskolan {f.Address.StreetName()}")
+            .RuleFor(k => k.Name, f => $"Förskolan {f.Name.LastName()}")
             .RuleFor(k => k.Location, f => new Point(
                 f.Random.Double(17, 19),
                 f.Random.Double(55, 65)
@@ -24,7 +24,7 @@ public static class SeedFakers
     }
     public static Faker<User> CreateFakeUsers()
     {
-        return new Faker<User>()//i couldnt login if i didnt have all these fucking fields
+        return new Faker<User>("sv")//i couldnt login if i didnt have all these fucking fields
             .RuleFor(u => u.FirstName, f => f.Name.FirstName())
             .RuleFor(u => u.LastName, f => f.Name.LastName())
             .RuleFor(u => u.Email, (f, u) => f.Internet.Email(u.FirstName, u.LastName))
