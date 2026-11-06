@@ -1,4 +1,5 @@
 using System.Security.Claims;
+using ErrorOr;
 using Microsoft.AspNetCore.Authorization;
 using Microsoft.AspNetCore.Mvc;
 using Vicaria.Server.Features.PendingTimes.Get.DTOs;
@@ -6,11 +7,11 @@ using Vicaria.Server.Infrastructure;
 
 namespace Vicaria.Server.Features.PendingTimes.Get
 {
-    [Route("api/Pendingtimes")]
+    [Route("api/pending-times")]
     [Authorize]
     [ApiController]
     public class GetPendingTimesController(
-        IHandler<GetPendingTimesQuery, GetPendingTimesResponse> handler
+        IHandler<GetPendingTimesQuery, ErrorOr<GetPendingTimesResponse>> Handler
     ) : ControllerBase
     {
         [HttpGet()]
@@ -20,23 +21,31 @@ namespace Vicaria.Server.Features.PendingTimes.Get
             CancellationToken cancellationToken
         )
         {
+            string? userIdClaim = User.FindFirstValue(ClaimTypes.NameIdentifier);
+            if (!Guid.TryParse(userIdClaim, out Guid userId))
+            {
+                return Unauthorized();
+            }
+
             if (fromTime >= toTime)
             {
                 return BadRequest();
             }
 
-            var userClaim = User.FindFirstValue(ClaimTypes.NameIdentifier);
-            bool isGuid = Guid.TryParse(userClaim, out var userId);
-            if (!isGuid)
-            {
-                return Unauthorized();
-            }
+            GetPendingTimesQuery query = new
+            (
+                userId,
+                fromTime,
+                toTime
+            );
 
-            var query = new GetPendingTimesQuery(userId, fromTime, toTime);
+            ErrorOr<GetPendingTimesResponse> response = await Handler.HandleAsync(query, cancellationToken);
 
-            var response = await handler.HandleAsync(query, cancellationToken);
-
-            return Ok(response);
+            return response.Match<ActionResult<GetPendingTimesResponse>>
+            (
+                value => Ok(value),
+                errors => this.ToProblem(errors)
+            );
         }
     }
 }
