@@ -300,20 +300,12 @@ export default function ManagerBooking({
 
   return (
     <Dialog open={open} onOpenChange={setOpen}>
-      <DialogContent showCloseButton={false} className="sm:max-w-sm">
+      <DialogContent className="sm:max-w-sm">
         <form className="flex flex-col gap-4" onSubmit={handleSubmit(onSubmit)}>
-          <DialogHeader className="flex flex-row items-center gap-0">
+          <DialogHeader>
             <DialogTitle className="mx-auto text-center">
               {isEditing ? "Ändra datum och tid" : "Boka vikarie"}
             </DialogTitle>
-
-            <DialogClose
-              render={
-                <Button type="button" variant="ghost" className="m-0 p-0">
-                  <XIcon />
-                </Button>
-              }
-            />
           </DialogHeader>
 
           {pendingTimeSuccess && pendingTimeData ? (
