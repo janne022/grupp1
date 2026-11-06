@@ -63,14 +63,12 @@ namespace Vicaria.MigrationService
 
             #region user seed data
 
-            Random random = new Random();
-
             // Fucking PISS RETARD HACK!!! Kill my ASS
             User seedUser = new()
             {
                 FirstName = "Fucking",
                 LastName = "Hack!",
-                PhoneNumber = new string("07" + random.Next(10000000, 100000000).ToString())
+                PhoneNumber = new string("07" + Random.Shared.Next(10000000, 100000000).ToString())
                 // please don't kill your ass for merely seeding a bit
             };
 
