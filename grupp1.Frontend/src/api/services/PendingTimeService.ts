@@ -1,9 +1,9 @@
 import { useMutation, useQuery, useQueryClient } from "@tanstack/react-query";
 import { apiClient, ApiError } from "@/lib/api";
 import type {
-  BookDecidedTimeQuery,
   GetAllDecidedTimesResponse,
   PostPendingTimeRequest,
+  PostPendingTimeResponse,
 } from "../models";
 
 type GetAllDecidedTimesParams = {
@@ -47,8 +47,8 @@ function GetAllPendingTimes(
 function PostPendingTime() {
   const query = useQueryClient();
   return useMutation({
-    mutationFn: (req: BookDecidedTimeQuery) => {
-      return apiClient.post<PostPendingTimeRequest>("/api/pending-times", req);
+    mutationFn: (req: PostPendingTimeRequest) => {
+      return apiClient.post<PostPendingTimeResponse>("/api/pending-times", req);
     },
 
     onSuccess: async () => {

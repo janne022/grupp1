@@ -1,5 +1,13 @@
 import { useEffect, useState, type Dispatch, type SetStateAction } from "react";
-import { User, XIcon } from "lucide-react";
+import {
+  Calendar,
+  CircleCheck,
+  CircleQuestionMark,
+  Clock,
+  School,
+  User,
+  XIcon,
+} from "lucide-react";
 import { Controller, useForm, useWatch } from "react-hook-form";
 import { zodResolver } from "@hookform/resolvers/zod";
 import * as z from "zod";
@@ -8,6 +16,7 @@ import type {
   AvailableTimesByKindergartenDTO,
   BookDecidedTimeQuery,
   GetAllDecidedTimesDTO,
+  PostPendingTimeResponse,
 } from "@/api/models";
 import { EditDecidedTime } from "@/api/services/DecidedTimeService";
 import { filterAvailableTimes } from "./substituteDisplay";
@@ -35,6 +44,7 @@ import { ScrollArea } from "./scroll-area";
 import { DatePickerTime } from "../date-picker";
 import { Input } from "./input";
 import { PostPendingTime } from "@/api/services/PendingTimeService";
+import { Avatar, AvatarFallback } from "./avatar";
 
 interface BookTimeProps {
   open: boolean;
@@ -118,6 +128,9 @@ export default function ManagerBooking({
   const [isSaving, setIsSaving] = useState(false);
   const [submitError, setSubmitError] = useState<string | null>(null);
   const [searchQuery, setSearchQuery] = useState("");
+  const [pendingTimeSuccess, setPendingTimeSuccess] = useState(false);
+  const [pendingTimeData, setPendingTimeData] =
+    useState<PostPendingTimeResponse | null>(null);
 
   const isEditing = !!updateDecidedTime;
   const postService = PostPendingTime();
@@ -272,9 +285,12 @@ export default function ManagerBooking({
         endTime: toIsoDateTime(data.EndDateTime),
       };
 
-      await postService.mutateAsync(booking);
+      const response = await postService.mutateAsync(booking);
+      setPendingTimeData(response);
 
-      setOpen(false);
+      if (response) {
+        setPendingTimeSuccess(true);
+      }
     } catch {
       setSubmitError("Det gick inte att spara bokningen. Försök igen.");
     } finally {
@@ -300,125 +316,218 @@ export default function ManagerBooking({
             />
           </DialogHeader>
 
-          {isEditing && (
-            <div className="text-center">
-              <p className="text-lg flex flex-row items-center justify-center gap-1 my-0">
-                {isEditing &&
-                  `${updateDecidedTime.kindergartenName ?? "Okänd"}`}
+          {pendingTimeSuccess && pendingTimeData ? (
+            <div className="flex flex-col gap-4">
+              <CircleCheck size={48} className="mx-auto mb-2 text-green-500" />
+              <h3 className="text-center text-lg font-semibold">
+                Förfrågan skickad!
+              </h3>
+              <p className="text-center text-sm text-muted-foreground">
+                Din bokning har skapats och förfrågningar har skickats till
+                tillgänliga vikarier. Om fler vikarier blir tillgängliga kommer
+                de också att få en förfrågan.
               </p>
-              <p className="text-sm text-muted-foreground flex flex-row items-center justify-center gap-1">
-                <User />
-                {isEditing &&
-                  `${updateDecidedTime.substituteFirstName} ${updateDecidedTime.substituteLastName}`}
-              </p>
-            </div>
-          )}
-
-          <FieldGroup>
-            <Controller
-              name="StartDateTime"
-              control={control}
-              render={({ field, fieldState }) => (
-                <Field data-invalid={fieldState.invalid}>
-                  <DatePickerTime
-                    {...field}
-                    labelName="Startdag"
-                    onChange={field.onChange}
-                  />
-
-                  {fieldState.invalid && (
-                    <FieldError errors={[fieldState.error]} />
-                  )}
-                </Field>
-              )}
-            />
-
-            <Controller
-              name="EndDateTime"
-              control={control}
-              render={({ field, fieldState }) => (
-                <Field data-invalid={fieldState.invalid}>
-                  <DatePickerTime
-                    {...field}
-                    labelName="Slutdag"
-                    onChange={field.onChange}
-                  />
-
-                  {fieldState.invalid && (
-                    <FieldError errors={[fieldState.error]} />
-                  )}
-                </Field>
-              )}
-            />
-          </FieldGroup>
-
-          {!isEditing && (
-            <FieldGroup>
-              <ScrollArea className="max-h-72 w-full">
-                <div className="space-y-4">
-                  <Field orientation="horizontal">
-                    <FieldContent>
-                      <FieldTitle className="font-semibold">
-                        Alla förskolor
-                      </FieldTitle>
-                      <FieldDescription>
-                        {totalAvailable} tillgängliga vikarier
-                      </FieldDescription>
-                    </FieldContent>
-                  </Field>
-
-                  <Input
-                    type="search"
-                    placeholder="Sök förskola..."
-                    value={searchQuery}
-                    onChange={(e) => setSearchQuery(e.target.value)}
-                  />
-
-                  <RadioGroup
-                    value={effectiveSelectedKindergartenId}
-                    onValueChange={setSelectedKindergartenId}
-                    className="max-w-sm"
-                  >
-                    {filtered.length === 0 ? (
-                      <p className="text-center text-sm text-muted-foreground">
-                        Ingen förskola hittades.
-                      </p>
-                    ) : (
-                      filtered.map((kindergarten) => (
-                        <FieldLabel
-                          key={kindergarten.kindergartenId}
-                          htmlFor={kindergarten.kindergartenId}
-                        >
-                          <Field orientation="horizontal">
-                            <FieldContent>
-                              <FieldTitle className="font-semibold">
-                                {kindergarten.kindergartenName}
-                              </FieldTitle>
-
-                              <FieldDescription className="text-sm text-muted-foreground">
-                                {kindergarten.availableTimes.length}{" "}
-                                tillgängliga vikarier
-                              </FieldDescription>
-                            </FieldContent>
-
-                            <RadioGroupItem
-                              value={kindergarten.kindergartenId}
-                              id={kindergarten.kindergartenId}
-                            />
-                          </Field>
-                        </FieldLabel>
-                      ))
-                    )}
-                  </RadioGroup>
+              <h4 className="font-semibold">Bokningsdetaljer</h4>
+              <div className="flex flex-row gap-2 items-center">
+                <School />
+                <div className="flex flex-col">
+                  <h5 className="text-muted-foreground text-xs m-0 p-0">
+                    Förskola
+                  </h5>
+                  <p className="m-0 p-0">
+                    {pendingTimeData.kindergarten.kindergartenName}
+                  </p>
                 </div>
-              </ScrollArea>
-            </FieldGroup>
-          )}
+              </div>
+              <div className="flex flex-row gap-2 items-center">
+                <Calendar />
+                <div className="flex flex-col">
+                  <h5 className="text-muted-foreground text-xs m-0 p-0">
+                    Datum
+                  </h5>
+                  <p className="m-0 p-0">
+                    {new Date(pendingTimeData.startTime).toLocaleString(
+                      "sv-SE",
+                      {
+                        dateStyle: "short",
+                      },
+                    )}{" "}
+                    -
+                    {new Date(pendingTimeData.endTime).toLocaleString("sv-SE", {
+                      dateStyle: "short",
+                    })}
+                  </p>
+                </div>
+              </div>
+              <div className="flex flex-row gap-2 items-center">
+                <Clock />
+                <div className="flex flex-col">
+                  <h5 className="text-muted-foreground text-xs m-0 p-0">Tid</h5>
+                  <p className="m-0 p-0">
+                    {new Date(pendingTimeData.startTime).toLocaleString(
+                      "sv-SE",
+                      {
+                        timeStyle: "short",
+                      },
+                    )}{" "}
+                    -
+                    {new Date(pendingTimeData.endTime).toLocaleString("sv-SE", {
+                      timeStyle: "short",
+                    })}
+                  </p>
+                </div>
+              </div>
+              <div className="flex flex-col gap-2 mt-4">
+                <h3 className="font-semibold">Vikarier</h3>
+                {pendingTimeData.substitutes.map((substitute) => (
+                  <div
+                    key={substitute.id}
+                    className="mt-2 flex flex-row gap-2 items-center justify-between"
+                  >
+                    <div className="flex flex-row gap-2">
+                      <Avatar>
+                        <AvatarFallback>
+                          {substitute.fullName
+                            .split(" ")
+                            .map((name) => name[0])
+                            .join("")}
+                        </AvatarFallback>
+                      </Avatar>
+                      <div>
+                        <h4 className="text-md">{substitute.fullName}</h4>
+                        <p className="text-xs text-muted-foreground">
+                          Förfrågan har skickats
+                        </p>
+                      </div>
+                    </div>
+                    <CircleQuestionMark className="text-muted-foreground" />
+                  </div>
+                ))}
+              </div>
+            </div>
+          ) : (
+            <>
+              {isEditing && (
+                <div className="text-center">
+                  <p className="text-lg flex flex-row items-center justify-center gap-1 my-0">
+                    {isEditing &&
+                      `${updateDecidedTime.kindergartenName ?? "Okänd"}`}
+                  </p>
+                  <p className="text-sm text-muted-foreground flex flex-row items-center justify-center gap-1">
+                    <User />
+                    {isEditing &&
+                      `${updateDecidedTime.substituteFirstName} ${updateDecidedTime.substituteLastName}`}
+                  </p>
+                </div>
+              )}
 
-          {submitError && (
-            <p role="alert" className="text-sm text-destructive">
-              {submitError}
-            </p>
+              <FieldGroup>
+                <Controller
+                  name="StartDateTime"
+                  control={control}
+                  render={({ field, fieldState }) => (
+                    <Field data-invalid={fieldState.invalid}>
+                      <DatePickerTime
+                        {...field}
+                        labelName="Startdag"
+                        onChange={field.onChange}
+                      />
+
+                      {fieldState.invalid && (
+                        <FieldError errors={[fieldState.error]} />
+                      )}
+                    </Field>
+                  )}
+                />
+
+                <Controller
+                  name="EndDateTime"
+                  control={control}
+                  render={({ field, fieldState }) => (
+                    <Field data-invalid={fieldState.invalid}>
+                      <DatePickerTime
+                        {...field}
+                        labelName="Slutdag"
+                        onChange={field.onChange}
+                      />
+
+                      {fieldState.invalid && (
+                        <FieldError errors={[fieldState.error]} />
+                      )}
+                    </Field>
+                  )}
+                />
+              </FieldGroup>
+
+              {!isEditing && (
+                <FieldGroup>
+                  <ScrollArea className="max-h-72 w-full">
+                    <div className="space-y-4">
+                      <Field orientation="horizontal">
+                        <FieldContent>
+                          <FieldTitle className="font-semibold">
+                            Alla förskolor
+                          </FieldTitle>
+                          <FieldDescription>
+                            {totalAvailable} tillgängliga vikarier
+                          </FieldDescription>
+                        </FieldContent>
+                      </Field>
+
+                      <Input
+                        type="search"
+                        placeholder="Sök förskola..."
+                        value={searchQuery}
+                        onChange={(e) => setSearchQuery(e.target.value)}
+                      />
+
+                      <RadioGroup
+                        value={effectiveSelectedKindergartenId}
+                        onValueChange={setSelectedKindergartenId}
+                        className="max-w-sm"
+                      >
+                        {filtered.length === 0 ? (
+                          <p className="text-center text-sm text-muted-foreground">
+                            Ingen förskola hittades.
+                          </p>
+                        ) : (
+                          filtered.map((kindergarten) => (
+                            <FieldLabel
+                              key={kindergarten.kindergartenId}
+                              htmlFor={kindergarten.kindergartenId}
+                            >
+                              <Field orientation="horizontal">
+                                <FieldContent>
+                                  <FieldTitle className="font-semibold">
+                                    {kindergarten.kindergartenName}
+                                  </FieldTitle>
+
+                                  <FieldDescription className="text-sm text-muted-foreground">
+                                    {kindergarten.availableTimes.length}{" "}
+                                    tillgängliga vikarier
+                                  </FieldDescription>
+                                </FieldContent>
+
+                                <RadioGroupItem
+                                  value={kindergarten.kindergartenId}
+                                  id={kindergarten.kindergartenId}
+                                />
+                              </Field>
+                            </FieldLabel>
+                          ))
+                        )}
+                      </RadioGroup>
+                    </div>
+                  </ScrollArea>
+                </FieldGroup>
+              )}
+
+              {submitError && (
+                <p role="alert" className="text-sm text-destructive">
+                  {submitError}
+                </p>
+              )}
+            </>
           )}
 
           <DialogFooter className="flex flex-row justify-between">
