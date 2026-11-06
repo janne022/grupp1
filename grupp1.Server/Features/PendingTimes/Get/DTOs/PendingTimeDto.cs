@@ -1,9 +1,9 @@
 namespace Vicaria.Server.Features.PendingTimes.Get.DTOs;
 
-public record class GetPendingTimesDTO
+public record class PendingTimeDto
 (
     Guid Id,
     DateTime StartTime,
     DateTime EndTime,
-    GetPendingTimesKindergartensDTO Kindergartens
+    KindergartenDto Kindergarten
 );
