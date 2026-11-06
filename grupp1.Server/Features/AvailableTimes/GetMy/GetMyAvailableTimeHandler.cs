@@ -12,7 +12,7 @@ public class GetMyAvailableTimesHandler(VicariaDbContext DbContext)
         CancellationToken cancellationToken = default
     )
     {
-        var relevantTimes = DbContext.AvailableTimes.Where(at => at.SubstituteId == query.SubstituteId);
+        var relevantTimes = DbContext.AvailableTimes.Where(at => at.UserId == query.SubstituteId);
 
         if (query.FromTime is not null)
         {

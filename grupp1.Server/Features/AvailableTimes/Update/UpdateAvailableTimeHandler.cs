@@ -16,7 +16,7 @@ public class UpdateAvailableTimeHandler(
     )
     {
         var availableTime = await DbContext.AvailableTimes.FirstOrDefaultAsync(
-            at => at.Id == command.AvailableTimeId && at.SubstituteId == command.SubstituteId,
+            at => at.Id == command.AvailableTimeId && at.UserId == command.SubstituteId,
             ct
         );
 

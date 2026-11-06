@@ -94,7 +94,7 @@ public class BookDecidedTimeHandler(
             Id = Guid.CreateVersion7(),
             StartTime = availableTime.StartTime,
             EndTime = availableTime.EndTime,
-            SubstituteId = availableTime.SubstituteId,
+            SubstituteId = availableTime.UserId,
             KindergartenId = command.KindergartenId,
         };
 
