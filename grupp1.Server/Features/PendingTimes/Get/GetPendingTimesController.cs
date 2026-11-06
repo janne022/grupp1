@@ -1,20 +1,20 @@
 using System.Security.Claims;
 using Microsoft.AspNetCore.Authorization;
 using Microsoft.AspNetCore.Mvc;
-using Vicaria.Server.Features.PendingTimes.GetMy.DTOs;
+using Vicaria.Server.Features.PendingTimes.Get.DTOs;
 using Vicaria.Server.Infrastructure;
 
-namespace Vicaria.Server.Features.PendingTimes.GetMy
+namespace Vicaria.Server.Features.PendingTimes.Get
 {
     [Route("api/Pendingtimes")]
     [Authorize]
     [ApiController]
-    public class GetMyPendingTimesController(
-        IHandler<GetMyPendingTimesQuery, GetMyPendingTimesResponse> handler
+    public class GetPendingTimesController(
+        IHandler<GetPendingTimesQuery, GetPendingTimesResponse> handler
     ) : ControllerBase
     {
         [HttpGet()]
-        public async Task<ActionResult<GetMyPendingTimesResponse>> GetMy(
+        public async Task<ActionResult<GetPendingTimesResponse>> GetPendingTimes(
             [FromQuery] DateTime? fromTime,
             [FromQuery] DateTime? toTime,
             CancellationToken cancellationToken
@@ -32,7 +32,7 @@ namespace Vicaria.Server.Features.PendingTimes.GetMy
                 return Unauthorized();
             }
 
-            var query = new GetMyPendingTimesQuery(userId, fromTime, toTime);
+            var query = new GetPendingTimesQuery(userId, fromTime, toTime);
 
             var response = await handler.HandleAsync(query, cancellationToken);
 
