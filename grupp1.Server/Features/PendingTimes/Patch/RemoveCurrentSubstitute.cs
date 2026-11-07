@@ -1,0 +1,1 @@
+namespace Vicaria.Server.Features.PendingTimes.Patch;
