@@ -8,16 +8,15 @@ using Vicaria.Server.Infrastructure;
 
 namespace Vicaria.Server.Features.PendingTimes.Accept;
 
-[Route("api/decided-times")]
+[Route("api/pending-times")]
 [Authorize(Roles = VicariaUserRoles.Substitute)]
 [ApiController]
 
 public class AcceptPendingTimeController(
-    IHandler<AcceptPendingTimeQuery, ErrorOr<AcceptPendingTimeResponse>> handler,
-    ILogger<AcceptPendingTimeController> logger
+    IHandler<AcceptPendingTimeQuery, ErrorOr<AcceptPendingTimeResponse>> handler
 ) : ControllerBase
 {
-    [HttpPost("/accept/{pending-time-id:guid}")]
+    [HttpPost("{pending-time-id:guid}/accept")]
     public async Task<ActionResult<AcceptPendingTimeResponse>> Accept(
         [FromRoute(Name = "pending-time-id")] Guid pendingTimeId,
         CancellationToken cancellationToken = default
@@ -36,9 +35,11 @@ public class AcceptPendingTimeController(
             userId
          );
 
+        var result = await handler.HandleAsync(query, cancellationToken);
 
-        var result = handler.HandleAsync(query, cancellationToken);
-
-        throw new NotImplementedException();
+        return result.Match<ActionResult<AcceptPendingTimeResponse>>(
+            value => Created($"api/decided-times/{value.DecidedTimeId}", value),
+            error => this.ToProblem(error)
+        );
     }
 }
