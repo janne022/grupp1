@@ -16,6 +16,7 @@ public class AcceptPendingTimeHandler(
     {
         var pendingTime = await dbContext.PendingTimes
         .Include(pt => pt.AvailableSubs)
+        .Include(pt => pt.Kindergarten)
         .SingleOrDefaultAsync(pt => pt.Id == query.PendingTimeId, cancellationToken);
 
         if (pendingTime == null)
@@ -23,6 +24,13 @@ public class AcceptPendingTimeHandler(
             _logger.LogError("PendingTimeId {PendingTimeId} not found", query.PendingTimeId);
             return Error.NotFound("PendingTime.NotFound", $"No results from pendingTimeId: {query.PendingTimeId}");
         }
+
+        if (pendingTime.IsBooked)
+        {
+            _logger.LogInformation("User {UserId} tried booking an already booked time {PendingTimeId}", query.UserId, query.PendingTimeId);
+            return Error.Conflict("PendingTime.Conflict", "This time is no longer available.");
+        }
+        pendingTime.IsBooked = true;
 
         var user = await dbContext.Users.SingleOrDefaultAsync(pt => pt.Id == query.UserId, cancellationToken);
         if (user == null)
@@ -33,26 +41,37 @@ public class AcceptPendingTimeHandler(
 
         if (pendingTime.AvailableSubs.Any(a => a.UserId == user.Id))
         {
-            _logger.LogWarning("User {UserId} is not in AvailableSubs for PendingTime {PendingTimeId}",
+            _logger.LogWarning("User {UserId} is not an AvailableSubs for PendingTime {PendingTimeId}",
                 query.UserId, query.PendingTimeId);
             return Error.Validation("PendingTime.UserNotAvailable", "This user is not available for this pending time.");
         }
 
         var decidedTime = new DecidedTime
         {
+            Id = Guid.CreateVersion7(),
             StartTime = pendingTime.StartTime,
             EndTime = pendingTime.EndTime,
-            UserId = user.Id,
-            KindergartenId = pendingTime.KindergartenId
+            SubstituteId = user.Id,
+            KindergartenId = pendingTime.KindergartenId,
+            PendingTimeId = pendingTime.Id,
+            ManagerId = pendingTime.ManagerId
         };
 
         await dbContext.DecidedTimes.AddAsync(decidedTime, cancellationToken);
 
         await dbContext.SaveChangesAsync(cancellationToken);
 
-        /* return new AcceptPendingTimeResponse//NOT  DONE NEED MODELS UPDATED
-        {//NOT  DONE NEED MODELS UPDATED
-            PendingTimeId = //NOT  DONE NEED MODELS UPDATED
-        };//NOT  DONE NEED MODELS UPDATED */
+        return new AcceptPendingTimeResponse(
+            DecidedTimeId: decidedTime.Id,
+            StartTime: decidedTime.StartTime,
+            EndTime: decidedTime.EndTime,
+            ManagerId: decidedTime.ManagerId,
+            Kindergarten: new AcceptPendingTimeKindergartenDTO(
+                Id: decidedTime.KindergartenId,
+                Name: pendingTime.Kindergarten.Name,
+                Latitude: pendingTime.Kindergarten.Location?.Y,
+                Longitude: pendingTime.Kindergarten.Location?.X
+            )
+        );
     }
 }

@@ -4,9 +4,9 @@ namespace Vicaria.Server.Features.PendingTimes.Accept.DTOs;
 
 public record class AcceptPendingTimeResponse
 (
-    Guid PendingTimeId,
+    Guid DecidedTimeId, //yes this should be a decidedTimeId not pendingtime
     DateTime StartTime,
     DateTime EndTime,
-    Guid UserId,
-    Guid KindergartenId
+    Guid ManagerId,
+    AcceptPendingTimeKindergartenDTO Kindergarten
 );
