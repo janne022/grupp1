@@ -4,6 +4,8 @@ using Vicaria.Server.Domain;
 using ErrorOr;
 using Vicaria.Server.Infrastructure;
 using System.Security.Claims;
+using Vicaria.Server.Domain.Models;
+using Microsoft.EntityFrameworkCore;
 
 namespace Vicaria.Server.Features.PendingTimes.Delete;
 
@@ -19,17 +21,17 @@ public sealed class RemoveCurrentUserController : ControllerBase
         _handler = handler;
     }
 
-    [HttpDelete(Name = "current-user")]
-    public async Task<ActionResult<RemoveCurrentUserResponse>> RemoveCurrentUser()
+    [HttpDelete("{pendingTimeId}/current-user")]
+    public async Task<ActionResult<RemoveCurrentUserResponse>> RemoveCurrentUser([FromRoute(Name = "pendingTimeId")] Guid pendingTimeId)
     {
-       string? substituteIdClaim = User.FindFirstValue(ClaimTypes.NameIdentifier);
+        string? substituteIdClaim = User.FindFirstValue(ClaimTypes.NameIdentifier);
 
-       if(!Guid.TryParse(substituteIdClaim, out Guid substituteId))
+        if (!Guid.TryParse(substituteIdClaim, out Guid substituteId))
         {
             return Unauthorized();
         }
 
-        RemoveCurrentUserCommand command = new(substituteId);
+        RemoveCurrentUserCommand command = new(substituteId, pendingTimeId);
 
         ErrorOr<RemoveCurrentUserResponse> response = await _handler.HandleAsync(command);
 
@@ -44,9 +46,61 @@ public sealed class RemoveCurrentUserController : ControllerBase
 #region Handler
 public class RemoveCurrentUserHandler : IHandler<RemoveCurrentUserCommand, ErrorOr<RemoveCurrentUserResponse>>
 {
-    public async Task<ErrorOr<RemoveCurrentUserResponse>> HandleAsync(RemoveCurrentUserCommand request, CancellationToken cancellationToken = default)
+    private readonly VicariaDbContext _dbContext;
+    private readonly ILogger<RemoveCurrentUserHandler> _logger;
+    public RemoveCurrentUserHandler(VicariaDbContext dbContext, ILogger<RemoveCurrentUserHandler> logger)
     {
-        throw new NotImplementedException();
+        _dbContext = dbContext;
+        _logger = logger;
+    }
+    public async Task<ErrorOr<RemoveCurrentUserResponse>> HandleAsync(RemoveCurrentUserCommand command, CancellationToken cancellationToken = default)
+    {
+        PendingTime? pendingTime = await _dbContext.PendingTimes
+            .Include(pendingTime => pendingTime.AvailableSubs)
+            .ThenInclude(substite => substite.User)
+            .Include(pendingTime => pendingTime.Kindergarten)
+            .FirstOrDefaultAsync(pendingTime => pendingTime.Id == command.PendingTimeId)
+        ;
+
+        if (pendingTime is null)
+        {
+            _logger.LogWarning("Remove current user from pending time FAILED: could not find pendingTime with ID {id}", command.PendingTimeId);
+            return Error.NotFound("Could not find the pendingTime by the given ID");
+        }
+
+        int substitutesRemoved = pendingTime.AvailableSubs.RemoveWhere(userPendingTime => userPendingTime.UserId == command.UserId);
+
+        if (substitutesRemoved is 0)
+        {
+            _logger.LogWarning(
+                "Remove current user from pending time FAILED: could not remove the substitute ({subId}) from the pending time ({ptId})",
+                command.UserId,
+                pendingTime.Id
+            );
+
+            return Error.Unexpected("Could not remove current substitute from pendingTime");
+        }
+
+        await _dbContext.SaveChangesAsync();
+
+        return new RemoveCurrentUserResponse
+        (
+            Id: pendingTime.Id,
+            StartTime: pendingTime.StartTime,
+            EndTime: pendingTime.EndTime,
+            Kindergarten: new KindergartenDto
+            (
+                pendingTime.KindergartenId,
+                pendingTime.Kindergarten.Name
+            ),
+            Substitutes: [.. pendingTime.AvailableSubs.Select(substitute => new SubstituteDto
+            (
+                Id: substitute.UserId,
+                FullName: $"{substitute.User.FirstName} {substitute.User.LastName}",
+                FirstName: substitute.User.FirstName,
+                LastName: substitute.User.LastName
+            ))]
+        );
     }
 }
 #endregion
@@ -62,10 +116,19 @@ public record class RemoveCurrentUserResponse
 
 public record class RemoveCurrentUserCommand
 (
-    Guid UserId
+    Guid UserId,
+    Guid PendingTimeId
 );
 
-public record class KindergartenDto();
+public record class KindergartenDto(
+    Guid Id,
+    string KindergartenName
+);
 
-public record class SubstituteDto();
+public record class SubstituteDto(
+    Guid Id,
+    string FullName,
+    string FirstName,
+    string LastName
+);
 #endregion
