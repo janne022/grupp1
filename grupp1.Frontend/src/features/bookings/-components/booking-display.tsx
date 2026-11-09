@@ -1,5 +1,5 @@
-import { Booking } from "../../../shared/components/ui/booking";
 import type { BookingData } from "@/shared/types/types";
+import { Booking } from "../../../shared/components/ui/booking";
 
 type BookingsDisplayProps = {
   bookings: BookingData[];
