@@ -1,24 +1,6 @@
 import { defineConfig } from "orval";
 
-const input = {
-  target: `../grupp1.Server/openapi.json`,
-};
-
 export default defineConfig({
-  kindergartens: {
-    input: {
-      ...input,
-      filters: {
-        tags: ["Kindergartens"],
-      },
-    },
-    output: {
-      mode: "tags-split",
-      target: "./src/features/kindergartens/-api/endpoints",
-      schemas: "./",
-      client: "fetch",
-    },
-  },
   api: {
     input: {
       target: `../grupp1.Server/openapi.json`,
