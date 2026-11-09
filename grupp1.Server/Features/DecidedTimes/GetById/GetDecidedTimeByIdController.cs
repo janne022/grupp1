@@ -10,6 +10,7 @@ namespace Vicaria.Server.Features.DecidedTimes.GetById;
 [Route("api/decided-times")]
 [Authorize]
 [ApiController]
+[Tags("DecidedTimes")]
 public class GetDecidedTimeByIdController(
     IHandler<GetDecidedTimeByIdQuery, GetDecidedTimeByIdResponse> handler
 ) : ControllerBase

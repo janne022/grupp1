@@ -7,10 +7,13 @@ export default defineConfig({
     },
     output: {
       mode: "tags-split",
-      target: "./src/api/endpoints",
-      schemas: "./src/api/models",
+      target: "./src/shared/api/endpoints",
+      schemas: {
+        path: "./src/shared/api/models",
+        splitByTags: true,
+      },
       client: "fetch",
-      clean: true
+      clean: true,
       //prettier: true, apparently prettier is not working with the new version of orval
       // so we will use eslint instead. Good to know.
     },

@@ -8,6 +8,7 @@ namespace Vicaria.Server.Features.Auth.LogOut
     [Route("api/auth/logout")]
     [Authorize]
     [ApiController]
+    [Tags("Auth")]
     public class LogOutController(SignInManager<User> signInManager) : ControllerBase
     {
         [HttpPost]
@@ -18,4 +19,3 @@ namespace Vicaria.Server.Features.Auth.LogOut
         }
     }
 }
-

@@ -7,6 +7,7 @@ namespace Vicaria.Server.Features.Auth.Register;
 
 [Route("api/auth")]
 [ApiController]
+[Tags("Auth")]
 public class RegisterController(
     IHandler<RegisterQuery, RegisterResponse> handler,
     SignInManager<User> signInManager

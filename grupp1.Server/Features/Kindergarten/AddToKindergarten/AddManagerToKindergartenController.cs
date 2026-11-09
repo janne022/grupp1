@@ -10,6 +10,7 @@ namespace Vicaria.Server.Features.Kindergarten.AddManagerToKindergarten;
 [Authorize(Roles = "Manager")]
 [Route("api/kindergartens")]
 [ApiController]
+[Tags("Kindergarten")]
 public class AddManagerToKindergartenController(
     IHandler<AddManagerToKindergartenCommand, ErrorOr<AddManagerToKindergartenResult>> handler
 ) : ControllerBase
