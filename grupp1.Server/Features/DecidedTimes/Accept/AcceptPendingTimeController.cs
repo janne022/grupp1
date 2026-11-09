@@ -8,7 +8,7 @@ using Vicaria.Server.Infrastructure;
 
 namespace Vicaria.Server.Features.PendingTimes.Accept;
 
-[Route("api/pending-times")]
+[Route("api/decided-times")]
 [Authorize(Roles = VicariaUserRoles.Substitute)]
 [ApiController]
 
@@ -16,7 +16,7 @@ public class AcceptPendingTimeController(
     IHandler<AcceptPendingTimeQuery, ErrorOr<AcceptPendingTimeResponse>> handler
 ) : ControllerBase
 {
-    [HttpPost("{pending-time-id:guid}/accept")]
+    [HttpPost("{pending-time-id:guid}")]
     public async Task<ActionResult<AcceptPendingTimeResponse>> Accept(
         [FromRoute(Name = "pending-time-id")] Guid pendingTimeId,
         CancellationToken cancellationToken = default
