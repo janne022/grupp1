@@ -18,7 +18,7 @@ import {
 } from "@/shared/components/ui/field";
 import { Input } from "@/shared/components/ui/input";
 import { Controller, useForm } from "react-hook-form";
-import { useSignup } from "@/features/authentication/-api/RegisterService";
+import { useSignup } from "@/features/(auth)/-api/RegisterService";
 import {
   Select,
   SelectContent,

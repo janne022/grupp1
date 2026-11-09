@@ -17,7 +17,7 @@ import {
   FieldLabel,
 } from "@/shared/components/ui/field";
 import { Input } from "@/shared/components/ui/input";
-import { useLogin } from "@/features/authentication/-api/LoginService";
+import { useLogin } from "@/features/(auth)/-api/LoginService";
 import { Controller, useForm } from "react-hook-form";
 import { Link } from "@tanstack/react-router";
 
