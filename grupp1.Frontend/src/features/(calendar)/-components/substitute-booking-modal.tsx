@@ -20,7 +20,10 @@ import {
 } from "../../../shared/components/ui/field";
 
 import React, { useEffect, type Dispatch } from "react";
-import type { GetMyAvailableTimesDTO, KindergartenDto } from "@/api/models";
+import type {
+  GetMyAvailableTimesDTO,
+  KindergartenDto,
+} from "@/shared/api/models";
 import {
   AddAvailableTime,
   EditAvailableTime,

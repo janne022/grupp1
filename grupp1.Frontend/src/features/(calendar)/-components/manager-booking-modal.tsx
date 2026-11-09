@@ -6,7 +6,6 @@ import {
   Clock,
   School,
   User,
-  XIcon,
 } from "lucide-react";
 import { Controller, useForm, useWatch } from "react-hook-form";
 import { zodResolver } from "@hookform/resolvers/zod";
@@ -17,7 +16,7 @@ import type {
   BookDecidedTimeQuery,
   GetAllDecidedTimesDTO,
   PostPendingTimeResponse,
-} from "@/api/models";
+} from "@/shared/api/models";
 import { EditDecidedTime } from "@/features/(calendar)/-api/DecidedTimeService";
 import { filterAvailableTimes } from "../../bookings/-components/substituteDisplay";
 

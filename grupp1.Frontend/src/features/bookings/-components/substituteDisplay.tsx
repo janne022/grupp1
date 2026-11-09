@@ -1,4 +1,4 @@
-import type { AvailableTimesByManagerDTO } from "@/api/models";
+import type { AvailableTimesByManagerDTO } from "@/shared/api/models";
 import type {} from "../../(calendar)/-components/manager-booking-modal";
 import {
   Table,

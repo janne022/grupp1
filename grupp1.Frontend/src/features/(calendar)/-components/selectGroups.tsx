@@ -6,7 +6,7 @@ import {
   SelectValue,
 } from "@/shared/components/ui/select";
 
-import type { KindergartenDto } from "@/api/models";
+import type { KindergartenDto } from "@/shared/api/models";
 
 export function SelectGroups({
   KindergartenDto,
