@@ -2,13 +2,16 @@ import { Badge } from "@/shared/components/ui/badge";
 import { CalendarDays, Check, Clock8, X } from "lucide-react";
 import { useState } from "react";
 
-export default function Message(
-  kindergarten: string,
-  date: string,
-  time: string,
-) {
-
-    const [status, setStatus] = useState("pending")
+export default function Message({
+  kindergarten,
+  date,
+  time,
+}: {
+  kindergarten: string;
+  date: string;
+  time: string;
+}) {
+  const [status, setStatus] = useState("pending");
 
   return (
     <div>
