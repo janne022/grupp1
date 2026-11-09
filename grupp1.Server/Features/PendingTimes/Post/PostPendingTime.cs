@@ -129,6 +129,10 @@ public sealed class PostPendingTimeHandler : IHandler<PostPendingTimeCommand, Er
             AvailableSubs = availableSubstitutes
         };
 
+        if (await _dbContext.PendingTimes.AnyAsync(pendingTime => pendingTime.Id == newPendingTime.Id))
+        {
+            return Error.Conflict("pendingTime for this kindergarten and this exact timeframe already exists.");
+        }
         await _dbContext.AddAsync(newPendingTime);
         await _dbContext.SaveChangesAsync();
 
