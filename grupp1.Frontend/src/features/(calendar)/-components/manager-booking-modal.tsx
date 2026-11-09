@@ -12,7 +12,6 @@ import type {
 } from "@/shared/api/models";
 import { EditDecidedTime } from "@/features/(calendar)/-api/DecidedTimeService";
 import { PostPendingTime } from "@/features/(calendar)/-api/PendingTimeService";
-import { filterAvailableTimes } from "../../bookings/-components/substituteDisplay";
 import { Button } from "../../../shared/components/ui/button";
 import {
   Dialog,
