@@ -22,7 +22,7 @@ public class AcceptPendingTimeHandler(
         if (pendingTime == null)
         {
             _logger.LogError("PendingTimeId {PendingTimeId} not found", query.PendingTimeId);
-            return Error.NotFound("PendingTime.NotFound", $"No results from pendingTimeId: {query.PendingTimeId}");
+            return Error.NotFound("PendingTime.NotFound", $"Pending time not found");
         }
 
         if (pendingTime.IsBooked)
@@ -39,7 +39,7 @@ public class AcceptPendingTimeHandler(
             return Error.NotFound("User.NotFound", $"User not found");
         }
 
-        if (pendingTime.AvailableSubs.Any(a => a.UserId == user.Id))
+        if (!pendingTime.AvailableSubs.Any(a => a.UserId == user.Id))
         {
             _logger.LogWarning("User {UserId} is not an AvailableSubs for PendingTime {PendingTimeId}",
                 query.UserId, query.PendingTimeId);
