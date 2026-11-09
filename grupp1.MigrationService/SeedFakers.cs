@@ -15,7 +15,7 @@ public static class SeedFakers
     {
         return new Faker<Kindergarten>("sv")
             .RuleFor(k => k.Id, _ => Guid.CreateVersion7())
-            .RuleFor(k => k.Name, f => $"Förskolan {f.Name.LastName()}")
+            .RuleFor(k => k.Name, f => f.Name.LastName())
             .RuleFor(k => k.Location, f => new Point(
                 f.Random.Double(17, 19),
                 f.Random.Double(55, 65)
