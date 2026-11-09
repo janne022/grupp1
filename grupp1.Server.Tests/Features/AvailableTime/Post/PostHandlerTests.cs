@@ -1,17 +1,8 @@
 ﻿using Microsoft.EntityFrameworkCore;
-using Microsoft.EntityFrameworkCore.Infrastructure;
-using Microsoft.Extensions.Logging;
 using Microsoft.Extensions.Logging.Abstractions;
-using Moq;
-using System;
-using System.Collections.Generic;
-using System.Text;
-using Vicaria.Server.Domain.Models;
 using Vicaria.Server.Features.AvailableTimes.Post;
 using Vicaria.Server.Infrastructure;
 using Model = Vicaria.Server.Domain.Models;
-
-
 
 
 namespace Vicaria.Server.Tests.Features.AvailableTime.Post
@@ -23,6 +14,7 @@ namespace Vicaria.Server.Tests.Features.AvailableTime.Post
 
         private static readonly DateTime startTime = new(2026, 11, 5, 8, 0, 0);
         private static readonly DateTime endTime = new(2026, 11, 5, 16, 0, 0);
+        
         public PostHandlerTests()
         {
             _db = CreateInMemoryDbContext();
@@ -38,33 +30,17 @@ namespace Vicaria.Server.Tests.Features.AvailableTime.Post
             return new VicariaDbContext(options);
         }
 
-        //Det som måste finnas:
-        //1. StartTime
-        //2. EndTime
-        //3. Kindergarten
-        //4. User (sub)
-
-        //Det som ska skickas in:
-        //1. StartTime
-        //2. EndTime
-        //3. Kindergarten
-
-        //Det som skickas tillbaka:
-        //1. Guid Id
-        //2. string ErrorMessage
-        //3. PostAvailableTimeStatus Status
 
         [Fact]
-        public async Task HandleAsync_WhenKindergartenIsNull_ReturnsBadRequest()
+        public async Task HandleAsync_WhenKindergartenDoesNotExist_ReturnsNotFound()
         {
             //Arrange
-
             var command = new PostAvailableTimeCommand
             {
                 StartTime = startTime,
                 EndTime = endTime,
-                Kindergartens = null,
-                UserId = new Guid()
+                Kindergartens = [Guid.NewGuid()],
+                UserId = Guid.NewGuid()
             };
 
 
@@ -73,8 +49,9 @@ namespace Vicaria.Server.Tests.Features.AvailableTime.Post
 
 
             //Assert
-            Assert.Equal(PostAvailableTimeStatus.BadRequest, response.Status);
-            
+            Assert.Equal(PostAvailableTimeStatus.NotFound, response.Status);
+            Assert.Empty(_db.AvailableTimes);
+
         }
 
 
@@ -83,7 +60,6 @@ namespace Vicaria.Server.Tests.Features.AvailableTime.Post
         {
 
             //Arrange
-
             Model.Kindergarten mockKindergarten = new()
             {
                 Id = Guid.NewGuid(),
@@ -94,7 +70,7 @@ namespace Vicaria.Server.Tests.Features.AvailableTime.Post
             _db.Kindergartens.Add(mockKindergarten);
             await _db.SaveChangesAsync();
 
-            Guid userId = new Guid();
+            Guid userId = Guid.NewGuid();
 
             var command = new PostAvailableTimeCommand
             {
@@ -106,17 +82,90 @@ namespace Vicaria.Server.Tests.Features.AvailableTime.Post
 
 
             //Act
-
             PostAvailableTimeResponse response = await _handler.HandleAsync(command, default);
 
 
-
             //Assert
-
             Assert.Equal(PostAvailableTimeStatus.Ok, response.Status);
             Assert.Single(_db.AvailableTimes.Where(at => at.UserId == userId));
         }
 
+
+        [Theory]
+        [InlineData(8, 8)]
+        [InlineData(16, 8)]
+        public async Task HandleAsync_WhenEndTimeIsNotAfterStartTime_ReturnsBadRequest(int startHour, int endHour)
+        {
+            // Arrange
+            Model.Kindergarten mockKindergarten = new()
+            {
+                Id = Guid.NewGuid(),
+                Name = "Solrosen",
+                Managers = []
+            };
+
+            _db.Kindergartens.Add(mockKindergarten);
+            await _db.SaveChangesAsync();
+
+            var command = new PostAvailableTimeCommand
+            {
+                StartTime = new DateTime(2026, 11, 5, startHour, 0, 0),
+                EndTime = new DateTime(2026, 11, 5, endHour, 0, 0),
+                Kindergartens = [mockKindergarten.Id],
+                UserId = Guid.NewGuid()
+            };
+
+            // Act
+            PostAvailableTimeResponse response = await _handler.HandleAsync(command, default);
+
+            // Assert
+            Assert.Equal(PostAvailableTimeStatus.BadRequest, response.Status);
+            Assert.Empty(_db.AvailableTimes);
+        }
+
+
+        [Fact]
+        public async Task HandleAsync_WhenOverlappingTimeForSameKindergarten_ReturnsConflict()
+        {
+            // Arrange
+            Guid userId = Guid.NewGuid();
+
+            Model.Kindergarten mockKindergarten = new()
+            {
+                Id = Guid.NewGuid(),
+                Name = "Solrosen",
+                Managers = []
+            };
+
+            _db.Kindergartens.Add(mockKindergarten);
+
+            Model.AvailableTime existingTime = new()
+            {
+                Id = Guid.NewGuid(),
+                StartTime = startTime,
+                EndTime = endTime,
+                Kindergartens = [new Model.KindergartenAvailableTime { KindergartenId = mockKindergarten.Id }],
+                UserId = userId
+            };
+
+            _db.AvailableTimes.Add(existingTime);
+            await _db.SaveChangesAsync();
+
+            var command = new PostAvailableTimeCommand
+            {
+                StartTime = startTime.AddHours(4),
+                EndTime = endTime.AddHours(4),
+                Kindergartens = [mockKindergarten.Id],
+                UserId = userId
+            };
+
+            // Act
+            PostAvailableTimeResponse response = await _handler.HandleAsync(command, default);
+
+            // Assert
+            Assert.Equal(PostAvailableTimeStatus.Conflict, response.Status);
+            Assert.Equal(1, await _db.AvailableTimes.CountAsync());
+        }
 
     }
 }
