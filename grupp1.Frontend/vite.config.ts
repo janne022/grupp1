@@ -9,9 +9,11 @@ export default defineConfig({
   plugins: [
     tailwindcss(),
     tanstackRouter({
-      target: 'react',
+      target: "react",
       autoCodeSplitting: true,
-    }), react(),
+      routesDirectory: path.resolve(import.meta.dirname, "./src/features"),
+    }),
+    react(),
   ],
   resolve: {
     alias: {

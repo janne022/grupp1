@@ -8,105 +8,111 @@
 // You should NOT make any changes in this file as it will be overwritten.
 // Additionally, you should also exclude this file from your linter and/or formatter to prevent it from being checked or modified.
 
-import { Route as rootRouteImport } from './routes/__root'
-import { Route as IndexRouteImport } from './routes/index'
-import { Route as ManagerPageRouteImport } from './routes/ManagerPage'
-import { Route as LoginRouteImport } from './routes/login'
-import { Route as SignupRouteImport } from './routes/signup'
+import { Route as rootRouteImport } from './features/__root'
+import { Route as calendarIndexRouteImport } from './features/(calendar)/index'
+import { Route as AuthenticationLoginRouteImport } from './features/authentication/login'
+import { Route as AuthenticationSignupRouteImport } from './features/authentication/signup'
+import { Route as BookingsIndexRouteImport } from './features/bookings/index'
 
-const IndexRoute = IndexRouteImport.update({
-  id: '/',
+const calendarIndexRoute = calendarIndexRouteImport.update({
+  id: '/(calendar)/',
   path: '/',
   getParentRoute: () => rootRouteImport,
 } as any)
-const ManagerPageRoute = ManagerPageRouteImport.update({
-  id: '/ManagerPage',
-  path: '/ManagerPage',
+const AuthenticationLoginRoute = AuthenticationLoginRouteImport.update({
+  id: '/authentication/login',
+  path: '/authentication/login',
   getParentRoute: () => rootRouteImport,
 } as any)
-const LoginRoute = LoginRouteImport.update({
-  id: '/login',
-  path: '/login',
+const AuthenticationSignupRoute = AuthenticationSignupRouteImport.update({
+  id: '/authentication/signup',
+  path: '/authentication/signup',
   getParentRoute: () => rootRouteImport,
 } as any)
-const SignupRoute = SignupRouteImport.update({
-  id: '/signup',
-  path: '/signup',
+const BookingsIndexRoute = BookingsIndexRouteImport.update({
+  id: '/bookings/',
+  path: '/bookings/',
   getParentRoute: () => rootRouteImport,
 } as any)
 
 export interface FileRoutesByFullPath {
-  '/': typeof IndexRoute
-  '/ManagerPage': typeof ManagerPageRoute
-  '/login': typeof LoginRoute
-  '/signup': typeof SignupRoute
+  '/authentication/login': typeof AuthenticationLoginRoute
+  '/authentication/signup': typeof AuthenticationSignupRoute
+  '/': typeof calendarIndexRoute
+  '/bookings/': typeof BookingsIndexRoute
 }
 export interface FileRoutesByTo {
-  '/': typeof IndexRoute
-  '/ManagerPage': typeof ManagerPageRoute
-  '/login': typeof LoginRoute
-  '/signup': typeof SignupRoute
+  '/authentication/login': typeof AuthenticationLoginRoute
+  '/authentication/signup': typeof AuthenticationSignupRoute
+  '/': typeof calendarIndexRoute
+  '/bookings': typeof BookingsIndexRoute
 }
 export interface FileRoutesById {
   __root__: typeof rootRouteImport
-  '/': typeof IndexRoute
-  '/ManagerPage': typeof ManagerPageRoute
-  '/login': typeof LoginRoute
-  '/signup': typeof SignupRoute
+  '/authentication/login': typeof AuthenticationLoginRoute
+  '/authentication/signup': typeof AuthenticationSignupRoute
+  '/(calendar)/': typeof calendarIndexRoute
+  '/bookings/': typeof BookingsIndexRoute
 }
 export interface FileRouteTypes {
   fileRoutesByFullPath: FileRoutesByFullPath
-  fullPaths: '/' | '/ManagerPage' | '/login' | '/signup'
+  fullPaths:
+    '/authentication/login' | '/authentication/signup' | '/' | '/bookings/'
   fileRoutesByTo: FileRoutesByTo
-  to: '/' | '/ManagerPage' | '/login' | '/signup'
-  id: '__root__' | '/' | '/ManagerPage' | '/login' | '/signup'
+  to: '/authentication/login' | '/authentication/signup' | '/' | '/bookings'
+  id:
+    | '__root__'
+    | '/authentication/login'
+    | '/authentication/signup'
+    | '/(calendar)/'
+    | '/bookings/'
   fileRoutesById: FileRoutesById
 }
 export interface RootRouteChildren {
-  IndexRoute: typeof IndexRoute
-  ManagerPageRoute: typeof ManagerPageRoute
-  LoginRoute: typeof LoginRoute
-  SignupRoute: typeof SignupRoute
+  AuthenticationLoginRoute: typeof AuthenticationLoginRoute
+  AuthenticationSignupRoute: typeof AuthenticationSignupRoute
+  calendarIndexRoute: typeof calendarIndexRoute
+  BookingsIndexRoute: typeof BookingsIndexRoute
 }
 
 declare module '@tanstack/react-router' {
   interface FileRoutesByPath {
-    '/': {
-      id: '/'
+    '/(calendar)/': {
+      id: '/(calendar)/'
       path: '/'
       fullPath: '/'
-      preLoaderRoute: typeof IndexRouteImport
+      preLoaderRoute: typeof calendarIndexRouteImport
       parentRoute: typeof rootRouteImport
     }
-    '/ManagerPage': {
-      id: '/ManagerPage'
-      path: '/ManagerPage'
-      fullPath: '/ManagerPage'
-      preLoaderRoute: typeof ManagerPageRouteImport
+    '/authentication/login': {
+      id: '/authentication/login'
+      path: '/authentication/login'
+      fullPath: '/authentication/login'
+      preLoaderRoute: typeof AuthenticationLoginRouteImport
       parentRoute: typeof rootRouteImport
     }
-    '/login': {
-      id: '/login'
-      path: '/login'
-      fullPath: '/login'
-      preLoaderRoute: typeof LoginRouteImport
+    '/authentication/signup': {
+      id: '/authentication/signup'
+      path: '/authentication/signup'
+      fullPath: '/authentication/signup'
+      preLoaderRoute: typeof AuthenticationSignupRouteImport
       parentRoute: typeof rootRouteImport
     }
-    '/signup': {
-      id: '/signup'
-      path: '/signup'
-      fullPath: '/signup'
-      preLoaderRoute: typeof SignupRouteImport
+    '/bookings/': {
+      id: '/bookings/'
+      path: '/bookings'
+      fullPath: '/bookings/'
+      preLoaderRoute: typeof BookingsIndexRouteImport
       parentRoute: typeof rootRouteImport
     }
   }
 }
 
 const rootRouteChildren: RootRouteChildren = {
-  IndexRoute: IndexRoute,
-  ManagerPageRoute: ManagerPageRoute,
-  LoginRoute: LoginRoute,
-  SignupRoute: SignupRoute,
+  AuthenticationLoginRoute: AuthenticationLoginRoute,
+  AuthenticationSignupRoute: AuthenticationSignupRoute,
+  calendarIndexRoute: calendarIndexRoute,
+  BookingsIndexRoute: BookingsIndexRoute,
 }
 export const routeTree = rootRouteImport
   ._addFileChildren(rootRouteChildren)
