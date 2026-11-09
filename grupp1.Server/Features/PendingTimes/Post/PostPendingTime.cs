@@ -11,6 +11,7 @@ namespace Vicaria.Server.Features.PendingTimes.Post;
 
 #region Controller
 [ApiController]
+[Tags("PendingTimes")]
 [Authorize(Roles = VicariaUserRoles.Manager)]
 [Route("api/pending-times")]
 public sealed class PostPendingTimeController : ControllerBase
