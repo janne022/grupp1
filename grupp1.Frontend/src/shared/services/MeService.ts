@@ -1,7 +1,6 @@
-import { apiClient, ApiError } from "@/shared/api/api";
-
 import { useQuery } from "@tanstack/react-query";
 import type { UserInfoResponse } from "../api/models";
+import { apiClient, ApiError } from "../api/api";
 
 export const currentUserQuery = {
   queryKey: ["currentUser"] as const,

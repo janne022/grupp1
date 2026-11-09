@@ -6,6 +6,8 @@ import {
   School,
 } from "lucide-react";
 
+import type { PostPendingTimeResponse } from "@/shared/api/models";
+
 import { Button } from "../../../shared/components/ui/button";
 import {
   DialogFooter,
@@ -13,7 +15,6 @@ import {
   DialogTitle,
 } from "../../../shared/components/ui/dialog";
 import { Avatar, AvatarFallback } from "../../../shared/components/ui/avatar";
-import type { PostPendingTimeResponse } from "@/shared/api/models";
 
 interface BookingSuccessProps {
   data: PostPendingTimeResponse;
