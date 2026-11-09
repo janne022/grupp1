@@ -9,7 +9,7 @@ export const Route = createFileRoute("/bookings/")({
 const TESTDATAREMOVELATER: BookingData[] = [
   {
     id: "1",
-    name: "Alice Bergström",
+    name: "Alice Bergstroem",
     kindergarten: "Solrosen",
     startTime: new Date("2026-10-20T08:00"),
     endTime: new Date("2026-10-20T16:00"),
