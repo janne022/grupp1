@@ -13,12 +13,12 @@ import * as z from "zod";
 
 import type {
   AvailableTimesByKindergartenDTO,
+  AvailableTimesByManagerDTO,
   BookDecidedTimeQuery,
   GetAllDecidedTimesDTO,
   PostPendingTimeResponse,
 } from "@/shared/api/models";
 import { EditDecidedTime } from "@/features/(calendar)/-api/DecidedTimeService";
-import { filterAvailableTimes } from "../../bookings/-components/substituteDisplay";
 
 import { Button } from "../../../shared/components/ui/button";
 import {
@@ -65,6 +65,18 @@ type DateTimeValue = {
   date: Date;
   time: string;
 };
+
+function filterAvailableTimes(
+  times: AvailableTimesByManagerDTO[],
+  from: Date,
+  to: Date,
+) {
+  return times.filter((t) => {
+    const availableFrom = new Date(t.startTime);
+    const availableTo = new Date(t.endTime);
+    return availableFrom <= from && availableTo >= to;
+  });
+}
 
 function splitDateTime(dateTime: string | Date): DateTimeValue {
   const date = new Date(dateTime);
