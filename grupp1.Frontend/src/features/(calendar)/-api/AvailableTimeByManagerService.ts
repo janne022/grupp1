@@ -1,6 +1,6 @@
 import { apiClient } from "@/shared/api/api";
 import { useQuery } from "@tanstack/react-query";
-import type { GetAllAvailableTimeByManagerResponse } from "../../../api/models";
+import type { GetAllAvailableTimeByManagerResponse } from "@/shared/api/models";
 import { useCurrentUser } from "../../../shared/services/MeService";
 
 export const availableTimesByManagerQuery = (managerId: string) => ({

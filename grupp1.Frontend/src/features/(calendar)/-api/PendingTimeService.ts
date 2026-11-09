@@ -4,7 +4,7 @@ import type {
   GetAllDecidedTimesResponse,
   PostPendingTimeRequest,
   PostPendingTimeResponse,
-} from "../../../api/models";
+} from "@/shared/api/models";
 
 type GetAllDecidedTimesParams = {
   kindergartenId?: string[];

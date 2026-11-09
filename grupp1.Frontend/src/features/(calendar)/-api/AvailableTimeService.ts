@@ -6,7 +6,7 @@ import type {
   PostAvailableTimeResponse,
   UpdateAvailableTimeRequest,
   UpdateAvailableTimeResponse,
-} from "../../../api/models";
+} from "@/shared/api/models";
 import { useCurrentUser } from "../../../shared/services/MeService";
 
 function GetAllAvailableTimes(enabled = true) {

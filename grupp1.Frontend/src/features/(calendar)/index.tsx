@@ -28,7 +28,7 @@ import { toast } from "@/shared/components/ui/toast";
 import type {
   GetAllDecidedTimesDTO,
   GetMyAvailableTimesDTO,
-} from "@/api/models";
+} from "@/shared/api/models";
 import { cn } from "cn";
 import { Skeleton } from "@/shared/components/ui/skeleton";
 import {

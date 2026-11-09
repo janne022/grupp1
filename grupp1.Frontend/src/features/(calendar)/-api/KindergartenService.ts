@@ -1,6 +1,6 @@
 import { useQuery } from "@tanstack/react-query";
 import { apiClient, ApiError } from "@/shared/api/api";
-import type { GetAllKindergartensResponse } from "../../../api/models";
+import type { GetAllKindergartensResponse } from "@/shared/api/models";
 
 function GetAllKindergartens(enabled = true) {
   return useQuery({
