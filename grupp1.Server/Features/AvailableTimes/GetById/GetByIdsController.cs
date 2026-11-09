@@ -7,6 +7,7 @@ namespace Vicaria.Server.Features.AvailableTimes.GetById;
 [Route("api/available-times")]
 [Authorize]
 [ApiController]
+[Tags("AvailableTimes")]
 public class GetAvailableTimeByIdsController : ControllerBase
 {
     #region Fields

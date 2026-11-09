@@ -11,6 +11,7 @@ namespace Vicaria.Server.Features.DecidedTimes.Edit;
 #region Controller
 
 [ApiController]
+[Tags("DecidedTimes")]
 [Authorize(Roles = VicariaUserRoles.Manager)]
 [Route("api/decidedtimes")]
 public sealed class EditDecidedTimeController : ControllerBase

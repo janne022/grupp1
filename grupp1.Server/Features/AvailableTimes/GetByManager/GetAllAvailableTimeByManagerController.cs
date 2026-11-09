@@ -9,6 +9,7 @@ namespace Vicaria.Server.Features.AvailableTimes.GetByManager;
 [Route("api/managers")] //uuuuuuuuuuuhhhhhhh maybe other folder? though that feels dumb
 [Authorize(Roles = VicariaUserRoles.Manager)]
 [ApiController]
+[Tags("AvailableTimes")]
 public class GetAllAvailableTimeByManagerController(
     IHandler<GetAllAvailableTimeByManagerQuery, GetAllAvailableTimeByManagerResponse> handler) : ControllerBase
 {

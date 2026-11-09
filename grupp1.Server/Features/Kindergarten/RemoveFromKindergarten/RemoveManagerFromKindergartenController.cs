@@ -9,6 +9,7 @@ namespace Vicaria.Server.Features.Kindergarten.RemoveManagerFromKindergarten;
 [Authorize(Roles = "Manager")]
 [Route("api/kindergartens")]
 [ApiController]
+[Tags("Kindergarten")]
 public class RemoveManagerFromKindergartenController(
     IHandler<RemoveManagerFromKindergartenCommand, RemoveManagerFromKindergartenResult> handler
 ) : ControllerBase

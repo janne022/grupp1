@@ -8,7 +8,10 @@ export default defineConfig({
     output: {
       mode: "tags-split",
       target: "./src/shared/api/endpoints",
-      schemas: "./src/shared/api/models",
+      schemas: {
+        path: "./src/shared/api/models",
+        splitByTags: true,
+      },
       client: "fetch",
       clean: true,
       //prettier: true, apparently prettier is not working with the new version of orval
