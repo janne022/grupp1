@@ -27,7 +27,7 @@ import {
   SelectLabel,
   SelectTrigger,
   SelectValue,
-} from "./ui/select";
+} from "@/shared/components/ui/select";
 import { Link } from "@tanstack/react-router";
 
 const formSchema = z
