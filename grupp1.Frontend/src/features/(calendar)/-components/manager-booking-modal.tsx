@@ -215,24 +215,21 @@ export default function ManagerBooking({
       ? toDate(endDateTime)
       : undefined;
 
-  const filtered: AvailableTimesByKindergartenDTO[] =
-    !isEditing && from && to && from < to
-      ? availableTimes
-          .map((kindergarten) => ({
-            ...kindergarten,
-            availableTimes: filterAvailableTimes(
-              kindergarten.availableTimes,
-              from,
-              to,
-            ),
-          }))
-          .filter((kindergarten) => kindergarten.availableTimes.length > 0)
-          .filter((kindergarten) =>
-            kindergarten.kindergartenName
-              .toLowerCase()
-              .includes(searchQuery.toLowerCase()),
-          )
-      : [];
+  const filtered: AvailableTimesByKindergartenDTO[] = !isEditing
+    ? availableTimes
+        .map((kindergarten) => ({
+          ...kindergarten,
+          availableTimes:
+            from && to && from < to
+              ? filterAvailableTimes(kindergarten.availableTimes, from, to)
+              : kindergarten.availableTimes,
+        }))
+        .filter((kindergarten) =>
+          kindergarten.kindergartenName
+            .toLowerCase()
+            .includes(searchQuery.toLowerCase()),
+        )
+    : [];
 
   const effectiveSelectedKindergartenId = filtered.some(
     (kindergarten) => kindergarten.kindergartenId === selectedKindergartenId,
