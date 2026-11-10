@@ -9,6 +9,7 @@ namespace Vicaria.Server.Features.UserInfo
     [Route("api/user-info")]
     [Authorize]
     [ApiController]
+    [Tags("UserInfo")]
     public class UserInfoController(IHandler<UserInfoQuery, UserInfoResponse?> handler,
     ILogger<UserInfoController> _logger)
         : ControllerBase

@@ -10,6 +10,7 @@ namespace Vicaria.Server.Features.AvailableTimes.Update
     [Route("api/available-times")]
     [Authorize(Roles = VicariaUserRoles.Substitute)]
     [ApiController]
+    [Tags("AvailableTimes")]
     public class UpdateAvailableTimeController(
         IHandler<UpdateAvailableTimeCommand, UpdateAvailableTimeResponse> handler,
         ILogger<UpdateAvailableTimeController> logger

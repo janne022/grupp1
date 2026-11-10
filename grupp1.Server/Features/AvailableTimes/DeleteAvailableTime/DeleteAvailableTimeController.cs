@@ -10,6 +10,7 @@ namespace Vicaria.Server.Features.AvailableTimes.Delete;
 [Route("api/available-times")]
 [Authorize]
 [ApiController]
+[Tags("AvailableTimes")]
 public class DeleteAvailableTimeController(
     IHandler<DeleteAvailableTimeCommand, DeleteAvailableTimeStatus> handler) : ControllerBase
 {
@@ -39,4 +40,3 @@ public class DeleteAvailableTimeController(
         };
     }
 }
-
