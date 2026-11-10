@@ -22,6 +22,22 @@ export default function PendingMessage({
       minute: "2-digit",
     });
 
+  const countTimeDifference = (start: Date, end: Date) => {
+    const difference = Math.abs(end.getTime() - start.getTime());
+
+    return {
+      milliseconds: difference,
+      seconds: Math.floor(difference / 1000),
+      minutes: Math.floor(difference / 60000),
+      hours: Math.floor(difference / 3600000),
+      days: Math.floor(difference / 86400000),
+    };
+  };
+
+  const timeDiff = countTimeDifference(
+    new Date(pendingTime.startTime),
+    new Date(pendingTime.endTime),
+  );
 
   const timeRange = `${formatTime(pendingTime.startTime)} - ${formatTime(pendingTime.endTime)}`;
 
@@ -30,7 +46,9 @@ export default function PendingMessage({
       <CardHeader className="gap-3">
         <CardTitle>{pendingTime.kindergarten.name}s förskola</CardTitle>
         <CardAction>
-          <Badge className="bg-amber-200 text-yellow-700">pending</Badge>
+          <Badge className="bg-orange-400 text-orange-900">
+            Behöver beslut
+          </Badge>
         </CardAction>
         <CardDescription className="flex flex-col gap-1.5">
           <div className="flex justify-start gap-1">
@@ -45,9 +63,8 @@ export default function PendingMessage({
           </div>
           <div className="flex justify-start gap-1">
             <Clock8 />
-            <p>
-              {timeRange}
-            </p>
+            <p>{timeRange}</p>
+            <p>({timeDiff.hours} timmars pass)</p>
           </div>
         </CardDescription>
       </CardHeader>
