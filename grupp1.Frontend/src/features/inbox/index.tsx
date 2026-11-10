@@ -26,16 +26,20 @@ function RouteComponent() {
       <div className="p-3">
         <div className="flex justify-between">
           <h1>Dina erbjudna pass</h1>
-          <Badge className="bg-orange-400 text-orange-900">{pendingTimes?.length} pass tillgängliga</Badge>
+          <Badge className="bg-orange-400 text-orange-900">
+            {pendingTimes?.length} pass tillgängliga
+          </Badge>
         </div>
         <div>
           <Button>tab 1</Button>
           <Button>tab 2</Button>
           <Button>tab 3</Button>
         </div>
-        {pendingTimes?.map((pendingTime) => (
-          <PendingMessage pendingTime={pendingTime}/>
-        ))}
+        <div className="overflow-y-scroll max-h-199">
+          {pendingTimes?.map((pendingTime) => (
+            <PendingMessage pendingTime={pendingTime} />
+          ))}
+        </div>
       </div>
     );
   }
