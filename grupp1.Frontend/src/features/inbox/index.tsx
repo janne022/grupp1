@@ -26,7 +26,7 @@ function RouteComponent() {
       <div className="p-3">
         <div className="flex justify-between">
           <h1>Dina erbjudna pass</h1>
-          <Badge className="bg-orange-400 text-orange-900">
+          <Badge className="p-3" >
             {pendingTimes?.length} pass tillgängliga
           </Badge>
         </div>
