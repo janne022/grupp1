@@ -23,10 +23,10 @@ function RouteComponent() {
     const pendingTimes = pendingTimesResponse.data?.pendingTimes;
 
     return (
-      <div>
+      <div className="p-3">
         <div className="flex justify-between">
           <h1>Dina erbjudna pass</h1>
-          <Badge>3 pass</Badge>
+          <Badge>{pendingTimes?.length} pass</Badge>
         </div>
         <div>
           <Button>tab 1</Button>
