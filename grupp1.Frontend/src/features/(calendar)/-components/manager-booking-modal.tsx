@@ -337,9 +337,7 @@ export default function ManagerBooking({
                   <h5 className="text-muted-foreground text-xs m-0 p-0">
                     Förskola
                   </h5>
-                  <p className="m-0 p-0">
-                    {pendingTimeData.kindergarten.kindergartenName}
-                  </p>
+                  <p className="m-0 p-0">{pendingTimeData.kindergarten.name}</p>
                 </div>
               </div>
               <div className="flex flex-row gap-2 items-center">

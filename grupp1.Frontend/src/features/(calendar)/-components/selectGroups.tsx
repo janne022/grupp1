@@ -17,11 +17,12 @@ export function SelectGroups({
   value?: string[];
   onChange?: (value: string[]) => void;
 }) {
+  console.log("KindergartenDto", KindergartenDto);
   return (
     <Select
       multiple={true}
       items={KindergartenDto.map((dto) => ({
-        label: dto.kindergartenName,
+        label: dto.name,
         value: dto.id,
       }))}
       value={value}
@@ -37,7 +38,7 @@ export function SelectGroups({
       <SelectContent>
         {KindergartenDto.map((dto) => (
           <SelectItem key={dto.id} value={dto.id}>
-            {dto.kindergartenName}
+            {dto.name}
           </SelectItem>
         ))}
       </SelectContent>
