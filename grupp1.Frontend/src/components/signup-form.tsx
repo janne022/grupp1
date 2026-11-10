@@ -28,7 +28,10 @@ import {
   SelectTrigger,
   SelectValue,
 } from "./ui/select";
-import { Link } from "@tanstack/react-router";
+import { Link, useNavigate } from "@tanstack/react-router";
+import { useQueryClient } from "@tanstack/react-query";
+import { currentUserQuery } from "@/api/services/MeService";
+import type { UserInfoResponse } from "@/api/models/userInfoResponse";
 
 const formSchema = z
   .object({
@@ -37,6 +40,9 @@ const formSchema = z
     email: z.email(),
     password: z.string().min(8, "Password must be at least 8 characters"),
     confirmPassword: z.string(),
+    phoneNumber: z
+      .string()
+      .min(8, "Phone numbers must be at least 8 characters"),
     role: z.enum(["Manager", "Substitute"]),
   })
   .refine((data) => data.password === data.confirmPassword, {
@@ -58,18 +64,44 @@ export function SignupForm({
       email: "",
       password: "",
       confirmPassword: "",
+      phoneNumber: "",
       role: undefined,
     },
   });
 
+  const forwardingPage = useNavigate();
+  const queryClient = useQueryClient();
+
   function onSubmit(data: z.infer<typeof formSchema>) {
-    signup.mutate({
-      firstName: data.firstName,
-      lastName: data.lastName,
-      email: data.email,
-      password: data.password,
-      role: data.role,
-    });
+    signup.mutate(
+      {
+        firstName: data.firstName,
+        lastName: data.lastName,
+        email: data.email,
+        password: data.password,
+        phoneNumber: data.phoneNumber,
+        role: data.role,
+      },
+      {
+        onSuccess: () => {
+          console.log("onSuccess entered");
+          const user = queryClient.getQueryData<UserInfoResponse | null>(
+            currentUserQuery.queryKey,
+          );
+          if (user?.roles.includes("Manager")) {
+            forwardingPage({ to: "/ManagerPage" }
+            );
+            console.log("manager logged in");
+          } else if (user?.roles.includes("Substitute")) {
+            forwardingPage({ to: "/" }); // TODO: Swap this for /SubstitutePage when that's ready
+            console.log("sub logged in");
+          } else {
+            forwardingPage({ to: "/signup" }); // This shouldn't happen
+            console.log("who the fuck logged in");
+          }
+        },
+      },
+    );
   }
 
   const roles = [
@@ -131,6 +163,22 @@ export function SignupForm({
                       id="email"
                       type="email"
                       placeholder="john.doe@example.com"
+                      required
+                    />
+                  </Field>
+                )}
+              />
+              <Controller
+                name="phoneNumber"
+                control={form.control}
+                render={({ field, fieldState }) => (
+                  <Field data-invalid={fieldState.invalid}>
+                    <FieldLabel htmlFor="phoneNumber">Phone number</FieldLabel>
+                    <Input
+                      {...field}
+                      id="phoneNumber"
+                      type="tel"
+                      placeholder="0701234567"
                       required
                     />
                   </Field>
