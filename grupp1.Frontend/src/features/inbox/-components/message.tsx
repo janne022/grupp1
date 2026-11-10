@@ -42,7 +42,7 @@ export default function PendingMessage({
   const timeRange = `${formatTime(pendingTime.startTime)} - ${formatTime(pendingTime.endTime)}`;
 
   return (
-    <Card  className="m-5">
+    <Card className="mt-3">
       <CardHeader className="gap-3">
         <CardTitle className="text-lg">{pendingTime.kindergarten.name}s förskola</CardTitle>
         <CardAction>
