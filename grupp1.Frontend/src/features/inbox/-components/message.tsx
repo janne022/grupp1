@@ -42,17 +42,17 @@ export default function PendingMessage({
   const timeRange = `${formatTime(pendingTime.startTime)} - ${formatTime(pendingTime.endTime)}`;
 
   return (
-    <Card className="m-5">
+    <Card  className="m-5">
       <CardHeader className="gap-3">
         <CardTitle className="text-lg">{pendingTime.kindergarten.name}s förskola</CardTitle>
         <CardAction>
-          <Badge className="bg-orange-400 text-orange-900">
-            Behöver beslut
+          <Badge className="p-3" >
+            Tillgänglig
           </Badge>
         </CardAction>
         <CardDescription className="flex flex-col gap-1.5">
           <div className="flex justify-start gap-1">
-            <CalendarDays size={20} />
+            <CalendarDays size={18} />
             <p>
               {new Date(pendingTime.startTime).toLocaleDateString("sv-SE", {
                 weekday: "long",
@@ -62,17 +62,17 @@ export default function PendingMessage({
             </p>
           </div>
           <div className="flex justify-start gap-1 items-center">
-            <Clock8 size={20} />
+            <Clock8 size={16} />
             <p>{timeRange}</p>
-            <p className="text-xs">({timeDiff.hours} timmars pass)</p>
+            <p className="text-xs">({timeDiff.hours}h pass)</p>
           </div>
         </CardDescription>
       </CardHeader>
-      <CardFooter className="flex justify-end gap-2">
-        <Button size="icon" variant="destructive">
+      <CardFooter className="flex justify-end gap-3">
+        <Button size="icon-lg" variant="destructive">
           <X />
         </Button>
-        <Button size="icon">
+        <Button size="icon-lg">
           <Check />
         </Button>
       </CardFooter>
