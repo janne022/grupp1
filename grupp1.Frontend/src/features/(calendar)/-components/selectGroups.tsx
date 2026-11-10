@@ -17,7 +17,6 @@ export function SelectGroups({
   value?: string[];
   onChange?: (value: string[]) => void;
 }) {
-  console.log("KindergartenDto", KindergartenDto);
   return (
     <Select
       multiple={true}
