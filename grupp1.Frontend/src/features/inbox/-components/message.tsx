@@ -47,7 +47,7 @@ export default function PendingMessage({
         <CardTitle className="text-lg">{pendingTime.kindergarten.name}s förskola</CardTitle>
         <CardAction>
           <Badge className="p-3" >
-            Tillgänglig
+            Bokningsbar
           </Badge>
         </CardAction>
         <CardDescription className="flex flex-col gap-1.5">

@@ -1,8 +1,14 @@
 import { createFileRoute } from "@tanstack/react-router";
 import PendingMessage from "./-components/message";
 import { GetAllPendingTimes } from "./-api/PendingTimeService";
-import { Button } from "@/shared/components/ui/button";
 import { Badge } from "@/shared/components/ui/badge";
+import {
+  Tabs,
+  TabsContent,
+  TabsList,
+  TabsTrigger,
+} from "@/shared/components/ui/tabs";
+import { CheckCircle, MessageCircleQuestionIcon } from "lucide-react";
 
 export const Route = createFileRoute("/inbox/")({
   component: RouteComponent,
@@ -23,26 +29,40 @@ function RouteComponent() {
     const pendingTimes = pendingTimesResponse.data?.pendingTimes;
 
     return (
-      <div className="p-3">
-        <div className="flex flex-col gap-3">
-          <div className="flex justify-between items-center">
-            <h1 className="text-2xl">Dina erbjudna pass</h1>
-            <Badge className="p-3">
-              {pendingTimes?.length} pass tillgängliga
-            </Badge>
-          </div>
+      <Tabs defaultValue="pending" className="p-3">
+        <TabsList variant="line">
+          <TabsTrigger value="pending">
+            <MessageCircleQuestionIcon />
+            Tillgängliga pass
+          </TabsTrigger>
+          <TabsTrigger value="decided">
+            <CheckCircle />
+            Bestämda pass
+          </TabsTrigger>
+        </TabsList>
+        <TabsContent value="pending">
           <div>
-            <Button>tab 1</Button>
-            <Button>tab 2</Button>
-            <Button>tab 3</Button>
+            <div className="flex flex-col gap-3">
+              <div className="flex justify-between items-center pb-2">
+                <h1 className="text-2xl">
+                  Pass som matchar dina tillgängliga tider
+                </h1>
+                <Badge className="p-3">
+                  {pendingTimes?.length} pass i listan
+                </Badge>
+              </div>
+            </div>
+            <div className="overflow-y-scroll max-h-199 p-0.5">
+              {pendingTimes?.map((pendingTime) => (
+                <PendingMessage pendingTime={pendingTime} />
+              ))}
+            </div>
           </div>
-        </div>
-        <div className="overflow-y-scroll max-h-199 p-0.5">
-          {pendingTimes?.map((pendingTime) => (
-            <PendingMessage pendingTime={pendingTime} />
-          ))}
-        </div>
-      </div>
+        </TabsContent>
+        <TabsContent value="decided">
+          <p>Här var det tomt..!</p>
+        </TabsContent>
+      </Tabs>
     );
   }
 }
