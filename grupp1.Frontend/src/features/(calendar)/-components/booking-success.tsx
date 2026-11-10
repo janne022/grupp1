@@ -45,7 +45,7 @@ export default function BookingSuccess({ data, onClose }: BookingSuccessProps) {
           <div className="flex flex-col">
             <span className="text-xs text-muted-foreground">Förskola</span>
 
-            <p>{data.kindergarten.kindergartenName}</p>
+            <p>{data.kindergarten.name}</p>
           </div>
         </div>
         <div className="flex items-center gap-2">
