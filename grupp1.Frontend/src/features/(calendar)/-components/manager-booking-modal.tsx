@@ -16,6 +16,7 @@ import type {
   AvailableTimesByManagerDTO,
   BookDecidedTimeQuery,
   GetAllDecidedTimesDTO,
+  GetAllKindergartensResponse,
   PostPendingTimeResponse,
 } from "@/shared/api/models";
 import { EditDecidedTime } from "@/features/(calendar)/-api/DecidedTimeService";
@@ -47,12 +48,14 @@ import { DatePickerTime } from "../../../shared/components/ui/date-picker";
 import { Input } from "../../../shared/components/ui/input";
 import { PostPendingTime } from "@/features/(calendar)/-api/PendingTimeService";
 import { Avatar, AvatarFallback } from "../../../shared/components/ui/avatar";
+import type { UseQueryResult } from "@tanstack/react-query";
 
 interface BookTimeProps {
   open: boolean;
   setOpen: Dispatch<SetStateAction<boolean>>;
   selectedDate?: Date;
   availableTimes?: AvailableTimesByKindergartenDTO[];
+  kindergartens?: UseQueryResult<GetAllKindergartensResponse | null, Error>;
   startTime?: string;
   endTime?: string;
   title?: string;
@@ -133,6 +136,7 @@ export default function ManagerBooking({
   setOpen,
   selectedDate,
   availableTimes = [],
+  kindergartens,
   startTime = "08:00",
   endTime = "16:00",
   submitLabel,
@@ -487,35 +491,41 @@ export default function ManagerBooking({
                         onValueChange={setSelectedKindergartenId}
                         className="max-w-sm"
                       >
-                        {filtered.length === 0 ? (
+                        {kindergartens?.data === null ? (
                           <p className="text-center text-sm text-muted-foreground">
                             Ingen förskola hittades.
                           </p>
                         ) : (
-                          filtered.map((kindergarten) => (
-                            <FieldLabel
-                              key={kindergarten.kindergartenId}
-                              htmlFor={kindergarten.kindergartenId}
-                            >
-                              <Field orientation="horizontal">
-                                <FieldContent>
-                                  <FieldTitle className="font-semibold">
-                                    {kindergarten.kindergartenName}
-                                  </FieldTitle>
+                          kindergartens?.data?.kindergartens.map(
+                            (kindergarten) => (
+                              <FieldLabel
+                                key={kindergarten.id}
+                                htmlFor={kindergarten.id}
+                              >
+                                <Field orientation="horizontal">
+                                  <FieldContent>
+                                    <FieldTitle className="font-semibold">
+                                      {kindergarten.name}
+                                    </FieldTitle>
 
-                                  <FieldDescription className="text-sm text-muted-foreground">
-                                    {kindergarten.availableTimes.length}{" "}
-                                    tillgängliga vikarier
-                                  </FieldDescription>
-                                </FieldContent>
+                                    {filtered.find(
+                                      (k) =>
+                                        k.kindergartenId === kindergarten.id,
+                                    ) && (
+                                      <FieldDescription className="text-sm text-muted-foreground">
+                                        {totalAvailable} tillgängliga vikarier
+                                      </FieldDescription>
+                                    )}
+                                  </FieldContent>
 
-                                <RadioGroupItem
-                                  value={kindergarten.kindergartenId}
-                                  id={kindergarten.kindergartenId}
-                                />
-                              </Field>
-                            </FieldLabel>
-                          ))
+                                  <RadioGroupItem
+                                    value={kindergarten.id}
+                                    id={kindergarten.id}
+                                  />
+                                </Field>
+                              </FieldLabel>
+                            ),
+                          )
                         )}
                       </RadioGroup>
                     </div>

@@ -102,7 +102,7 @@ function RouteComponent() {
 
   // Substitute queries and mutations
   const AvailableTimeResponse = GetAllAvailableTimes(isSubstitute);
-  const KindergartenResponse = GetAllKindergartens(isSubstitute);
+  const KindergartenResponse = GetAllKindergartens();
   const DeleteAvailableTimeFunction = DeleteAvailableTime();
 
   // Manager queries
@@ -450,6 +450,7 @@ function RouteComponent() {
               AvailableTimesByManagerResponse.data
                 ?.availableTimesByKindergarten ?? []
             }
+            kindergartens={KindergartenResponse}
             submitLabel="Bekräfta Bokning"
             selectedDate={date}
             updateDecidedTime={selectedDecidedTime}
