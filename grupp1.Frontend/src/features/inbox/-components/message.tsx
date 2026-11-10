@@ -16,6 +16,15 @@ export default function PendingMessage({
 }: {
   pendingTime: PendingTimeDto;
 }) {
+  const formatTime = (value: string) =>
+    new Date(value).toLocaleTimeString("sv-SE", {
+      hour: "2-digit",
+      minute: "2-digit",
+    });
+
+
+  const timeRange = `${formatTime(pendingTime.startTime)} - ${formatTime(pendingTime.endTime)}`;
+
   return (
     <Card className="m-5">
       <CardHeader className="gap-3">
@@ -26,13 +35,18 @@ export default function PendingMessage({
         <CardDescription className="flex flex-col gap-1.5">
           <div className="flex justify-start gap-1">
             <CalendarDays />
-            <p>{pendingTime.startTime}</p>
+            <p>
+              {new Date(pendingTime.startTime).toLocaleDateString("sv-SE", {
+                weekday: "long",
+                day: "numeric",
+                month: "long",
+              })}
+            </p>
           </div>
           <div className="flex justify-start gap-1">
             <Clock8 />
             <p>
-              {pendingTime.startTime}
-              <span> (8h)</span>
+              {timeRange}
             </p>
           </div>
         </CardDescription>
