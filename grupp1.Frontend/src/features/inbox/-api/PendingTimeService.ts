@@ -58,4 +58,4 @@ function GetAllPendingTimes(
   });
 }
 
-export { GetAllPendingTimes };
+export { GetAllPendingTimes, RejectPendingTime };
