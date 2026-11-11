@@ -78,7 +78,7 @@ public class RemoveCurrentUserHandler : IHandler<RemoveCurrentUserCommand, Error
                 pendingTime.Id
             );
 
-            return Error.Unexpected("Could not remove current substitute from pendingTime");
+            return Error.Unexpected("PendingTime.SubstituteNotFound", "Could not remove current substitute from pendingTime");
         }
 
         await _dbContext.SaveChangesAsync();
