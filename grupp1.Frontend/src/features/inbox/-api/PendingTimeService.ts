@@ -22,7 +22,8 @@ function AcceptPendingTime() {
     },
 
     onSuccess: async () => {
-      await query.invalidateQueries({ queryKey: ["decidedTimesData"] });
+      await query.invalidateQueries({ queryKey: ["pendingTimesData"] });
+      // TODO: also invalidate decided time queries here I think?
     },
   });
 }
