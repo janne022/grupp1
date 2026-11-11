@@ -10,6 +10,10 @@ declare module "@tanstack/react-router" {
   interface Register {
     router: typeof router;
   }
+  interface StaticDataRouteOption{
+        hideSidebar?: boolean;
+        hideFooter?: boolean;
+    }
 }
 
 createRoot(document.getElementById("root")!).render(
