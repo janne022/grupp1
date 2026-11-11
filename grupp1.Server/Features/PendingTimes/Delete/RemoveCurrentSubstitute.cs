@@ -21,7 +21,7 @@ public sealed class RemoveCurrentUserController : ControllerBase
         _handler = handler;
     }
 
-    [HttpDelete("{pendingTimeId}/current-user")]
+    [HttpDelete("{pendingTimeId}/substitute")]
     public async Task<ActionResult<RemoveCurrentUserResponse>> RemoveCurrentUser([FromRoute(Name = "pendingTimeId")] Guid pendingTimeId)
     {
         string? substituteIdClaim = User.FindFirstValue(ClaimTypes.NameIdentifier);
