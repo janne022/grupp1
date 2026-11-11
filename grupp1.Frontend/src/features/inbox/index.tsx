@@ -37,7 +37,7 @@ function RouteComponent() {
           </TabsTrigger>
           <TabsTrigger value="decided">
             <CheckCircle />
-            Bestämda pass
+            Övriga
           </TabsTrigger>
         </TabsList>
         <TabsContent value="pending">
