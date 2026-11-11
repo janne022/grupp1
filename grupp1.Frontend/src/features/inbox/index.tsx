@@ -1,6 +1,6 @@
 import { createFileRoute } from "@tanstack/react-router";
 import PendingMessage from "./-components/message";
-import { GetAllPendingTimes } from "./-api/PendingTimeService";
+import { GetAllPendingTimes, RejectPendingTime } from "./-api/PendingTimeService";
 import { Badge } from "@/shared/components/ui/badge";
 import {
   Tabs,

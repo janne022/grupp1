@@ -11,6 +11,9 @@ import {
 } from "@/shared/components/ui/card";
 import { CalendarDays, Check, Clock8, X } from "lucide-react";
 
+import { RejectPendingTime } from "../-api/PendingTimeService";
+import { toast } from "@/shared/components/ui/toast";
+
 export default function PendingMessage({
   pendingTime,
 }: {
@@ -41,14 +44,35 @@ export default function PendingMessage({
 
   const timeRange = `${formatTime(pendingTime.startTime)} - ${formatTime(pendingTime.endTime)}`;
 
+  const rejectPendingTimeFunction = RejectPendingTime();
+
+  function handleDelete() {
+    rejectPendingTimeFunction.mutate(pendingTime.id, {
+      onSuccess: () => {
+        toast.add({
+          type: "success",
+          title: "Tack!",
+          description: "Du har tackat nej till passet.",
+        });
+      },
+      onError: () => {
+        toast.add({
+          type: "error",
+          title: "Åh nej...",
+          description: "Något gick fel...",
+        });
+      },
+    });
+  }
+
   return (
     <Card className="mt-3">
       <CardHeader className="gap-3">
-        <CardTitle className="text-lg">{pendingTime.kindergarten.name}s förskola</CardTitle>
+        <CardTitle className="text-lg">
+          {pendingTime.kindergarten.name}s förskola
+        </CardTitle>
         <CardAction>
-          <Badge className="p-3" >
-            Bokningsbar
-          </Badge>
+          <Badge className="p-3">Bokningsbar</Badge>
         </CardAction>
         <CardDescription className="flex flex-col gap-1.5">
           <div className="flex justify-start gap-1">
@@ -69,7 +93,7 @@ export default function PendingMessage({
         </CardDescription>
       </CardHeader>
       <CardFooter className="flex justify-end gap-3">
-        <Button size="icon-lg" variant="destructive">
+        <Button size="icon-lg" variant="destructive" onClick={handleDelete}>
           <X />
         </Button>
         <Button size="icon-lg">
