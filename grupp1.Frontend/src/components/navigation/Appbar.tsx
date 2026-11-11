@@ -1,6 +1,7 @@
 import { Link } from "@tanstack/react-router";
 import { PersonStanding } from "lucide-react";
 import AppbarUserInfo from "./AppbarUserInfo";
+import { NavUser } from "./NavUser";
 import {
   SidebarHeader,
   SidebarMenu,
@@ -30,6 +31,7 @@ export default function Appbar() {
         <SidebarGroupLabel> </SidebarGroupLabel>
         <SidebarGroupContent>
           <AppbarUserInfo />
+          <NavUser />
           <SidebarMenu>
             {navLinks.map((link) => (
               <SidebarMenuItem key={link.to}>
