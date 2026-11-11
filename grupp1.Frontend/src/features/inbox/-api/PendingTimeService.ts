@@ -1,15 +1,30 @@
-import { useQuery } from "@tanstack/react-query";
+import { useMutation, useQuery, useQueryClient } from "@tanstack/react-query";
 import { apiClient, ApiError } from "@/shared/api/api";
-import type {
-  GetAllDecidedTimesResponse,
-  GetPendingTimesResponse,
-} from "@/shared/api/models";
+import type { GetPendingTimesResponse } from "@/shared/api/models";
 
 type GetAllDecidedTimesParams = {
   kindergartenId?: string[];
   fromTime?: string;
   toTime?: string;
 };
+
+function RejectPendingTime() {
+  const query = useQueryClient();
+
+  return useMutation({
+    mutationFn: (pendingTimeId: string) => {
+      return apiClient.delete<void>(
+        `/api/pending-times/${pendingTimeId}/substitute`,
+      );
+    },
+
+    onSuccess: async () => {
+      await query.invalidateQueries({
+        queryKey: ["pendingTimesData"],
+      });
+    },
+  });
+}
 
 function GetAllPendingTimes(
   params: GetAllDecidedTimesParams = {},
