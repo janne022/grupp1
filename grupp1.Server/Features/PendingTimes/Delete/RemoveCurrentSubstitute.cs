@@ -65,7 +65,7 @@ public class RemoveCurrentUserHandler : IHandler<RemoveCurrentUserCommand, Error
         if (pendingTime is null)
         {
             _logger.LogWarning("Remove current user from pending time FAILED: could not find pendingTime with ID {id}", command.PendingTimeId);
-            return Error.NotFound("Could not find the pendingTime by the given ID");
+            return Error.NotFound("PendingTime.NotFound", "Could not find the pendingTime by the given ID");
         }
 
         int substitutesRemoved = pendingTime.AvailableSubs.RemoveWhere(userPendingTime => userPendingTime.UserId == command.UserId);
