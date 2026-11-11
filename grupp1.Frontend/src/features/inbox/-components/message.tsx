@@ -11,7 +11,10 @@ import {
 } from "@/shared/components/ui/card";
 import { CalendarDays, Check, Clock8, X } from "lucide-react";
 
-import { RejectPendingTime } from "../-api/PendingTimeService";
+import {
+  AcceptPendingTime,
+  RejectPendingTime,
+} from "../-api/PendingTimeService";
 import { toast } from "@/shared/components/ui/toast";
 
 export default function PendingMessage({
@@ -45,6 +48,7 @@ export default function PendingMessage({
   const timeRange = `${formatTime(pendingTime.startTime)} - ${formatTime(pendingTime.endTime)}`;
 
   const rejectPendingTimeFunction = RejectPendingTime();
+  const acceptPendingTimeFunction = AcceptPendingTime();
 
   function handleDelete() {
     rejectPendingTimeFunction.mutate(pendingTime.id, {
@@ -53,6 +57,25 @@ export default function PendingMessage({
           type: "success",
           title: "Tack!",
           description: "Du har tackat nej till passet.",
+        });
+      },
+      onError: () => {
+        toast.add({
+          type: "error",
+          title: "Åh nej...",
+          description: "Något gick fel...",
+        });
+      },
+    });
+  }
+
+  function handleAccept() {
+    acceptPendingTimeFunction.mutate(pendingTime.id, {
+      onSuccess: () => {
+        toast.add({
+          type: "success",
+          title: "najs!",
+          description: "Du har tackat ja till passet!",
         });
       },
       onError: () => {
@@ -96,7 +119,7 @@ export default function PendingMessage({
         <Button size="icon-lg" variant="destructive" onClick={handleDelete}>
           <X />
         </Button>
-        <Button size="icon-lg">
+        <Button size="icon-lg" onClick={handleAccept}>
           <Check />
         </Button>
       </CardFooter>
