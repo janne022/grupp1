@@ -1,6 +1,6 @@
 import { createFileRoute } from "@tanstack/react-router";
 import PendingMessage from "./-components/message";
-import { GetAllPendingTimes, RejectPendingTime } from "./-api/PendingTimeService";
+import { GetAllPendingTimes } from "./-api/PendingTimeService";
 import { Badge } from "@/shared/components/ui/badge";
 import {
   Tabs,
@@ -15,7 +15,9 @@ export const Route = createFileRoute("/inbox/")({
 });
 
 function RouteComponent() {
-  const pendingTimesResponse = GetAllPendingTimes();
+  const pendingTimesResponse = GetAllPendingTimes({
+    includeBookedTimes: false,
+  });
 
   if (pendingTimesResponse.isError) {
     return <h1>Oops, något gick fel!</h1>;
