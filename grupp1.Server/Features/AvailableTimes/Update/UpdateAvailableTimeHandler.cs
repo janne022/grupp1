@@ -34,6 +34,13 @@ public class UpdateAvailableTimeHandler(
             );
         }
 
+        var oldStart = availableTime.StartTime;
+        var oldEnd = availableTime.EndTime;
+        var oldKindergartenIds = await DbContext.KindergartenAvailableTimes
+            .Where(kat => kat.AvailableTimeId == availableTime.Id)
+            .Select(kat => kat.KindergartenId)
+            .ToListAsync(ct);
+
         var startTime = command.StartTime ?? availableTime.StartTime;
         var endTime = command.EndTime ?? availableTime.EndTime;
 
@@ -114,6 +121,42 @@ public class UpdateAvailableTimeHandler(
                     );
                 }
             }
+        }
+        List<Guid> newKindergartenIds = command.Kindergartens is { } newIds
+                ? await DbContext.Kindergartens
+                    .Where(k => newIds.Contains(k.Id))
+                    .Select(k => k.Id)
+                    .ToListAsync(ct)
+                : oldKindergartenIds;
+
+        await DbContext.Set<UserPendingTime>()
+            .Where(upt =>
+                upt.UserId == command.UserId &&
+                DbContext.PendingTimes.Any(pt =>
+                    pt.Id == upt.PendingTimeId &&
+                    !pt.IsBooked &&
+                    oldStart <= pt.StartTime &&
+                    oldEnd >= pt.EndTime &&
+                    oldKindergartenIds.Contains(pt.KindergartenId)))
+                .ExecuteDeleteAsync(ct);
+
+        var matchingPendingTimes = await DbContext.PendingTimes
+            .Include(pt => pt.AvailableSubs)
+            .Where(pt =>
+                !pt.IsBooked &&
+                startTime <= pt.StartTime &&
+                endTime >= pt.EndTime &&
+                newKindergartenIds.Contains(pt.KindergartenId) &&
+                !pt.AvailableSubs.Any(s => s.UserId == command.UserId))
+            .ToListAsync(ct);
+
+        foreach (var pendingTime in matchingPendingTimes)
+        {
+            pendingTime.AvailableSubs.Add(new UserPendingTime
+            {
+                UserId = command.UserId,
+                PendingTimeId = pendingTime.Id
+            });
         }
 
         // Finally save the changes made.
