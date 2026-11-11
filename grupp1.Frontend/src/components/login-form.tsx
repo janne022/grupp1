@@ -19,7 +19,9 @@ import {
 import { Input } from "@/components/ui/input";
 import { useLogin } from "@/api/services/LoginService";
 import { Controller, useForm } from "react-hook-form";
-import { Link } from "@tanstack/react-router";
+import { Link, useNavigate } from "@tanstack/react-router";
+import { useQueryClient } from "@tanstack/react-query";
+import { currentUserQuery } from "@/api/services/MeService";
 
 const formSchema = z.object({
   email: z.email(),
@@ -31,6 +33,8 @@ export function LoginForm({
   ...props
 }: React.ComponentProps<"div">) {
   const login = useLogin();
+  const queryClient = useQueryClient();
+  const navigate = useNavigate();
 
   const form = useForm<z.infer<typeof formSchema>>({
     resolver: zodResolver(formSchema),
@@ -41,19 +45,27 @@ export function LoginForm({
   });
 
   function onSubmit(data: z.infer<typeof formSchema>) {
-    login.mutate({
-      email: data.email,
-      password: data.password,
-    });
+    login.mutate(
+      {
+        email: data.email,
+        password: data.password,
+      },
+      {
+        onSuccess: async () => {
+          await queryClient.query({ ...currentUserQuery, staleTime: 0 });
+          navigate({ to: "/"})
+        },
+      },
+    );
   }
 
   return (
     <div className={cn("flex flex-col gap-6", className)} {...props}>
-      <Card>
+      <Card className="ring-0">
         <CardHeader>
-          <CardTitle>Login to your account</CardTitle>
+          {/* <CardTitle className="font-bold text-2xl">Login</CardTitle> */}
           <CardDescription>
-            Enter your email below to login to your account
+            Enter your email to login to your account
           </CardDescription>
         </CardHeader>
         <CardContent>
@@ -98,7 +110,9 @@ export function LoginForm({
                   Login
                 </Button>
                 <FieldDescription className="text-center">
-                  Don&apos;t have an account? <Link to="/signup">Sign up</Link>
+                  <Link className="text-left" to="/signup">
+                    Don&apos;t have an account?{" "}
+                  </Link>
                 </FieldDescription>
               </Field>
             </FieldGroup>

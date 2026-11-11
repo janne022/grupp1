@@ -38,7 +38,7 @@ import {
   ContextMenuItem,
   ContextMenuTrigger,
 } from "@/components/ui/context-menu";
-import { useCurrentUser } from "@/api/services/MeService";
+import { currentUserQuery, useCurrentUser } from "@/api/services/MeService";
 import ManagerBooking from "@/components/ui/managerBooking";
 import { useAvailableTimesByManager } from "@/api/services/AvailableTimeByManagerService";
 import {
@@ -50,6 +50,15 @@ import ConfirmDialog from "@/components/confirm-dialog";
 
 export const Route = createFileRoute("/")({
   component: RouteComponent,
+  beforeLoad: async ({ context }) => {
+    const user = await context.queryClient.query(currentUserQuery);
+
+    if (!user) {
+      throw Route.redirect({
+        to: "/login",
+      });
+    }
+  },
 });
 
 type TimeVariant = "available" | "decided";
