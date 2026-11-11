@@ -94,7 +94,7 @@ export async function apiFetch<T>(
   }
 
   if (!response.ok) {
-    throw new ApiError(response.status, await response.json());
+    throw new ApiError(response.status, await response.text());
   }
 
   return response.json() as Promise<T>;
