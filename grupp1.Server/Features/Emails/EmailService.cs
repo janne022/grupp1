@@ -5,6 +5,16 @@ using MimeKit;
 using ErrorOr;
 using Vicaria.Server.Infrastructure.Emails;
 
+// TODO: Find and implement an actual email provider!
+// When the time comes to hook this up to an actual provider:
+//    dotnet user-secrets set "SMTP_URI" "smtp://smtp.ouremailprovider.com:port"
+//    dotnet user-secrets set "SMTP_USERNAME" "LoginAtTheEmailProvider"
+//    dotnet user-secrets set "SMTP_PASSWORD" "PasswordAtTheEmailProvider"
+//    dotnet user-secrets set "SMTP_FROM_ADDRESS" "WhereTheEmailIsActuallySentFrom.com"
+//
+//    dotnet user-secrets remove "SMTP_URI"
+//    ^ returns to mailpit afterwards
+
 namespace Vicaria.Server.Features.Emails
 {
     public class EmailService(IConfiguration config, ILogger<EmailService> logger) : IEmailService
