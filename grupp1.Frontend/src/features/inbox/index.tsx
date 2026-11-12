@@ -9,6 +9,7 @@ import {
   TabsTrigger,
 } from "@/shared/components/ui/tabs";
 import { CheckCircle, MessageCircleQuestionIcon } from "lucide-react";
+import HeaderBar from "./-components/headerBar";
 
 export const Route = createFileRoute("/inbox/")({
   component: RouteComponent,
@@ -33,25 +34,22 @@ function RouteComponent() {
     return (
       <Tabs defaultValue="pending" className="p-3">
         <TabsList variant="line">
-          <TabsTrigger value="pending">
-            <MessageCircleQuestionIcon />
-            Tillgängliga pass
-          </TabsTrigger>
-          <TabsTrigger value="decided">
-            <CheckCircle />
-            Övriga
-          </TabsTrigger>
+          <TabsTrigger value="pending">Tillgängliga pass</TabsTrigger>
+          <TabsTrigger value="decided">Övriga</TabsTrigger>
         </TabsList>
         <TabsContent value="pending">
           <div>
             <div className="flex flex-col gap-3">
-              <div className="flex justify-between items-center pb-2">
-                <h1 className="text-2xl">
-                  Pass som matchar dina tillgängliga tider
-                </h1>
-                <Badge className="p-3">
-                  {pendingTimes?.length} pass i listan
-                </Badge>
+              <div className="pb-2 flex flex-col gap-2">
+                <div className="flex justify-between items-center">
+                  <h1 className="text-2xl">
+                    Pass som matchar dina tillgängliga tider
+                  </h1>
+                  <Badge className="p-3">
+                    {pendingTimes?.length} pass i listan
+                  </Badge>
+                </div>
+                <HeaderBar />
               </div>
             </div>
             <div className="overflow-y-scroll max-h-199 p-0.5">
