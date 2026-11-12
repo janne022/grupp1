@@ -33,12 +33,10 @@ export default function FilterMenu() {
           </DropdownMenuCheckboxItem>
           <DropdownMenuCheckboxItem>Denna vecka</DropdownMenuCheckboxItem>
           <DropdownMenuSeparator />
-          <DropdownMenuItem>
-            <div className="flex justify-between w-full">
+            <div className="flex justify-between w-full p-1.5">
               <Button variant="ghost">Rensa</Button>
               <Button>Visa pass</Button>
             </div>
-          </DropdownMenuItem>
         </DropdownMenuGroup>
       </DropdownMenuContent>
     </DropdownMenu>
