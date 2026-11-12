@@ -1,4 +1,4 @@
-namespace Vicaria.Server.Infrastructure.Interfaces.Emails
+namespace Vicaria.Server.Infrastructure.Emails
 {
     public interface IEmailTemplate
     {

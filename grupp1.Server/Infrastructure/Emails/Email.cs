@@ -1,5 +1,5 @@
 using Vicaria.Server.Domain.Models;
-using Vicaria.Server.Infrastructure.Interfaces.Emails;
+using Vicaria.Server.Infrastructure.Emails;
 
 namespace Vicaria.Server.Infrastructure.Emails
 {
