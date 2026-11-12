@@ -1,5 +1,11 @@
 import { Link } from "@tanstack/react-router";
-import { PersonStanding } from "lucide-react";
+import {
+  PersonStanding,
+  Home,
+  CalendarClockIcon,
+  UserGroup,
+  Settings,
+} from "lucide-react";
 import AppbarUserInfo from "./AppbarUserInfo";
 import { NavUser } from "./NavUser";
 import {
@@ -14,10 +20,10 @@ import {
 } from "../ui/sidebar";
 
 const navLinks = [
-  { label: "Hem", to: "/" },
-  { label: "Översikt", to: "/calendar" },
-  { label: "länk 3", to: "/link3" },
-  { label: "länk 4", to: "/link4" },
+  { label: "Hem", to: "/", Icon: Home },
+  { label: "Översikt", to: "/calendar", Icon: CalendarClockIcon },
+  { label: "länk 3", to: "/link3", Icon: UserGroup },
+  { label: "länk 4", to: "/link4", Icon: Settings },
 ];
 
 export default function Appbar() {
@@ -30,16 +36,26 @@ export default function Appbar() {
       <SidebarGroup>
         <SidebarGroupLabel> </SidebarGroupLabel>
         <SidebarGroupContent>
-          <AppbarUserInfo />
+          {/* <AppbarUserInfo /> */}
           <NavUser />
           <SidebarMenu>
-            {navLinks.map((link) => (
-              <SidebarMenuItem key={link.to}>
-                <SidebarMenuButton>
-                  <Link to={link.to}>{link.label}</Link>
-                </SidebarMenuButton>
-              </SidebarMenuItem>
-            ))}
+            {navLinks.map((link) => {
+              const Icon = link.Icon;
+
+              return (
+                <SidebarMenuItem key={link.to}>
+                  <SidebarMenuButton>
+                    <Link
+                      to={link.to}
+                      className="flex flex-row gap-2 items-center"
+                    >
+                      {Icon && <Icon size={18} />}
+                      {link.label}
+                    </Link>
+                  </SidebarMenuButton>
+                </SidebarMenuItem>
+              );
+            })}
           </SidebarMenu>
         </SidebarGroupContent>
       </SidebarGroup>
