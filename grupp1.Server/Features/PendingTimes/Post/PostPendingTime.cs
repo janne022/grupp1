@@ -156,7 +156,7 @@ public sealed class PostPendingTimeHandler : IHandler<PostPendingTimeCommand, Er
             IsBooked: fetchedNewPendingTime.IsBooked,
             Kindergarten: new KindergartenDto(
                 Id: fetchedNewPendingTime.KindergartenId,
-                KindergartenName: fetchedNewPendingTime.Kindergarten.Name
+                Name: fetchedNewPendingTime.Kindergarten.Name
             ),
             StartTime: fetchedNewPendingTime.StartTime,
             EndTime: fetchedNewPendingTime.EndTime,
@@ -215,7 +215,7 @@ public record class PostPendingTimeResponse
 public record class KindergartenDto
 (
     Guid Id,
-    string KindergartenName
+    string Name
 );
 
 public record class SubstituteDto

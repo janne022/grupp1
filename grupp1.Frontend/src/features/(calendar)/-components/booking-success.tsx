@@ -37,23 +37,17 @@ export default function BookingSuccess({ data, onClose }: BookingSuccessProps) {
       </p>
       <div className="flex flex-col gap-4">
         <h4 className="font-semibold">Bokningsdetaljer</h4>
-
-        {/* Kindergarten */}
         <div className="flex items-center gap-2">
           <School />
-
           <div className="flex flex-col">
             <span className="text-xs text-muted-foreground">Förskola</span>
-
             <p>{data.kindergarten.name}</p>
           </div>
         </div>
         <div className="flex items-center gap-2">
           <Calendar />
-
           <div className="flex flex-col">
             <span className="text-xs text-muted-foreground">Datum</span>
-
             <p>
               {startDate.toLocaleDateString("sv-SE", {
                 dateStyle: "short",
@@ -65,14 +59,10 @@ export default function BookingSuccess({ data, onClose }: BookingSuccessProps) {
             </p>
           </div>
         </div>
-
-        {/* Time */}
         <div className="flex items-center gap-2">
           <Clock />
-
           <div className="flex flex-col">
             <span className="text-xs text-muted-foreground">Tid</span>
-
             <p>
               {startDate.toLocaleTimeString("sv-SE", {
                 timeStyle: "short",
@@ -87,7 +77,6 @@ export default function BookingSuccess({ data, onClose }: BookingSuccessProps) {
       </div>
       <div className="flex flex-col gap-2 mt-2">
         <h4 className="font-semibold">Vikarier</h4>
-
         {data.substitutes.length > 0 ? (
           data.substitutes.map((substitute) => {
             const initials = substitute.fullName

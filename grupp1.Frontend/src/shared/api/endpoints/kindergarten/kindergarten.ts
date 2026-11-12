@@ -91,6 +91,55 @@ export const patchApiKindergartensKindergartenIdManagersManagerId = async (kinde
 }
 
 
+export type getApiManagerKindergartensResponse200TextPlain = {
+  data: GetAllKindergartensResponse
+  status: 200
+}
+
+export type getApiManagerKindergartensResponse200ApplicationJson = {
+  data: GetAllKindergartensResponse
+  status: 200
+}
+
+export type getApiManagerKindergartensResponse200TextJson = {
+  data: GetAllKindergartensResponse
+  status: 200
+}
+
+export type getApiManagerKindergartensResponseSuccess = (getApiManagerKindergartensResponse200TextPlain | getApiManagerKindergartensResponse200ApplicationJson | getApiManagerKindergartensResponse200TextJson) & {
+  headers: Headers;
+};
+;
+
+export type getApiManagerKindergartensResponse = (getApiManagerKindergartensResponseSuccess)
+
+export const getGetApiManagerKindergartensUrl = () => {
+
+
+
+
+  return `/api/manager/kindergartens`
+}
+
+export const getApiManagerKindergartens = async ( options?: RequestInit): Promise<getApiManagerKindergartensResponse> => {
+
+  const res = await fetch(getGetApiManagerKindergartensUrl(),
+  {
+    ...options,
+    method: 'GET'
+
+
+  }
+)
+
+  const contentType = (res.headers.get('content-type') ?? '').toLowerCase();
+  const body = [204, 205, 304].includes(res.status) ? null : await res.text();
+
+  const data: getApiManagerKindergartensResponse['data'] = body ? (contentType.includes('json') ? JSON.parse(body) : body) : {}
+  return { data, status: res.status, headers: res.headers } as getApiManagerKindergartensResponse
+}
+
+
 export type getApiKindergartensResponse200TextPlain = {
   data: GetAllKindergartensResponse
   status: 200
