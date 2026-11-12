@@ -56,6 +56,7 @@ namespace Vicaria.Server.Features.Emails
 
             try
             {
+                client.Timeout = 10_000;
                 await client.ConnectAsync(uri.Host, uri.Port, socketOptions);
 
                 string? smtpUsername = _config["SMTP_USERNAME"];
