@@ -10,7 +10,7 @@ using Vicaria.Server.Infrastructure.Emails;
 //    dotnet user-secrets set "SMTP_URI" "smtp://smtp.ouremailprovider.com:port"
 //    dotnet user-secrets set "SMTP_USERNAME" "LoginAtTheEmailProvider"
 //    dotnet user-secrets set "SMTP_PASSWORD" "PasswordAtTheEmailProvider"
-//    dotnet user-secrets set "SMTP_FROM_ADDRESS" "WhereTheEmailIsActuallySentFrom.com"
+//    dotnet user-secrets set "SMTP_FROM_ADDRESS" "Where@TheEmailIsActuallySentFrom.com"
 //
 //    dotnet user-secrets remove "SMTP_URI"
 //    ^ returns to mailpit afterwards
