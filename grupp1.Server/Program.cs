@@ -2,6 +2,8 @@ using Vicaria.Server.Infrastructure;
 using Microsoft.AspNetCore.Identity;
 using Vicaria.Server.Domain.Models;
 using Microsoft.EntityFrameworkCore;
+using Vicaria.Server.Infrastructure.Emails;
+using Vicaria.Server.Features.Emails;
 
 namespace Vicaria.Server;
 
@@ -73,6 +75,8 @@ public class Program
             options.Cookie.SameSite = SameSiteMode.Strict;
             options.Cookie.SecurePolicy = CookieSecurePolicy.Always;
         });
+
+        builder.Services.AddScoped<IEmailService, EmailService>();
 
         // Bootleg wolverine, scans for all handlers and registers them as scoped services
         var handlers = typeof(Program).Assembly
