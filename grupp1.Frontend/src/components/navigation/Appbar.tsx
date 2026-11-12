@@ -6,7 +6,6 @@ import {
   UserGroup,
   Settings,
 } from "lucide-react";
-import AppbarUserInfo from "./AppbarUserInfo";
 import { NavUser } from "./NavUser";
 import {
   SidebarHeader,
@@ -17,6 +16,7 @@ import {
   SidebarGroup,
   SidebarGroupLabel,
   SidebarGroupContent,
+  SidebarFooter,
 } from "../ui/sidebar";
 
 const navLinks = [
@@ -34,10 +34,8 @@ export default function Appbar() {
         <h2 className="text-2xl">Vicaria</h2>
       </SidebarHeader>
       <SidebarGroup>
-        <SidebarGroupLabel> </SidebarGroupLabel>
+        <SidebarGroupLabel></SidebarGroupLabel>
         <SidebarGroupContent>
-          {/* <AppbarUserInfo /> */}
-          <NavUser />
           <SidebarMenu>
             {navLinks.map((link) => {
               const Icon = link.Icon;
@@ -59,6 +57,9 @@ export default function Appbar() {
           </SidebarMenu>
         </SidebarGroupContent>
       </SidebarGroup>
+      <SidebarFooter className="mt-auto">
+        <NavUser />
+      </SidebarFooter>
     </Sidebar>
   );
 }

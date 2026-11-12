@@ -1,5 +1,4 @@
 import { LogOutIcon, BellIcon, Menu, UserCircle } from "lucide-react";
-
 import { Avatar, AvatarFallback, AvatarImage } from "@/components/ui/avatar";
 import {
   DropdownMenu,
@@ -33,7 +32,7 @@ export function NavUser() {
   return (
     <SidebarMenu>
       <SidebarMenuItem>
-        <DropdownMenu>
+        <DropdownMenu modal={false}>
           <DropdownMenuTrigger>
             <SidebarMenuButton
               size="lg"
@@ -57,7 +56,7 @@ export function NavUser() {
             </SidebarMenuButton>
           </DropdownMenuTrigger>
           <DropdownMenuContent
-            className="w-(--radix-dropdown-menu-trigger-width) min-w-56 rounded-lg"
+            className="min-w-56 rounded-lg"
             side="right"
             align="end"
             sideOffset={4}
@@ -71,9 +70,10 @@ export function NavUser() {
                       {fullNameSplit}
                     </AvatarFallback>
                   </Avatar>
-                  <div className="grid flex-1 text-left text-sm leading-tight">
-                    <span className="truncate font-medium">
+                  <div className="flex flex-col text-left text-sm leading-tight">
+                    <span className="font-medium">
                       {user?.firstName} {user?.lastName}
+                      {user?.lastName}
                     </span>
                     <span className="text-xs text-muted-foreground">
                       {user?.email}
@@ -82,6 +82,7 @@ export function NavUser() {
                 </div>
               </DropdownMenuLabel>
               <DropdownMenuSeparator />
+
               <DropdownMenuGroup>
                 <DropdownMenuItem>
                   {/* TODO: Connect this to the profile page */}
