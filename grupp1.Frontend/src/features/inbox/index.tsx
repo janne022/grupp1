@@ -1,6 +1,7 @@
 import { createFileRoute } from "@tanstack/react-router";
 import PendingMessage from "./-components/message";
 import { GetAllPendingTimes } from "./-api/PendingTimeService";
+import { GetAllDecidedTimes } from "./-api/DecidedTimeService";
 import { Badge } from "@/shared/components/ui/badge";
 import {
   Tabs,
@@ -19,15 +20,17 @@ function RouteComponent() {
     includeBookedTimes: false,
   });
 
-  if (pendingTimesResponse.isError) {
+  const decidedTimesResponse = GetAllDecidedTimes();
+
+  if (pendingTimesResponse.isError || decidedTimesResponse.isError) {
     return <h1>Oops, något gick fel!</h1>;
   }
 
-  if (pendingTimesResponse.isLoading) {
-    return <h1>Laddar in dina tidserbjudanden..</h1>;
+  if (pendingTimesResponse.isLoading || decidedTimesResponse.isLoading) {
+    return <h1>Laddar in dina pass..</h1>;
   }
 
-  if (pendingTimesResponse.isSuccess) {
+  if (pendingTimesResponse.isSuccess || decidedTimesResponse.isSuccess) {
     const pendingTimes = pendingTimesResponse.data?.pendingTimes;
 
     return (
@@ -59,7 +62,24 @@ function RouteComponent() {
           </div>
         </TabsContent>
         <TabsContent value="decided">
-          <p>Här var det tomt..!</p>
+          <div>
+            <div className="flex flex-col gap-3">
+              <div className="pb-2 flex flex-col gap-2">
+                <div className="flex justify-between items-center">
+                  <h1 className="text-2xl">Övriga pass</h1>
+                  <Badge className="p-3" variant="secondary">
+                    {pendingTimes?.length} pass i listan
+                  </Badge>
+                </div>
+                <HeaderBar />
+              </div>
+            </div>
+            <div className="overflow-y-scroll max-h-199 p-0.5">
+              {pendingTimes?.map((pendingTime) => (
+                <PendingMessage pendingTime={pendingTime} />
+              ))}
+            </div>
+          </div>
         </TabsContent>
       </Tabs>
     );
