@@ -1,4 +1,3 @@
-import type { PendingTimeDto } from "@/shared/api/models";
 import { Badge } from "@/shared/components/ui/badge";
 import { Button } from "@/shared/components/ui/button";
 import {
@@ -11,16 +10,20 @@ import {
 } from "@/shared/components/ui/card";
 import { CalendarDays, Check, Clock8, X } from "lucide-react";
 
-import {
-  AcceptPendingTime,
-  RejectPendingTime,
-} from "../-api/PendingTimeService";
-import { toast } from "@/shared/components/ui/toast";
-
-export default function PendingMessage({
-  pendingTime,
+export default function Message({
+  type,
+  startTime,
+  endTime,
+  kindergartenName,
+  acceptHandler,
+  rejectHandler,
 }: {
-  pendingTime: PendingTimeDto;
+  type: string;
+  startTime: string;
+  endTime: string;
+  kindergartenName: string;
+  acceptHandler?: () => void;
+  rejectHandler?: () => void;
 }) {
   const formatTime = (value: string) =>
     new Date(value).toLocaleTimeString("sv-SE", {
@@ -40,68 +43,24 @@ export default function PendingMessage({
     };
   };
 
-  const timeDiff = countTimeDifference(
-    new Date(pendingTime.startTime),
-    new Date(pendingTime.endTime),
-  );
+  const timeDiff = countTimeDifference(new Date(startTime), new Date(endTime));
 
-  const timeRange = `${formatTime(pendingTime.startTime)} - ${formatTime(pendingTime.endTime)}`;
-
-  const rejectPendingTimeFunction = RejectPendingTime();
-  const acceptPendingTimeFunction = AcceptPendingTime();
-
-  function handleDelete() {
-    rejectPendingTimeFunction.mutate(pendingTime.id, {
-      onSuccess: () => {
-        toast.add({
-          type: "success",
-          title: "Tack!",
-          description: "Du har tackat nej till passet.",
-        });
-      },
-      onError: () => {
-        toast.add({
-          type: "error",
-          title: "Åh nej...",
-          description: "Något gick fel...",
-        });
-      },
-    });
-  }
-
-  function handleAccept() {
-    acceptPendingTimeFunction.mutate(pendingTime.id, {
-      onSuccess: () => {
-        toast.add({
-          type: "success",
-          title: "najs!",
-          description: "Du har tackat ja till passet!",
-        });
-      },
-      onError: () => {
-        toast.add({
-          type: "error",
-          title: "Åh nej...",
-          description: "Något gick fel...",
-        });
-      },
-    });
-  }
+  const timeRange = `${formatTime(startTime)} - ${formatTime(endTime)}`;
 
   return (
     <Card className="mt-3">
       <CardHeader className="gap-3">
-        <CardTitle className="text-lg">
-          {pendingTime.kindergarten.name}s förskola
-        </CardTitle>
+        <CardTitle className="text-lg">{kindergartenName}s förskola</CardTitle>
         <CardAction>
-          <Badge className="p-3" variant="secondary">Bokningsbar</Badge>
+          <Badge className="p-3" variant="secondary">
+            {type == "pending" ? "bokningsbar" : "bokad"}
+          </Badge>
         </CardAction>
         <CardDescription className="flex flex-col gap-1.5">
           <div className="flex justify-start gap-1">
             <CalendarDays size={18} />
             <p>
-              {new Date(pendingTime.startTime).toLocaleDateString("sv-SE", {
+              {new Date(startTime).toLocaleDateString("sv-SE", {
                 weekday: "long",
                 day: "numeric",
                 month: "long",
@@ -115,14 +74,16 @@ export default function PendingMessage({
           </div>
         </CardDescription>
       </CardHeader>
-      <CardFooter className="flex justify-end gap-3">
-        <Button size="icon-lg" variant="destructive" onClick={handleDelete}>
-          <X />
-        </Button>
-        <Button size="icon-lg" onClick={handleAccept}>
-          <Check />
-        </Button>
-      </CardFooter>
+      {type == "pending" && (
+        <CardFooter className="flex justify-end gap-3">
+          <Button size="icon-lg" variant="destructive" onClick={rejectHandler}>
+            <X />
+          </Button>
+          <Button size="icon-lg" onClick={acceptHandler}>
+            <Check />
+          </Button>
+        </CardFooter>
+      )}
     </Card>
   );
 }
