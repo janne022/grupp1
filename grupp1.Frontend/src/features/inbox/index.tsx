@@ -8,7 +8,6 @@ import {
   TabsList,
   TabsTrigger,
 } from "@/shared/components/ui/tabs";
-import { CheckCircle, MessageCircleQuestionIcon } from "lucide-react";
 import HeaderBar from "./-components/headerBar";
 
 export const Route = createFileRoute("/inbox/")({
@@ -45,7 +44,7 @@ function RouteComponent() {
                   <h1 className="text-2xl">
                     Pass som matchar dina tillgängliga tider
                   </h1>
-                  <Badge className="p-3">
+                  <Badge className="p-3" variant="secondary">
                     {pendingTimes?.length} pass i listan
                   </Badge>
                 </div>
