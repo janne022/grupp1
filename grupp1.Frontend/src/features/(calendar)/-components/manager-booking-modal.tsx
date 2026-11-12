@@ -14,9 +14,9 @@ import * as z from "zod";
 import type {
   AvailableTimesByKindergartenDTO,
   AvailableTimesByManagerDTO,
-  BookDecidedTimeQuery,
   GetAllDecidedTimesDTO,
   GetAllKindergartensResponse,
+  PostPendingTimeRequest,
   PostPendingTimeResponse,
 } from "@/shared/api/models";
 import { EditDecidedTime } from "@/features/(calendar)/-api/DecidedTimeService";
@@ -235,23 +235,21 @@ export default function ManagerBooking({
         )
     : [];
 
-  const effectiveSelectedKindergartenId = filtered.some(
-    (kindergarten) => kindergarten.kindergartenId === selectedKindergartenId,
-  )
-    ? selectedKindergartenId
-    : (filtered[0]?.kindergartenId ?? "");
+  const effectiveSelectedKindergartenId =
+    kindergartens?.data?.kindergartens.some(
+      (kindergarten) => kindergarten.id === selectedKindergartenId,
+    )
+      ? selectedKindergartenId
+      : (kindergartens?.data?.kindergartens[0]?.id ?? "");
 
   const totalAvailable = filtered.reduce(
     (total, kindergarten) => total + kindergarten.availableTimes.length,
     0,
   );
 
-  const selectedKindergarten = filtered.find(
-    (kindergarten) =>
-      kindergarten.kindergartenId === effectiveSelectedKindergartenId,
+  const selectedKindergarten = kindergartens?.data?.kindergartens.find(
+    (kindergarten) => kindergarten.id === effectiveSelectedKindergartenId,
   );
-
-  const selectedAvailableTime = selectedKindergarten?.availableTimes[0];
 
   async function onSubmit(data: FormValues) {
     setSubmitError(null);
@@ -289,13 +287,12 @@ export default function ManagerBooking({
       }
 
       // Create new booking
-      if (!selectedKindergarten || !selectedAvailableTime) {
+      if (!selectedKindergarten) {
         return;
       }
 
-      const booking: BookDecidedTimeQuery = {
-        availableTimeGuid: selectedAvailableTime.id,
-        kindergartenId: selectedKindergarten.kindergartenId,
+      const booking: PostPendingTimeRequest = {
+        kindergartenId: selectedKindergarten.id,
         startTime: toIsoDateTime(data.StartDateTime),
         endTime: toIsoDateTime(data.EndDateTime),
       };
@@ -331,7 +328,7 @@ export default function ManagerBooking({
               </h3>
               <p className="text-center text-sm text-muted-foreground">
                 Din bokning har skapats och förfrågningar har skickats till
-                tillgänliga vikarier. Om fler vikarier blir tillgängliga kommer
+                tillgängliga vikarier. Om fler vikarier blir tillgängliga kommer
                 de också att få en förfrågan.
               </p>
               <h4 className="font-semibold">Bokningsdetaljer</h4>
@@ -497,34 +494,41 @@ export default function ManagerBooking({
                           </p>
                         ) : (
                           kindergartens?.data?.kindergartens.map(
-                            (kindergarten) => (
-                              <FieldLabel
-                                key={kindergarten.id}
-                                htmlFor={kindergarten.id}
-                              >
-                                <Field orientation="horizontal">
-                                  <FieldContent>
-                                    <FieldTitle className="font-semibold">
-                                      {kindergarten.name}
-                                    </FieldTitle>
+                            (kindergarten) => {
+                              const availableKindergarten = filtered.find(
+                                (k) => k.kindergartenId === kindergarten.id,
+                              );
 
-                                    {filtered.find(
-                                      (k) =>
-                                        k.kindergartenId === kindergarten.id,
-                                    ) && (
-                                      <FieldDescription className="text-sm text-muted-foreground">
-                                        {totalAvailable} tillgängliga vikarier
-                                      </FieldDescription>
-                                    )}
-                                  </FieldContent>
+                              const totalAvailable =
+                                availableKindergarten?.availableTimes.length ??
+                                0;
 
-                                  <RadioGroupItem
-                                    value={kindergarten.id}
-                                    id={kindergarten.id}
-                                  />
-                                </Field>
-                              </FieldLabel>
-                            ),
+                              return (
+                                <FieldLabel
+                                  key={kindergarten.id}
+                                  htmlFor={kindergarten.id}
+                                >
+                                  <Field orientation="horizontal">
+                                    <FieldContent>
+                                      <FieldTitle className="font-semibold">
+                                        {kindergarten.name}
+                                      </FieldTitle>
+
+                                      {totalAvailable > 0 && (
+                                        <FieldDescription className="text-sm text-muted-foreground">
+                                          {totalAvailable} tillgängliga vikarier
+                                        </FieldDescription>
+                                      )}
+                                    </FieldContent>
+
+                                    <RadioGroupItem
+                                      id={kindergarten.id}
+                                      value={kindergarten.id}
+                                    />
+                                  </Field>
+                                </FieldLabel>
+                              );
+                            },
                           )
                         )}
                       </RadioGroup>

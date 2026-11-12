@@ -23,7 +23,10 @@ import {
   isWithinInterval,
   startOfDay,
 } from "date-fns";
-import { GetAllKindergartens } from "@/features/(calendar)/-api/KindergartenService";
+import {
+  GetAllKindergartens,
+  GetAllManagerKindergartens,
+} from "@/features/(calendar)/-api/KindergartenService";
 import { toast } from "@/shared/components/ui/toast";
 import type {
   GetAllDecidedTimesDTO,
@@ -102,12 +105,13 @@ function RouteComponent() {
 
   // Substitute queries and mutations
   const AvailableTimeResponse = GetAllAvailableTimes(isSubstitute);
-  const KindergartenResponse = GetAllKindergartens();
+  const KindergartenResponse = GetAllKindergartens(isSubstitute);
   const DeleteAvailableTimeFunction = DeleteAvailableTime();
 
   // Manager queries
   const AvailableTimesByManagerResponse = useAvailableTimesByManager(isManager);
   const DecidedTimesResponse = GetAllDecidedTimes(undefined, isManager);
+  const KindergartenByManagerResponse = GetAllManagerKindergartens(isManager);
   const DeleteDecidedTimeFunction = DeleteDecidedTime();
 
   // Modal handlers
@@ -191,6 +195,7 @@ function RouteComponent() {
     KindergartenResponse.error ||
     user.error ||
     AvailableTimesByManagerResponse.error ||
+    KindergartenByManagerResponse.error ||
     DecidedTimesResponse.error
   ) {
     return <div>Error!</div>;
@@ -450,7 +455,7 @@ function RouteComponent() {
               AvailableTimesByManagerResponse.data
                 ?.availableTimesByKindergarten ?? []
             }
-            kindergartens={KindergartenResponse}
+            kindergartens={KindergartenByManagerResponse}
             submitLabel="Bekräfta Bokning"
             selectedDate={date}
             updateDecidedTime={selectedDecidedTime}
