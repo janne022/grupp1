@@ -64,7 +64,18 @@ export function LoginForm({
   }
 
   return (
-    <div className={cn("flex flex-col gap-6", className)} {...props}>
+    <div
+      className={cn(
+        "flex flex-col gap-6 justify-center text-center",
+        className,
+      )}
+      {...props}
+    >
+      <img
+        className="w-28 self-center pb-6"
+        src="../../public/VicariaLogo-Compressed.png"
+      />
+      <h1 className="text-2xl">Välkommen tillbaka!</h1>
       <Card className="ring-0">
         <CardHeader>
           {/* <CardTitle className="font-bold text-2xl">Login</CardTitle> */}
@@ -124,8 +135,9 @@ export function LoginForm({
                 )}
               />
               <Field>
-                {login.isError && 
-                <FieldError>Fel lösenord eller email</FieldError>}
+                {login.isError && (
+                  <FieldError>Fel lösenord eller email</FieldError>
+                )}
                 <Button type="submit" form="login-form">
                   Logga in
                 </Button>
