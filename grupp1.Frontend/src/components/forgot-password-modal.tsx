@@ -24,6 +24,13 @@ export function ForgotPasswordModal() {
     setSubmitted(true);
   };
 
+  useEffect(() => {
+    if (!open) {
+      setSubmitted(false);
+      setEmail("");
+    }
+  }, [open]);
+
   return (
     <Dialog open={open} onOpenChange={setOpen}>
       <DialogTrigger render={<Button variant="link" />}>
