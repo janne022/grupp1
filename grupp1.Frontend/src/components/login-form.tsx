@@ -80,7 +80,7 @@ export function LoginForm({
         <CardHeader>
           {/* <CardTitle className="font-bold text-2xl">Login</CardTitle> */}
           <CardDescription>
-            skriv ner konto detaljer för att logga in
+            Skriv ner konto detaljer för att logga in
           </CardDescription>
         </CardHeader>
         <CardContent>
