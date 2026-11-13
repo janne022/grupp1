@@ -95,7 +95,7 @@ export function LoginForm({
                 control={form.control}
                 render={({ field, fieldState }) => (
                   <Field data-invalid={fieldState.invalid}>
-                    <FieldLabel htmlFor="email">Email</FieldLabel>
+                    <FieldLabel htmlFor="email">E-postadress</FieldLabel>
                     <Input
                       {...field}
                       id="email"
@@ -132,12 +132,12 @@ export function LoginForm({
                 )}
               />
               <Field>
-                {login.isError && (
-                  <FieldError>Fel lösenord eller email</FieldError>
-                )}
                 <Button type="submit" form="login-form">
                   Logga in
                 </Button>
+                {login.isError && (
+                  <FieldError>Fel lösenord eller e-postadress</FieldError>
+                )}
                 <FieldDescription className="text-center">
                   <button
                     type="button"

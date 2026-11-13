@@ -31,42 +31,51 @@ export function ForgotPasswordModal() {
       </DialogTrigger>
       <DialogContent>
         <DialogHeader>
-          <DialogTitle>Glömt ditt lösenord?</DialogTitle>
-          <DialogDescription>
-            Var god skriv din emailadress nedan så vi kan skicka dig en länk för
-            att ändra ditt lösenord.
-          </DialogDescription>
+          {submitted ? (
+            <DialogTitle>Färdigt!</DialogTitle>
+          ) : (
+            <DialogTitle>Glömt ditt lösenord?</DialogTitle>
+          )}
         </DialogHeader>
 
         {submitted ? (
           <div className="space-y-4">
             <p className="text-sm text-muted-foreground">
-              Länken skickas nu om den emailadressen finns sparad i våra system.
+              Länken skickas nu om den angivna e-postadressen finns sparad i
+              våra system. <br />
+              <br />
+              Du kan nu stänga fönstret.
             </p>
 
             <Button className="w-full" onClick={() => setOpen(false)}>
-              Stäng
+              Stäng fönstret
             </Button>
           </div>
         ) : (
-          <form onSubmit={handleSubmit} className="space-y-4">
-            <div className="space-y-2">
-              <Label htmlFor="email">Emailadress</Label>
+          <div className="space-y-4">
+            <p className="text-sm text-muted-foreground">
+              Var god skriv din e-postadress nedan så vi kan skicka dig en länk
+              för att ändra ditt lösenord.
+            </p>
+            <form onSubmit={handleSubmit} className="space-y-4">
+              <div className="space-y-2">
+                <Label htmlFor="email">E-postadress</Label>
 
-              <Input
-                id="email"
-                type="email"
-                placeholder="din_address@example.com"
-                value={email}
-                onChange={(event) => setEmail(event.target.value)}
-                required
-              />
-            </div>
+                <Input
+                  id="email"
+                  type="email"
+                  placeholder="din.e-postadress@example.com"
+                  value={email}
+                  onChange={(event) => setEmail(event.target.value)}
+                  required
+                />
+              </div>
 
-            <Button type="submit" className="w-full">
-              Skicka min länk
-            </Button>
-          </form>
+              <Button type="submit" className="w-full">
+                Skicka min länk
+              </Button>
+            </form>
+          </div>
         )}
       </DialogContent>
     </Dialog>
