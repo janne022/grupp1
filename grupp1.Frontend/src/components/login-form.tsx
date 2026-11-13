@@ -1,6 +1,7 @@
 import { cn } from "cn";
 import * as z from "zod";
 import { zodResolver } from "@hookform/resolvers/zod";
+import { ForgotPasswordModal } from "@/components/forgot-password-modal";
 
 import { Button } from "@/components/ui/button";
 import {
@@ -8,7 +9,6 @@ import {
   CardContent,
   CardDescription,
   CardHeader,
-  CardTitle,
 } from "@/components/ui/card";
 import {
   Field,
@@ -20,7 +20,7 @@ import {
 import { Input } from "@/components/ui/input";
 import { useLogin } from "@/api/services/LoginService";
 import { Controller, useForm } from "react-hook-form";
-import { Link, useNavigate } from "@tanstack/react-router";
+import { useNavigate } from "@tanstack/react-router";
 import { useQueryClient } from "@tanstack/react-query";
 import { currentUserQuery } from "@/api/services/MeService";
 import { useState } from "react";
@@ -95,7 +95,7 @@ export function LoginForm({
                 control={form.control}
                 render={({ field, fieldState }) => (
                   <Field data-invalid={fieldState.invalid}>
-                    <FieldLabel htmlFor="email">Email</FieldLabel>
+                    <FieldLabel htmlFor="email">E-postadress</FieldLabel>
                     <Input
                       {...field}
                       id="email"
@@ -115,12 +115,9 @@ export function LoginForm({
                   <Field data-invalid={fieldState.invalid}>
                     <div className="flex items-center">
                       <FieldLabel htmlFor="password">Lösenord</FieldLabel>
-                      <a
-                        href="#"
-                        className="ml-auto inline-block text-sm underline-offset-4 hover:underline"
-                      >
-                        Glömt lösenord?
-                      </a>
+                      <div className="ml-auto">
+                        <ForgotPasswordModal />
+                      </div>
                     </div>
                     <Input
                       {...field}
@@ -135,12 +132,12 @@ export function LoginForm({
                 )}
               />
               <Field>
-                {login.isError && (
-                  <FieldError>Fel lösenord eller email</FieldError>
-                )}
                 <Button type="submit" form="login-form">
                   Logga in
                 </Button>
+                {login.isError && (
+                  <FieldError>Fel lösenord eller e-postadress</FieldError>
+                )}
                 <FieldDescription className="text-center">
                   <button
                     type="button"
