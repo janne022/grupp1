@@ -22,7 +22,7 @@ function RouteComponent() {
     <div className="flex justify-center mt-26 c">
       <div className="text-center">
         <img className="w-28 justify-self-center pb-10" src="../../public/VicariaLogo-Compressed.png"></img>
-        <p className="text-2xl">Welcome back!</p>
+        <p className="text-2xl">Välkommen tillbaka!</p>
         <LoginForm className="min-w-xs max-w-xl" />
       </div>
     </div>
