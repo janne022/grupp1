@@ -1,4 +1,4 @@
-namespace Vicaria.Server.Features.Auth.NameChange.DTOs;
+namespace Vicaria.Server.Features.Account.NameChange.DTOs;
 
 public record class UserNamesChangeCommand
 (

@@ -2,10 +2,10 @@ using System.Security.Claims;
 using ErrorOr;
 using Microsoft.AspNetCore.Authorization;
 using Microsoft.AspNetCore.Mvc;
-using Vicaria.Server.Features.Auth.NameChange.DTOs;
+using Vicaria.Server.Features.Account.NameChange.DTOs;
 using Vicaria.Server.Infrastructure;
 
-namespace Vicaria.Server.Features.Auth.NameChange
+namespace Vicaria.Server.Features.Account.NameChange
 {
     [Route("api/auth")]
     [Authorize]

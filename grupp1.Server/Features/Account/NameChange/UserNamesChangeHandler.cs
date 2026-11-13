@@ -1,9 +1,9 @@
 using ErrorOr;
 using Microsoft.EntityFrameworkCore;
-using Vicaria.Server.Features.Auth.NameChange.DTOs;
+using Vicaria.Server.Features.Account.NameChange.DTOs;
 using Vicaria.Server.Infrastructure;
 
-namespace Vicaria.Server.Features.Auth.NameChange;
+namespace Vicaria.Server.Features.Account.NameChange;
 
 public class UserNamesChangeHandler(
     VicariaDbContext dbContext,
