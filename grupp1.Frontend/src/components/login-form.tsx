@@ -13,17 +13,22 @@ import {
 import {
   Field,
   FieldDescription,
+  FieldError,
   FieldGroup,
   FieldLabel,
 } from "@/components/ui/field";
 import { Input } from "@/components/ui/input";
 import { useLogin } from "@/api/services/LoginService";
 import { Controller, useForm } from "react-hook-form";
-import { Link } from "@tanstack/react-router";
+import { Link, useNavigate } from "@tanstack/react-router";
+import { useQueryClient } from "@tanstack/react-query";
+import { currentUserQuery } from "@/api/services/MeService";
+import { useState } from "react";
+import NoAccountModal from "./ui/noAccountModal";
 
 const formSchema = z.object({
-  email: z.email(),
-  password: z.string(),
+  email: z.email("Ange en giltig e-postadress"),
+  password: z.string().min(1, "Ange ditt lösenord"), //the 1 makes sure the usr has typed anything inte password field at all
 });
 
 export function LoginForm({
@@ -31,6 +36,9 @@ export function LoginForm({
   ...props
 }: React.ComponentProps<"div">) {
   const login = useLogin();
+  const queryClient = useQueryClient();
+  const navigate = useNavigate();
+  const [noAccountOpen, setNoAccountOpen] = useState(false);
 
   const form = useForm<z.infer<typeof formSchema>>({
     resolver: zodResolver(formSchema),
@@ -41,23 +49,46 @@ export function LoginForm({
   });
 
   function onSubmit(data: z.infer<typeof formSchema>) {
-    login.mutate({
-      email: data.email,
-      password: data.password,
-    });
+    login.mutate(
+      {
+        email: data.email,
+        password: data.password,
+      },
+      {
+        onSuccess: async () => {
+          await queryClient.query({ ...currentUserQuery, staleTime: 0 });
+          navigate({ to: "/" });
+        },
+      },
+    );
   }
 
   return (
-    <div className={cn("flex flex-col gap-6", className)} {...props}>
-      <Card>
+    <div
+      className={cn(
+        "flex flex-col gap-6 justify-center text-center",
+        className,
+      )}
+      {...props}
+    >
+      <img
+        className="w-28 self-center pb-6"
+        src="../../public/VicariaLogo-Compressed.png"
+      />
+      <h1 className="text-2xl">Välkommen tillbaka!</h1>
+      <Card className="ring-0">
         <CardHeader>
-          <CardTitle>Login to your account</CardTitle>
+          {/* <CardTitle className="font-bold text-2xl">Login</CardTitle> */}
           <CardDescription>
-            Enter your email below to login to your account
+            Skriv ner konto detaljer för att logga in
           </CardDescription>
         </CardHeader>
         <CardContent>
-          <form id="login-form" onSubmit={form.handleSubmit(onSubmit)}>
+          <form
+            id="login-form"
+            noValidate
+            onSubmit={form.handleSubmit(onSubmit)}
+          >
             <FieldGroup>
               <Controller
                 name="email"
@@ -69,9 +100,11 @@ export function LoginForm({
                       {...field}
                       id="email"
                       type="email"
-                      placeholder="john.doe@example.com"
-                      required
+                      aria-invalid={fieldState.invalid}
                     />
+                    {fieldState.invalid && (
+                      <FieldError errors={[fieldState.error]} />
+                    )}
                   </Field>
                 )}
               />
@@ -81,30 +114,49 @@ export function LoginForm({
                 render={({ field, fieldState }) => (
                   <Field data-invalid={fieldState.invalid}>
                     <div className="flex items-center">
-                      <FieldLabel htmlFor="password">Password</FieldLabel>
+                      <FieldLabel htmlFor="password">Lösenord</FieldLabel>
                       <a
                         href="#"
                         className="ml-auto inline-block text-sm underline-offset-4 hover:underline"
                       >
-                        Forgot your password?
+                        Glömt lösenord?
                       </a>
                     </div>
-                    <Input {...field} id="password" type="password" required />
+                    <Input
+                      {...field}
+                      id="password"
+                      type="password"
+                      aria-invalid={fieldState.invalid}
+                    />
+                    {fieldState.invalid && (
+                      <FieldError errors={[fieldState.error]} />
+                    )}
                   </Field>
                 )}
               />
               <Field>
+                {login.isError && (
+                  <FieldError>Fel lösenord eller email</FieldError>
+                )}
                 <Button type="submit" form="login-form">
-                  Login
+                  Logga in
                 </Button>
                 <FieldDescription className="text-center">
-                  Don&apos;t have an account? <Link to="/signup">Sign up</Link>
+                  <button
+                    type="button"
+                    onClick={() => setNoAccountOpen(true)}
+                    className="underline-offset-4 hover:underline"
+                  >
+                    Har du inte ett konto?
+                  </button>
                 </FieldDescription>
               </Field>
             </FieldGroup>
           </form>
         </CardContent>
       </Card>
+
+      <NoAccountModal open={noAccountOpen} setOpen={setNoAccountOpen} />
     </div>
   );
 }
