@@ -1,4 +1,4 @@
-import { useEffect, useState } from "react";
+import { useState } from "react";
 import {
   Dialog,
   DialogContent,
@@ -24,15 +24,16 @@ export function ForgotPasswordModal() {
     setSubmitted(true);
   };
 
-  useEffect(() => {
-    if (!open) {
-      setSubmitted(false);
-      setEmail("");
-    }
-  }, [open]);
+const handleOpenChange = (nextOpen: boolean) => {
+  if (nextOpen) {
+    setSubmitted(false);
+    setEmail("");
+  }
+  setOpen(nextOpen);
+};
 
   return (
-    <Dialog open={open} onOpenChange={setOpen}>
+    <Dialog open={open} onOpenChange={handleOpenChange}>
       <DialogTrigger render={<Button variant="link" />}>
         Glömt ditt lösenord?
       </DialogTrigger>
