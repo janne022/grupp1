@@ -28,7 +28,7 @@ const navLinks = [
 
 export default function Appbar() {
   return (
-    <Sidebar variant="inset">
+    <Sidebar variant="inset" className="border-r">
       <SidebarHeader className="flex flex-row items-center gap-2">
         <PersonStanding size={32} />
         <h2 className="text-2xl">Vicaria</h2>

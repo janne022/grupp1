@@ -1,4 +1,5 @@
 import { LogOutIcon, BellIcon, Menu, UserCircle } from "lucide-react";
+
 import { Avatar, AvatarFallback, AvatarImage } from "@/components/ui/avatar";
 import {
   DropdownMenu,
@@ -19,7 +20,11 @@ import { useCurrentUser } from "@/api/services/MeService";
 
 import { Link } from "@tanstack/react-router";
 
-export function NavUser() {
+type NavUserProps = {
+  isMobile?: boolean;
+};
+
+export function NavUser({ isMobile = false }: NavUserProps) {
   const { data: user } = useCurrentUser();
 
   const fullNameSplit = [user?.firstName, user?.lastName].map((name) =>
@@ -34,26 +39,37 @@ export function NavUser() {
       <SidebarMenuItem>
         <DropdownMenu modal={false}>
           <DropdownMenuTrigger>
-            <SidebarMenuButton
-              size="lg"
-              className="data-[state=open]:bg-sidebar-accent data-[state=open]:text-sidebar-accent-foreground"
-            >
-              <Avatar className="h-8 w-8 rounded-lg">
-                <AvatarImage />
-                <AvatarFallback className="rounded-lg">
-                  {fullNameSplit}
-                </AvatarFallback>
-              </Avatar>
-              <div className="grid flex-1 text-left text-sm leading-tight">
-                <span className="truncate font-medium">
-                  {user?.firstName} {user?.lastName}
-                </span>
-                <span className="truncate text-xs text-muted-foreground">
-                  {user?.email}
-                </span>
-              </div>
-              <Menu className="ml-auto size-4" />
-            </SidebarMenuButton>
+            {isMobile ? (
+              <button className="flex h-10 w-10 items-center justify-center rounded-full p-0 hover:bg-accent">
+                <Avatar className="h-8 w-8 rounded-full">
+                  <AvatarImage />
+                  <AvatarFallback className="rounded-full">
+                    {fullNameSplit}
+                  </AvatarFallback>
+                </Avatar>
+              </button>
+            ) : (
+              <SidebarMenuButton
+                size="lg"
+                className="data-[state=open]:bg-sidebar-accent data-[state=open]:text-sidebar-accent-foreground"
+              >
+                <Avatar className="h-8 w-8 rounded-lg">
+                  <AvatarImage />
+                  <AvatarFallback className="rounded-lg">
+                    {fullNameSplit}
+                  </AvatarFallback>
+                </Avatar>
+                <div className="flex flex-col text-left text-sm leading-tight">
+                  <span className="truncate font-medium">
+                    {user?.firstName} {user?.lastName}
+                  </span>
+                  <span className="truncate text-xs text-muted-foreground">
+                    {user?.email}
+                  </span>
+                </div>
+                <Menu className="ml-auto size-4" />
+              </SidebarMenuButton>
+            )}
           </DropdownMenuTrigger>
           <DropdownMenuContent
             className="min-w-56 rounded-lg"
@@ -70,10 +86,9 @@ export function NavUser() {
                       {fullNameSplit}
                     </AvatarFallback>
                   </Avatar>
-                  <div className="flex flex-col text-left text-sm leading-tight">
-                    <span className="font-medium">
+                  <div className="flex flex-col flex-1 text-left text-sm leading-tight">
+                    <span className="truncate font-medium">
                       {user?.firstName} {user?.lastName}
-                      {user?.lastName}
                     </span>
                     <span className="text-xs text-muted-foreground">
                       {user?.email}
@@ -82,7 +97,6 @@ export function NavUser() {
                 </div>
               </DropdownMenuLabel>
               <DropdownMenuSeparator />
-
               <DropdownMenuGroup>
                 <DropdownMenuItem>
                   {/* TODO: Connect this to the profile page */}

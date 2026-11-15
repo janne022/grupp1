@@ -1,11 +1,11 @@
 import { Link } from "@tanstack/react-router";
-import { Home, CalendarDays, Users, Settings } from "lucide-react";
+import { Home, CalendarDays, Users, User } from "lucide-react";
 
 const navLinks = [
   { label: "Hem", to: "/", Icon: Home },
   { label: "Översikt", to: "/calendar", Icon: CalendarDays },
   { label: "länk 3", to: "/link3", Icon: Users },
-  { label: "länk 4", to: "/link4", Icon: Settings },
+  { label: "Profil", to: "/link4", Icon: User },
 ];
 
 export default function BottomNav() {
