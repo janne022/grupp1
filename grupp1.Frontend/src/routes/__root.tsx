@@ -1,27 +1,25 @@
 import * as React from "react";
-import { Outlet, createRootRoute } from "@tanstack/react-router";
+import { Outlet, createRootRouteWithContext } from "@tanstack/react-router";
 import { TanStackRouterDevtools } from "@tanstack/react-router-devtools";
 import Layout from "@/components/layout/Layout";
 import "../styles/globals.css";
-import { QueryClient, QueryClientProvider } from "@tanstack/react-query";
+import { QueryClient } from "@tanstack/react-query";
 
-const queryClient = new QueryClient();
+type RouterContext = {
+  queryClient: QueryClient
+}
 
-export const Route = createRootRoute({
+export const Route = createRootRouteWithContext<RouterContext>()({
   component: RootComponent,
 });
-
-
 
 function RootComponent() {
   return (
     <React.Fragment>
-      <QueryClientProvider client={queryClient}>
         <Layout>
           <Outlet />
         </Layout>
         <TanStackRouterDevtools />
-      </QueryClientProvider>
     </React.Fragment>
   );
 }

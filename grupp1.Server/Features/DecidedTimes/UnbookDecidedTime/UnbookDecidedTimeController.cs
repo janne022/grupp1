@@ -4,14 +4,14 @@ using Microsoft.AspNetCore.Mvc;
 using Vicaria.Server.Infrastructure;
 using System.Security.Claims;
 using Microsoft.AspNetCore.Authorization;
+using ErrorOr;
 
 namespace Vicaria.Server.Features.DecidedTimes.UnbookDecidedTime
 {
     [Authorize]
     [Route("api/decided-times")]
-    [Authorize]
     [ApiController]
-    public class UnbookDecidedTimeController(IHandler<UnbookDecidedTimeCommand, UnbookDecidedTimeStatus> handler) : ControllerBase
+    public class UnbookDecidedTimeController(IHandler<UnbookDecidedTimeCommand, ErrorOr<Deleted>> handler) : ControllerBase
     {
         [HttpDelete("{id:guid}")]
         public async Task<IActionResult> UnbookDecidedTime([FromRoute]Guid id, CancellationToken cancellationToken)
@@ -25,14 +25,13 @@ namespace Vicaria.Server.Features.DecidedTimes.UnbookDecidedTime
 
             var command = new UnbookDecidedTimeCommand(id, userId);
 
-            var response = await handler.HandleAsync(command, cancellationToken);
+            ErrorOr<Deleted> response = await handler.HandleAsync(command, cancellationToken);
 
-            return response switch
-            {
-                UnbookDecidedTimeStatus.NotFound => NotFound(),
-                UnbookDecidedTimeStatus.Success => NoContent(),
-                _ => StatusCode(StatusCodes.Status500InternalServerError)
-            };
+            return response.Match<IActionResult>
+            (
+                value => NoContent(),
+                errors => this.ToProblem(errors)
+            );
         }
     }
 }
