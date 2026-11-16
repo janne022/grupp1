@@ -3,6 +3,7 @@ import PendingMessage from "./-components/pendingMessage";
 import { GetAllPendingTimes } from "./-api/PendingTimeService";
 import { GetAllDecidedTimes } from "./-api/DecidedTimeService";
 import { Badge } from "@/shared/components/ui/badge";
+import { useState } from "react";
 import {
   Tabs,
   TabsContent,
@@ -21,6 +22,8 @@ function RouteComponent() {
     includeBookedTimes: false,
   });
 
+  const [searchQuery, setSearchQuery] = useState("");
+
   const decidedTimesResponse = GetAllDecidedTimes({});
 
   if (pendingTimesResponse.isError || decidedTimesResponse.isError) {
@@ -32,8 +35,14 @@ function RouteComponent() {
   }
 
   if (pendingTimesResponse.isSuccess && decidedTimesResponse.isSuccess) {
-    const pendingTimes = pendingTimesResponse.data?.pendingTimes;
-    const decidedTimes = decidedTimesResponse.data?.decidedTimes;
+    const pendingTimesList = pendingTimesResponse.data?.pendingTimes ?? [];
+    const decidedTimesList = decidedTimesResponse.data?.decidedTimes ?? [];
+
+    const visiblePendingTimes = pendingTimesList.filter((pendingTime) =>
+      pendingTime.kindergarten.name
+        .toLowerCase()
+        .includes(searchQuery.toLowerCase()),
+    );
 
     return (
       <Tabs defaultValue="pending" className="p-3">
@@ -50,16 +59,20 @@ function RouteComponent() {
                     Pass som matchar dina tillgängliga tider
                   </h1>
                   <Badge className="p-3" variant="secondary">
-                    {pendingTimes?.length} pass i listan
+                    {visiblePendingTimes?.length} pass i listan
                   </Badge>
                 </div>
-                <HeaderBar />
+                <HeaderBar searchState={searchQuery} searchSetter={setSearchQuery} />
               </div>
             </div>
             <div className="overflow-y-scroll max-h-199 p-0.5">
-              {pendingTimes?.map((pendingTime) => (
-                <PendingMessage pendingTime={pendingTime} />
-              ))}
+              {visiblePendingTimes.length === 0 ? (
+                <p>Ingen förskola matchade din sökning...</p>
+              ) : (
+                visiblePendingTimes?.map((pendingTime) => (
+                  <PendingMessage pendingTime={pendingTime} />
+                ))
+              )}
             </div>
           </div>
         </TabsContent>
@@ -70,14 +83,14 @@ function RouteComponent() {
                 <div className="flex justify-between items-center">
                   <h1 className="text-2xl">Övriga pass</h1>
                   <Badge className="p-3" variant="secondary">
-                    {decidedTimes?.length} pass i listan
+                    {decidedTimesList?.length} pass i listan
                   </Badge>
                 </div>
-                <HeaderBar />
+                {/* <HeaderBar /> */}
               </div>
             </div>
             <div className="overflow-y-scroll max-h-199 p-0.5">
-              {decidedTimes?.map((decidedTime) => (
+              {decidedTimesList?.map((decidedTime) => (
                 <DecidedMessage decidedTime={decidedTime} />
               ))}
             </div>
