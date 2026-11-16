@@ -14,12 +14,10 @@ namespace grupp1.Server.Features.Auth.ForgotPassword
         {
             var result = await handler.HandleAsync(command, cancellationToken);
 
-            if (result.IsError)
-            {
-                return BadRequest();
-            }
-
-            return Ok();
+            return result.Match<IActionResult>(
+                value => Ok(),
+                errors => this.ToProblem(errors)
+                );
         }
     }
 }
