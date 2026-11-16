@@ -10,9 +10,9 @@ namespace Vicaria.Server.Features.Kindergarten.AddManagerToKindergarten;
 public class AddManagerToKindergartenHandler(
     VicariaDbContext dbContext,
     ILogger<AddManagerToKindergartenHandler> _logger
-) : IHandler<AddManagerToKindergartenCommand, ErrorOr<AddManagerToKindergartenResult>>
+) : IHandler<AddManagerToKindergartenCommand, ErrorOr<Success>>
 {
-    public async Task<ErrorOr<AddManagerToKindergartenResult>> HandleAsync(
+    public async Task<ErrorOr<Success>> HandleAsync(
         AddManagerToKindergartenCommand command,
         CancellationToken cancellationToken = default)
     {
@@ -41,6 +41,6 @@ public class AddManagerToKindergartenHandler(
         });
         await dbContext.SaveChangesAsync(cancellationToken);
 
-        return new AddManagerToKindergartenResult();
+        return Result.Success;
     }
 }
