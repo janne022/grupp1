@@ -3,6 +3,7 @@ import PendingMessage from "./-components/pendingMessage";
 import { GetAllPendingTimes } from "./-api/PendingTimeService";
 import { GetAllDecidedTimes } from "./-api/DecidedTimeService";
 import { Badge } from "@/shared/components/ui/badge";
+import { isSameISOWeek } from "date-fns";
 import { useState } from "react";
 import {
   Tabs,
@@ -88,7 +89,9 @@ function RouteComponent() {
             countTimeDifference(
               new Date(pendingTime.startTime),
               new Date(pendingTime.endTime),
-            ).hours < 7)),
+            ).hours < 7) &&
+          (!filterState.thisWeek ||
+            isSameISOWeek(new Date(), new Date(pendingTime.startTime)))),
     );
 
     return (
