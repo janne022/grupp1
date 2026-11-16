@@ -547,7 +547,7 @@ function ManagerBookingForm({
                       availableCountByKindergarten.get(
                         editTarget.kindergartenId,
                       ) ?? 0
-                    } tillgängliga vikarier`}
+                    } tillgängliga vikarier just nu`}
                 </p>
               )}
             </div>
@@ -681,7 +681,7 @@ function ManagerBookingForm({
                       </FieldTitle>
 
                       <FieldDescription>
-                        {totalAvailable} tillgängliga vikarier
+                        {totalAvailable} tillgängliga vikarier just nu
                       </FieldDescription>
                     </FieldContent>
                   </Field>
@@ -728,6 +728,7 @@ function ManagerBookingForm({
 
                                     <FieldDescription className="text-sm text-muted-foreground">
                                       {availableCount} tillgängliga vikarier
+                                      just nu
                                     </FieldDescription>
                                   </FieldContent>
 
