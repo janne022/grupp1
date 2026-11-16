@@ -65,7 +65,7 @@ function RouteComponent() {
 
     const visiblePendingTimes = pendingTimesList.filter(
       (pendingTime) =>
-        (pendingTime.kindergarten.name
+        ((pendingTime.kindergarten.name
           .toLowerCase()
           .includes(searchQuery.toLowerCase()) ||
           formatTime(pendingTime.startTime).includes(searchQuery) ||
@@ -77,11 +77,18 @@ function RouteComponent() {
               month: "long",
             })
             .includes(searchQuery)) &&
-        (!filterState.fullDay ||
+          filterState.fullDay &&
+          filterState.halfDay) ||
+        ((!filterState.fullDay ||
           countTimeDifference(
             new Date(pendingTime.startTime),
             new Date(pendingTime.endTime),
-          ).hours >= 7),
+          ).hours >= 7) &&
+          (!filterState.halfDay ||
+            countTimeDifference(
+              new Date(pendingTime.startTime),
+              new Date(pendingTime.endTime),
+            ).hours < 7)),
     );
 
     return (
@@ -115,7 +122,10 @@ function RouteComponent() {
                 <p>Ingen förskola matchade din sökning...</p>
               ) : (
                 visiblePendingTimes?.map((pendingTime) => (
-                  <PendingMessage key={pendingTime.id} pendingTime={pendingTime} />
+                  <PendingMessage
+                    key={pendingTime.id}
+                    pendingTime={pendingTime}
+                  />
                 ))
               )}
             </div>
@@ -136,7 +146,10 @@ function RouteComponent() {
             </div>
             <div className="overflow-y-scroll max-h-199 p-0.5">
               {decidedTimesList?.map((decidedTime) => (
-                <DecidedMessage key={decidedTime.decidedTimeId} decidedTime={decidedTime} />
+                <DecidedMessage
+                  key={decidedTime.decidedTimeId}
+                  decidedTime={decidedTime}
+                />
               ))}
             </div>
           </div>
