@@ -26,6 +26,12 @@ function RouteComponent() {
 
   const decidedTimesResponse = GetAllDecidedTimes({});
 
+  const formatTime = (value: string) =>
+    new Date(value).toLocaleTimeString("sv-SE", {
+      hour: "2-digit",
+      minute: "2-digit",
+    });
+
   if (pendingTimesResponse.isError || decidedTimesResponse.isError) {
     return <h1>Oops, något gick fel!</h1>;
   }
@@ -38,10 +44,13 @@ function RouteComponent() {
     const pendingTimesList = pendingTimesResponse.data?.pendingTimes ?? [];
     const decidedTimesList = decidedTimesResponse.data?.decidedTimes ?? [];
 
-    const visiblePendingTimes = pendingTimesList.filter((pendingTime) =>
-      pendingTime.kindergarten.name
-        .toLowerCase()
-        .includes(searchQuery.toLowerCase()),
+    const visiblePendingTimes = pendingTimesList.filter(
+      (pendingTime) =>
+        pendingTime.kindergarten.name
+          .toLowerCase()
+          .includes(searchQuery.toLowerCase()) ||
+        formatTime(pendingTime.startTime).includes(searchQuery) ||
+        formatTime(pendingTime.endTime).includes(searchQuery),
     );
 
     return (
@@ -62,7 +71,10 @@ function RouteComponent() {
                     {visiblePendingTimes?.length} pass i listan
                   </Badge>
                 </div>
-                <HeaderBar searchState={searchQuery} searchSetter={setSearchQuery} />
+                <HeaderBar
+                  searchState={searchQuery}
+                  searchSetter={setSearchQuery}
+                />
               </div>
             </div>
             <div className="overflow-y-scroll max-h-199 p-0.5">
