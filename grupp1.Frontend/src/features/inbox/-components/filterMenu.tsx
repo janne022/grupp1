@@ -74,18 +74,31 @@ export default function FilterMenu({
           <div className="flex justify-between w-full p-1.5">
             <Button
               variant="ghost"
-              onClick={() =>
+              onClick={() => {
                 setFilterList({
                   ...filterState,
                   fullDay: false,
                   halfDay: false,
                   thisWeek: false,
-                })
-              }
+                });
+
+                filterSetter({
+                  ...filterState,
+                  fullDay: false,
+                  halfDay: false,
+                  thisWeek: false,
+                });
+              }}
             >
               Rensa
             </Button>
-            <Button onClick={() => filterSetter(filterList)}>Visa pass</Button>
+            <Button
+              onClick={() => {
+                filterSetter(filterList);
+              }}
+            >
+              Visa pass
+            </Button>
           </div>
         </DropdownMenuGroup>
       </DropdownMenuContent>
