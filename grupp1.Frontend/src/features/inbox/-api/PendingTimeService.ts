@@ -1,9 +1,7 @@
 import { useMutation, useQuery, useQueryClient } from "@tanstack/react-query";
 import { apiClient, ApiError } from "@/shared/api/api";
-import type {
-  AcceptPendingTimeResponse,
-  GetPendingTimesResponse,
-} from "@/shared/api/models";
+import type { AcceptPendingTimeResponse } from "@/shared/api/models/accept-pending-time";
+import type { GetPendingTimesResponse } from "@/shared/api/models/get-pending-times";
 
 type GetAllPendingTimesParams = {
   fromTime?: string;
