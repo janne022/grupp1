@@ -50,7 +50,14 @@ function RouteComponent() {
           .toLowerCase()
           .includes(searchQuery.toLowerCase()) ||
         formatTime(pendingTime.startTime).includes(searchQuery) ||
-        formatTime(pendingTime.endTime).includes(searchQuery),
+        formatTime(pendingTime.endTime).includes(searchQuery) ||
+        new Date(pendingTime.startTime)
+          .toLocaleDateString("sv-SE", {
+            weekday: "long",
+            day: "numeric",
+            month: "long",
+          })
+          .includes(searchQuery),
     );
 
     return (
