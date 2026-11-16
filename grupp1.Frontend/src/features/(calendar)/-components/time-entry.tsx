@@ -14,19 +14,40 @@ import {
   ContextMenuLabel,
   ContextMenuTrigger,
 } from "@/shared/components/ui/context-menu";
+import { cn } from "cn";
+
+type Variant = "available" | "decided" | "pending";
 
 type Props = {
   time: {
     startTime: string;
     endTime: string;
   };
-  variant: "available" | "decided";
+  variant: Variant;
   open: boolean;
   onOpenChange: (open: boolean) => void;
-  onEdit: () => void;
-  onDelete: () => void;
+  onEdit?: () => void;
+  onDelete?: () => void;
   details?: ReactNode;
 };
+
+const variantConfig = {
+  available: {
+    title: "Tillgänglig tid",
+    label: "Tillgänglig",
+    dotColor: "bg-blue-600",
+  },
+  decided: {
+    title: "Bokad tid",
+    label: "Bokad",
+    dotColor: "bg-green-600",
+  },
+  pending: {
+    title: "Väntande tid",
+    label: "Väntande",
+    dotColor: "bg-amber-500",
+  },
+} satisfies Record<Variant, { title: string; label: string; dotColor: string }>;
 
 const formatTime = (value: string) =>
   new Date(value).toLocaleTimeString("sv-SE", {
@@ -43,11 +64,7 @@ export default function TimeEntry({
   onDelete,
   details,
 }: Props) {
-  const isAvailable = variant === "available";
-
-  const title = isAvailable ? "Tillgänglig tid" : "Bokad tid";
-  const label = isAvailable ? "Tillgänglig" : "Bokad";
-  const dotColor = isAvailable ? "bg-blue-600" : "bg-green-600";
+  const { title, label, dotColor } = variantConfig[variant];
 
   const timeRange = `${formatTime(time.startTime)} - ${formatTime(time.endTime)}`;
 
@@ -58,9 +75,11 @@ export default function TimeEntry({
           <button
             type="button"
             onClick={(e) => e.stopPropagation()}
-            className="flex w-full min-w-0 items-center gap-2 p-1 text-left hover:bg-primary hover:text-white"
+            className={cn(
+              "flex w-full min-w-0 items-center gap-2 p-1 text-left hover:bg-primary hover:text-white",
+            )}
           >
-            <span className={`size-1.5 shrink-0 rounded-full ${dotColor}`} />
+            <span className={cn("size-1.5 shrink-0 rounded-full", dotColor)} />
             <span className="truncate text-sm">
               {label} {timeRange}
             </span>
@@ -132,31 +151,38 @@ export default function TimeEntry({
   return (
     <ContextMenu>
       <ContextMenuTrigger className="w-full">{popover}</ContextMenuTrigger>
-      <ContextMenuContent>
-        <ContextMenuGroup>
-          <ContextMenuLabel>{title}</ContextMenuLabel>
-          <ContextMenuItem
-            onClick={(e) => {
-              e.stopPropagation();
-              onEdit();
-            }}
-          >
-            <PenLine />
-            Ändra
-          </ContextMenuItem>
+      {(onEdit || onDelete) && (
+        <ContextMenuContent>
+          <ContextMenuGroup>
+            <ContextMenuLabel>{title}</ContextMenuLabel>
 
-          <ContextMenuItem
-            variant="destructive"
-            onClick={(e) => {
-              e.stopPropagation();
-              onDelete();
-            }}
-          >
-            <Trash />
-            Radera
-          </ContextMenuItem>
-        </ContextMenuGroup>
-      </ContextMenuContent>
+            {onEdit && (
+              <ContextMenuItem
+                onClick={(e) => {
+                  e.stopPropagation();
+                  onEdit();
+                }}
+              >
+                <PenLine />
+                Ändra
+              </ContextMenuItem>
+            )}
+
+            {onDelete && (
+              <ContextMenuItem
+                variant="destructive"
+                onClick={(e) => {
+                  e.stopPropagation();
+                  onDelete();
+                }}
+              >
+                <Trash />
+                Radera
+              </ContextMenuItem>
+            )}
+          </ContextMenuGroup>
+        </ContextMenuContent>
+      )}
     </ContextMenu>
   );
 }

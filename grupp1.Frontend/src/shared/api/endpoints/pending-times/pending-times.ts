@@ -5,6 +5,8 @@
  * OpenAPI spec version: 1.0.0
  */
 import type {
+  EditPendingTimeRequest,
+  EditPendingTimeResponse,
   PostPendingTimeRequest,
   PostPendingTimeResponse
 } from '../../models';
@@ -70,6 +72,108 @@ const res = await fetch(getPostApiPendingTimesUrl(),
 
   const data: postApiPendingTimesResponse['data'] = body ? (contentType.includes('json') ? JSON.parse(body) : body) : {}
   return { data, status: res.status, headers: res.headers } as postApiPendingTimesResponse
+}
+
+
+export type patchApiPendingTimesResponse200TextPlain = {
+  data: EditPendingTimeResponse
+  status: 200
+}
+
+export type patchApiPendingTimesResponse200ApplicationJson = {
+  data: EditPendingTimeResponse
+  status: 200
+}
+
+export type patchApiPendingTimesResponse200TextJson = {
+  data: EditPendingTimeResponse
+  status: 200
+}
+
+export type patchApiPendingTimesResponseSuccess = (patchApiPendingTimesResponse200TextPlain | patchApiPendingTimesResponse200ApplicationJson | patchApiPendingTimesResponse200TextJson) & {
+  headers: Headers;
+};
+;
+
+export type patchApiPendingTimesResponse = (patchApiPendingTimesResponseSuccess)
+
+export const getPatchApiPendingTimesUrl = () => {
+
+
+
+
+  return `/api/pending-times`
+}
+
+export const patchApiPendingTimes = async (editPendingTimeRequest: EditPendingTimeRequest, options?: RequestInit): Promise<patchApiPendingTimesResponse> => {
+
+    const getHeaders = (h?: NonNullable<RequestInit['headers']>): Record<string, string | readonly string[]> => {
+    if (!h) return {};
+    if (h instanceof Headers) return Object.fromEntries(h.entries());
+    if (Symbol.iterator in h) {
+      return Object.fromEntries(
+        Array.from(h as Iterable<Iterable<string>>, (entry) => Array.from(entry) as [string, string]),
+      );
+    }
+    const headers: Record<string, string | readonly string[]> = {};
+    for (const [name, value] of Object.entries<string | readonly string[] | undefined>(h)) {
+      if (value !== undefined) headers[name] = value;
+    }
+    return headers;
+  };
+const res = await fetch(getPatchApiPendingTimesUrl(),
+  {
+    ...options,
+    method: 'PATCH',
+    headers: { 'Content-Type': 'application/json', ...getHeaders(options?.headers) },
+    body: JSON.stringify(editPendingTimeRequest)
+  }
+)
+
+  const contentType = (res.headers.get('content-type') ?? '').toLowerCase();
+  const body = [204, 205, 304].includes(res.status) ? null : await res.text();
+
+  const data: patchApiPendingTimesResponse['data'] = body ? (contentType.includes('json') ? JSON.parse(body) : body) : {}
+  return { data, status: res.status, headers: res.headers } as patchApiPendingTimesResponse
+}
+
+
+export type deleteApiPendingTimesIdResponse200 = {
+  data: void
+  status: 200
+}
+
+export type deleteApiPendingTimesIdResponseSuccess = (deleteApiPendingTimesIdResponse200) & {
+  headers: Headers;
+};
+;
+
+export type deleteApiPendingTimesIdResponse = (deleteApiPendingTimesIdResponseSuccess)
+
+export const getDeleteApiPendingTimesIdUrl = (id: string,) => {
+
+
+
+
+  return `/api/pending-times/${id}`
+}
+
+export const deleteApiPendingTimesId = async (id: string, options?: RequestInit): Promise<deleteApiPendingTimesIdResponse> => {
+
+  const res = await fetch(getDeleteApiPendingTimesIdUrl(id),
+  {
+    ...options,
+    method: 'DELETE'
+
+
+  }
+)
+
+
+  const body = [204, 205, 304].includes(res.status) ? null : await res.text();
+
+  const data: deleteApiPendingTimesIdResponse['data'] = body ? JSON.parse(body) : undefined
+  return { data, status: res.status, headers: res.headers } as deleteApiPendingTimesIdResponse
 }
 
 

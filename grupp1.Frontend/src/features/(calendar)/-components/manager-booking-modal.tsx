@@ -1,11 +1,5 @@
-import {
-  useEffect,
-  useMemo,
-  useState,
-  type Dispatch,
-  type SetStateAction,
-} from "react";
-import { User } from "lucide-react";
+import { useMemo, useState, type Dispatch, type SetStateAction } from "react";
+import { Clock, User } from "lucide-react";
 import { Controller, useForm, useWatch } from "react-hook-form";
 import { zodResolver } from "@hookform/resolvers/zod";
 import * as z from "zod";
@@ -14,11 +8,15 @@ import type {
   AvailableTimesByManagerDTO,
   GetAllDecidedTimesDTO,
   GetAllKindergartensResponse,
+  PendingTimeDto,
   PostPendingTimeRequest,
   PostPendingTimeResponse,
 } from "@/shared/api/models";
 import { EditDecidedTime } from "@/features/(calendar)/-api/DecidedTimeService";
-import { PostPendingTime } from "@/features/(calendar)/-api/PendingTimeService";
+import {
+  EditPendingTime,
+  PostPendingTime,
+} from "@/features/(calendar)/-api/PendingTimeService";
 import { Button } from "../../../shared/components/ui/button";
 import {
   Dialog,
@@ -46,6 +44,7 @@ import { Input } from "../../../shared/components/ui/input";
 import type { UseQueryResult } from "@tanstack/react-query";
 import BookingSuccess from "./booking-success";
 import { Calendar } from "@/shared/components/ui/calendar";
+import { cn } from "cn";
 import { sv } from "date-fns/locale";
 import type { DateRange } from "react-day-picker";
 
@@ -59,7 +58,47 @@ interface BookTimeProps {
   endTime?: string;
   title?: string;
   submitLabel?: string;
-  updateDecidedTime?: GetAllDecidedTimesDTO | null;
+  updateTime?: EditableTime | null;
+}
+
+export type EditableTime = GetAllDecidedTimesDTO | PendingTimeDto;
+
+function isPendingTime(time: EditableTime): time is PendingTimeDto {
+  return "kindergarten" in time;
+}
+
+type EditTarget = {
+  kind: "decided" | "pending";
+  id: string;
+  kindergartenId: string;
+  kindergartenName: string;
+  startTime: string;
+  endTime: string;
+  substituteName: string | null;
+};
+
+function toEditTarget(time: EditableTime): EditTarget {
+  if (isPendingTime(time)) {
+    return {
+      kind: "pending",
+      id: time.id,
+      kindergartenId: time.kindergarten.id,
+      kindergartenName: time.kindergarten.name,
+      startTime: time.startTime,
+      endTime: time.endTime,
+      substituteName: null,
+    };
+  }
+
+  return {
+    kind: "decided",
+    id: time.timeId,
+    kindergartenId: time.kindergartenId,
+    kindergartenName: time.kindergartenName,
+    startTime: time.startTime,
+    endTime: time.endTime,
+    substituteName: `${time.substituteFirstName} ${time.substituteLastName}`,
+  };
 }
 
 type DateTimeValue = {
@@ -209,9 +248,68 @@ const formSchema = z
 
 type FormSchemaValues = z.infer<typeof formSchema>;
 
+function getInitialValues(
+  editTarget: EditTarget | null,
+  selectedDate: Date | undefined,
+  startTime: string,
+  endTime: string,
+): FormValues {
+  if (editTarget) {
+    return {
+      StartDateTime: splitDateTime(editTarget.startTime),
+      EndDateTime: splitDateTime(editTarget.endTime),
+    };
+  }
+
+  const date = selectedDate ? new Date(selectedDate) : new Date();
+
+  const normalizedDate = new Date(
+    date.getFullYear(),
+    date.getMonth(),
+    date.getDate(),
+  );
+
+  return {
+    StartDateTime: { date: normalizedDate, time: startTime },
+    EndDateTime: { date: normalizedDate, time: endTime },
+  };
+}
+
 export default function ManagerBooking({
   open,
   setOpen,
+  ...props
+}: BookTimeProps) {
+  const formKey = `${props.updateTime ? toEditTarget(props.updateTime).id : "new"}-${
+    props.selectedDate?.getTime() ?? "none"
+  }`;
+
+  return (
+    <Dialog open={open} onOpenChange={setOpen}>
+      <DialogContent
+        className={cn(
+          "flex max-h-[calc(100dvh-2rem)] flex-col overflow-y-auto",
+          props.updateTime ? "sm:max-w-md" : "sm:max-w-3xl",
+        )}
+      >
+        {open && (
+          <ManagerBookingForm
+            key={formKey}
+            onClose={() => setOpen(false)}
+            {...props}
+          />
+        )}
+      </DialogContent>
+    </Dialog>
+  );
+}
+
+type ManagerBookingFormProps = Omit<BookTimeProps, "open" | "setOpen"> & {
+  onClose: () => void;
+};
+
+function ManagerBookingForm({
+  onClose,
   selectedDate,
   availableTimes = [],
   kindergartens,
@@ -219,48 +317,38 @@ export default function ManagerBooking({
   endTime = "16:00",
   title,
   submitLabel,
-  updateDecidedTime = null,
-}: BookTimeProps) {
+  updateTime = null,
+}: ManagerBookingFormProps) {
+  const editTarget = useMemo(
+    () => (updateTime ? toEditTarget(updateTime) : null),
+    [updateTime],
+  );
+  const isEditing = !!editTarget;
+  const isEditingPending = editTarget?.kind === "pending";
+
+  const [initialValues] = useState(() =>
+    getInitialValues(editTarget, selectedDate, startTime, endTime),
+  );
+
   const [selectedKindergartenId, setSelectedKindergartenId] = useState("");
   const [isSaving, setIsSaving] = useState(false);
   const [submitError, setSubmitError] = useState<string | null>(null);
   const [searchQuery, setSearchQuery] = useState("");
   const [bookingResult, setBookingResult] =
     useState<PostPendingTimeResponse | null>(null);
-  const [selectedRange, setSelectedRange] = useState<DateRange | undefined>();
-
-  const isEditing = !!updateDecidedTime;
+  const [selectedRange, setSelectedRange] = useState<DateRange | undefined>(
+    () => ({
+      from: initialValues.StartDateTime.date,
+      to: initialValues.EndDateTime.date,
+    }),
+  );
+  const [calendarMonth, setCalendarMonth] = useState(
+    () => initialValues.StartDateTime.date,
+  );
 
   const postService = PostPendingTime();
   const editDecidedTimeService = EditDecidedTime();
-
-  const initialValues = useMemo((): FormValues => {
-    if (updateDecidedTime) {
-      return {
-        StartDateTime: splitDateTime(updateDecidedTime.startTime),
-        EndDateTime: splitDateTime(updateDecidedTime.endTime),
-      };
-    }
-
-    const date = selectedDate ? new Date(selectedDate) : new Date();
-
-    const normalizedDate = new Date(
-      date.getFullYear(),
-      date.getMonth(),
-      date.getDate(),
-    );
-
-    return {
-      StartDateTime: {
-        date: normalizedDate,
-        time: startTime,
-      },
-      EndDateTime: {
-        date: normalizedDate,
-        time: endTime,
-      },
-    };
-  }, [updateDecidedTime, selectedDate, startTime, endTime]);
+  const editPendingTimeService = EditPendingTime();
 
   const form = useForm<FormSchemaValues>({
     resolver: zodResolver(formSchema),
@@ -269,32 +357,12 @@ export default function ManagerBooking({
   });
 
   const {
-    reset,
     control,
     handleSubmit,
     setValue,
     getValues,
     formState: { isValid },
   } = form;
-
-  useEffect(() => {
-    if (!open) {
-      setBookingResult(null);
-      return;
-    }
-
-    reset(initialValues);
-
-    setSelectedRange({
-      from: initialValues.StartDateTime.date,
-      to: updateDecidedTime ? initialValues.EndDateTime.date : undefined,
-    });
-
-    setSelectedKindergartenId("");
-    setSubmitError(null);
-    setSearchQuery("");
-    setBookingResult(null);
-  }, [open, updateDecidedTime, selectedDate, initialValues, reset]);
 
   const startDateTime = useWatch({
     control,
@@ -321,7 +389,7 @@ export default function ManagerBooking({
 
   const availableCountByKindergarten = new Map<string, number>();
 
-  if (!isEditing && period) {
+  if ((!isEditing || isEditingPending) && period) {
     for (const kindergarten of availableTimes) {
       availableCountByKindergarten.set(
         kindergarten.kindergartenId,
@@ -383,32 +451,38 @@ export default function ManagerBooking({
     setIsSaving(true);
 
     try {
-      if (updateDecidedTime) {
+      if (editTarget) {
         const hasStartTimeChanged = hasDateTimeChanged(
           data.StartDateTime,
-          updateDecidedTime.startTime,
+          editTarget.startTime,
         );
 
         const hasEndTimeChanged = hasDateTimeChanged(
           data.EndDateTime,
-          updateDecidedTime.endTime,
+          editTarget.endTime,
         );
 
         if (!hasStartTimeChanged && !hasEndTimeChanged) {
-          setOpen(false);
+          onClose();
           return;
         }
 
-        await editDecidedTimeService.mutateAsync({
-          id: updateDecidedTime.timeId,
-          kindergartenId: updateDecidedTime.kindergartenId,
+        const changes = {
+          id: editTarget.id,
+          kindergartenId: editTarget.kindergartenId,
           startTime: hasStartTimeChanged
             ? toIsoDateTime(data.StartDateTime)
             : null,
           endTime: hasEndTimeChanged ? toIsoDateTime(data.EndDateTime) : null,
-        });
+        };
 
-        setOpen(false);
+        if (editTarget.kind === "pending") {
+          await editPendingTimeService.mutateAsync(changes);
+        } else {
+          await editDecidedTimeService.mutateAsync(changes);
+        }
+
+        onClose();
         return;
       }
 
@@ -438,35 +512,48 @@ export default function ManagerBooking({
   }
 
   return (
-    <Dialog open={open} onOpenChange={setOpen}>
-      <DialogContent className="sm:max-w-xl">
-        {bookingResult ? (
-          <BookingSuccess data={bookingResult} onClose={() => setOpen(false)} />
-        ) : (
-          <form
-            className="flex flex-col gap-4"
-            onSubmit={handleSubmit(onSubmit)}
-          >
-            <DialogHeader>
-              <DialogTitle className="mx-auto text-center">
-                {title ?? (isEditing ? "Ändra datum och tid" : "Boka vikarie")}
-              </DialogTitle>
-            </DialogHeader>
+    <>
+      {bookingResult ? (
+        <BookingSuccess data={bookingResult} onClose={onClose} />
+      ) : (
+        <form className="flex flex-col gap-4" onSubmit={handleSubmit(onSubmit)}>
+          <DialogHeader>
+            <DialogTitle className="mx-auto text-center">
+              {editTarget?.kind === "pending"
+                ? "Ändra väntande tid"
+                : editTarget?.kind === "decided"
+                  ? "Ändra bokad tid"
+                  : (title ?? "Boka vikarie")}
+            </DialogTitle>
+          </DialogHeader>
 
-            {isEditing && updateDecidedTime && (
-              <div className="text-center">
-                <p className="my-0 flex flex-row items-center justify-center gap-1 text-lg">
-                  {updateDecidedTime.kindergartenName ?? "Okänd"}
-                </p>
+          {editTarget && (
+            <div className="text-center">
+              <p className="my-0 flex flex-row items-center justify-center gap-1 text-lg">
+                {editTarget.kindergartenName || "Okänd"}
+              </p>
 
+              {editTarget.kind === "decided" ? (
                 <p className="flex flex-row items-center justify-center gap-1 text-sm text-muted-foreground">
                   <User />
-                  {updateDecidedTime.substituteFirstName}{" "}
-                  {updateDecidedTime.substituteLastName}
+                  {editTarget.substituteName}
                 </p>
-              </div>
-            )}
+              ) : (
+                <p className="flex flex-row items-center justify-center gap-1 text-sm text-muted-foreground">
+                  <Clock />
+                  Väntar på vikarie
+                  {period &&
+                    ` · ${
+                      availableCountByKindergarten.get(
+                        editTarget.kindergartenId,
+                      ) ?? 0
+                    } tillgängliga vikarier`}
+                </p>
+              )}
+            </div>
+          )}
 
+          <div className={cn("grid gap-6", !isEditing && "sm:grid-cols-2")}>
             <FieldGroup>
               <Controller
                 name="StartDateTime"
@@ -480,10 +567,19 @@ export default function ManagerBooking({
                         { dayOfWeek: [0, 6] },
                       ]}
                       locale={sv}
-                      defaultMonth={selectedRange?.from}
+                      month={calendarMonth}
+                      onMonthChange={setCalendarMonth}
+                      weekStartsOn={1}
+                      className="w-full p-0"
                       classNames={{
+                        root: "relative w-full",
+                        month: "flex w-full flex-col gap-1",
+                        nav: "absolute top-0 left-1/2 z-10 flex h-7 w-56 -translate-x-1/2 items-center justify-between",
                         month_caption: "flex h-7 items-center justify-center",
                         caption_label: "text-sm font-medium",
+                        weekdays: "grid w-full grid-cols-5",
+                        week: "mt-1 grid w-full grid-cols-5",
+                        day: "group/day relative h-[clamp(1.75rem,5dvh,2.5rem)] min-w-0 rounded-md p-0 text-center nth-[n+6]:hidden",
                       }}
                       selected={selectedRange}
                       onSelect={handleRangeSelect}
@@ -576,8 +672,8 @@ export default function ManagerBooking({
             </FieldGroup>
 
             {!isEditing && (
-              <FieldGroup>
-                <div className="space-y-4">
+              <FieldGroup className="min-h-0">
+                <div className="flex h-full min-h-0 flex-col gap-4">
                   <Field orientation="horizontal">
                     <FieldContent>
                       <FieldTitle className="font-semibold">
@@ -597,86 +693,91 @@ export default function ManagerBooking({
                     onChange={(event) => setSearchQuery(event.target.value)}
                   />
 
-                  <ScrollArea className="max-h-72 w-full">
-                    <RadioGroup
-                      value={effectiveSelectedKindergartenId}
-                      onValueChange={setSelectedKindergartenId}
-                      className="w-full max-w-none"
-                    >
-                      {kindergartens?.isError ? (
-                        <p className="text-center text-sm text-destructive">
-                          Det gick inte att hämta förskolorna.
-                        </p>
-                      ) : visibleKindergartens.length === 0 ? (
-                        <p className="text-center text-sm text-muted-foreground">
-                          Ingen förskola hittades.
-                        </p>
-                      ) : (
-                        visibleKindergartens.map((kindergarten) => {
-                          const availableCount =
-                            availableCountByKindergarten.get(kindergarten.id) ??
-                            0;
+                  <div className="relative min-h-40 w-full sm:flex-1">
+                    <ScrollArea className="max-h-72 w-full sm:absolute sm:inset-0 sm:max-h-none">
+                      <RadioGroup
+                        value={effectiveSelectedKindergartenId}
+                        onValueChange={setSelectedKindergartenId}
+                        className="w-full max-w-none"
+                      >
+                        {kindergartens?.isError ? (
+                          <p className="text-center text-sm text-destructive">
+                            Det gick inte att hämta förskolorna.
+                          </p>
+                        ) : visibleKindergartens.length === 0 ? (
+                          <p className="text-center text-sm text-muted-foreground">
+                            Ingen förskola hittades.
+                          </p>
+                        ) : (
+                          visibleKindergartens.map((kindergarten) => {
+                            const availableCount =
+                              availableCountByKindergarten.get(
+                                kindergarten.id,
+                              ) ?? 0;
 
-                          return (
-                            <FieldLabel
-                              key={kindergarten.id}
-                              htmlFor={kindergarten.id}
-                            >
-                              <Field orientation="horizontal">
-                                <FieldContent>
-                                  <FieldTitle className="font-semibold">
-                                    {kindergarten.name}
-                                  </FieldTitle>
+                            return (
+                              <FieldLabel
+                                key={kindergarten.id}
+                                htmlFor={kindergarten.id}
+                              >
+                                <Field orientation="horizontal">
+                                  <FieldContent>
+                                    <FieldTitle className="font-semibold">
+                                      {kindergarten.name}
+                                    </FieldTitle>
 
-                                  <FieldDescription className="text-sm text-muted-foreground">
-                                    {availableCount} tillgängliga vikarier
-                                  </FieldDescription>
-                                </FieldContent>
+                                    <FieldDescription className="text-sm text-muted-foreground">
+                                      {availableCount} tillgängliga vikarier
+                                    </FieldDescription>
+                                  </FieldContent>
 
-                                <RadioGroupItem
-                                  id={kindergarten.id}
-                                  value={kindergarten.id}
-                                />
-                              </Field>
-                            </FieldLabel>
-                          );
-                        })
-                      )}
-                    </RadioGroup>
-                  </ScrollArea>
+                                  <RadioGroupItem
+                                    id={kindergarten.id}
+                                    value={kindergarten.id}
+                                  />
+                                </Field>
+                              </FieldLabel>
+                            );
+                          })
+                        )}
+                      </RadioGroup>
+                    </ScrollArea>
+                  </div>
                 </div>
               </FieldGroup>
             )}
+          </div>
 
-            {submitError && (
-              <p role="alert" className="text-sm text-destructive">
-                {submitError}
-              </p>
-            )}
+          {submitError && (
+            <p role="alert" className="text-sm text-destructive">
+              {submitError}
+            </p>
+          )}
 
-            <DialogFooter className="flex flex-row justify-between">
-              <DialogClose
-                render={
-                  <Button type="button" variant="outline" disabled={isSaving}>
-                    Avbryt
-                  </Button>
-                }
-              />
+          <DialogFooter className="flex flex-row justify-between">
+            <DialogClose
+              render={
+                <Button type="button" variant="outline" disabled={isSaving}>
+                  Avbryt
+                </Button>
+              }
+            />
 
-              <Button
-                type="submit"
-                disabled={
-                  isSaving || !isValid || (!isEditing && !selectedKindergarten)
-                }
-              >
-                {isSaving
-                  ? "Sparar..."
-                  : (submitLabel ?? (isEditing ? "Ändra" : "Bekräfta"))}
-              </Button>
-            </DialogFooter>
-          </form>
-        )}
-      </DialogContent>
-    </Dialog>
+            <Button
+              type="submit"
+              disabled={
+                isSaving || !isValid || (!isEditing && !selectedKindergarten)
+              }
+            >
+              {isSaving
+                ? "Sparar..."
+                : isEditing
+                  ? "Spara ändringar"
+                  : (submitLabel ?? "Bekräfta")}
+            </Button>
+          </DialogFooter>
+        </form>
+      )}
+    </>
   );
 }

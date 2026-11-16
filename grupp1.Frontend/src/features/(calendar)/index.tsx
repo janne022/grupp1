@@ -31,6 +31,7 @@ import { toast } from "@/shared/components/ui/toast";
 import type {
   GetAllDecidedTimesDTO,
   GetMyAvailableTimesDTO,
+  PendingTimeDto,
 } from "@/shared/api/models";
 import { cn } from "cn";
 import { Skeleton } from "@/shared/components/ui/skeleton";
@@ -50,12 +51,14 @@ import {
 } from "@/features/(calendar)/-api/DecidedTimeService";
 import TimeEntry from "@/features/(calendar)/-components/time-entry";
 import ConfirmDialog from "@/shared/components/ui/confirm-dialog";
+import { GetAllPendingTimes } from "@/shared/services/PendingTimeService";
+import { DeletePendingTime } from "@/features/(calendar)/-api/PendingTimeService";
 
 export const Route = createFileRoute("/(calendar)/")({
   component: RouteComponent,
 });
 
-type TimeVariant = "available" | "decided";
+type TimeVariant = "available" | "decided" | "pending";
 
 type DeleteTarget = {
   id: string;
@@ -73,6 +76,12 @@ const deleteDialogConfig = {
     title: "Radera bokad tid?",
     description:
       "Det här kommer att radera den bokade tiden. Detta går inte att ångra.",
+    confirmLabel: "Radera bokning",
+  },
+  pending: {
+    title: "Radera väntande tid?",
+    description:
+      "Det här kommer att radera den väntande tiden. Detta går inte att ångra.",
     confirmLabel: "Radera bokning",
   },
 } satisfies Record<
@@ -94,8 +103,9 @@ function RouteComponent() {
   const [deleteTarget, setDeleteTarget] = React.useState<DeleteTarget | null>(
     null,
   );
-  const [selectedDecidedTime, setSelectedDecidedTime] =
-    React.useState<GetAllDecidedTimesDTO | null>(null);
+  const [selectedDecidedTime, setSelectedDecidedTime] = React.useState<
+    GetAllDecidedTimesDTO | PendingTimeDto | null
+  >(null);
 
   // User and roles
   const user = useCurrentUser();
@@ -113,6 +123,8 @@ function RouteComponent() {
   const DecidedTimesResponse = GetAllDecidedTimes(undefined, isManager);
   const KindergartenByManagerResponse = GetAllManagerKindergartens(isManager);
   const DeleteDecidedTimeFunction = DeleteDecidedTime();
+  const PendingTimesResponse = GetAllPendingTimes(undefined, isManager);
+  const DeletePendingTimeFunction = DeletePendingTime();
 
   // Modal handlers
   const openDialog = (day?: Date) => {
@@ -133,7 +145,9 @@ function RouteComponent() {
     openDialog(new Date(time.startTime));
   };
 
-  const handleEditDecidedTime = (time: GetAllDecidedTimesDTO) => {
+  const handleEditDecidedTime = (
+    time: GetAllDecidedTimesDTO | PendingTimeDto,
+  ) => {
     setPopoverOpenId(null);
     setSelectedDecidedTime(time);
     openDialog(new Date(time.startTime));
@@ -144,50 +158,45 @@ function RouteComponent() {
     setDeleteTarget({ id, variant });
   };
 
+  const deleteMutations = {
+    available: DeleteAvailableTimeFunction,
+    decided: DeleteDecidedTimeFunction,
+    pending: DeletePendingTimeFunction,
+  } satisfies Record<TimeVariant, unknown>;
+
+  const deleteSuccessMessages: Record<TimeVariant, string> = {
+    available: "Din tillgängliga tid har tagits bort.",
+    decided: "Din bokade tid har tagits bort.",
+    pending: "Din väntande tid har tagits bort.",
+  };
+
+  const isDeleting = deleteTarget
+    ? deleteMutations[deleteTarget.variant].isPending
+    : false;
+
   const confirmDelete = () => {
-    if (!deleteTarget) return;
+    if (!deleteTarget || isDeleting) return;
 
-    if (deleteTarget.variant === "available") {
-      if (DeleteAvailableTimeFunction.isPending) return;
+    const { id, variant } = deleteTarget;
 
-      DeleteAvailableTimeFunction.mutate(deleteTarget.id, {
-        onSuccess: () => {
-          toast.add({
-            type: "success",
-            title: "Success!",
-            description: "Din tillgängliga tid har tagits bort.",
-          });
+    deleteMutations[variant].mutate(id, {
+      onSuccess: () => {
+        toast.add({
+          type: "success",
+          title: "Success!",
+          description: deleteSuccessMessages[variant],
+        });
 
-          setDeleteTarget(null);
-        },
-        onError: () => {
-          toast.add({
-            type: "error",
-            title: "Åh nej...",
-            description: "Något gick fel när tiden skulle tas bort.",
-          });
-        },
-      });
-    } else {
-      DeleteDecidedTimeFunction.mutate(deleteTarget.id, {
-        onSuccess: () => {
-          toast.add({
-            type: "success",
-            title: "Success!",
-            description: "Din bokade tid har tagits bort.",
-          });
-
-          setDeleteTarget(null);
-        },
-        onError: () => {
-          toast.add({
-            type: "error",
-            title: "Åh nej...",
-            description: "Något gick fel när tiden skulle tas bort.",
-          });
-        },
-      });
-    }
+        setDeleteTarget(null);
+      },
+      onError: () => {
+        toast.add({
+          type: "error",
+          title: "Åh nej...",
+          description: "Något gick fel när tiden skulle tas bort.",
+        });
+      },
+    });
   };
 
   if (
@@ -196,20 +205,33 @@ function RouteComponent() {
     user.error ||
     AvailableTimesByManagerResponse.error ||
     KindergartenByManagerResponse.error ||
-    DecidedTimesResponse.error
+    DecidedTimesResponse.error ||
+    PendingTimesResponse.error
   ) {
     return <div>Error!</div>;
   }
 
   // Calendar events
   const calendarEvents = isManager
-    ? (DecidedTimesResponse.data?.decidedTimes ?? []).map((item) => ({
-        id: item.timeId,
-        startTime: item.startTime,
-        endTime: item.endTime,
-        type: "decided" as const,
-        original: item,
-      }))
+    ? [
+        ...(DecidedTimesResponse.data?.decidedTimes ?? []).map((item) => ({
+          id: item.timeId,
+          startTime: item.startTime,
+          endTime: item.endTime,
+          type: "decided" as const,
+          original: item,
+        })),
+        ...(PendingTimesResponse.data?.pendingTimes ?? []).map((item) => ({
+          id: item.id,
+          startTime: item.startTime,
+          endTime: item.endTime,
+          type: "pending" as const,
+          original: item,
+        })),
+      ].sort(
+        (a, b) =>
+          new Date(a.startTime).getTime() - new Date(b.startTime).getTime(),
+      )
     : (AvailableTimeResponse.data?.availableTimes ?? []).map((item) => ({
         id: item.id,
         startTime: item.startTime,
@@ -221,7 +243,7 @@ function RouteComponent() {
   const isCalendarLoading =
     user.isPending ||
     (isManager
-      ? DecidedTimesResponse.isPending
+      ? DecidedTimesResponse.isPending || PendingTimesResponse.isPending
       : AvailableTimeResponse.isPending);
 
   return (
@@ -412,6 +434,28 @@ function RouteComponent() {
                             />
                           );
                         }
+                        if (item.type === "pending") {
+                          return (
+                            <TimeEntry
+                              key={uniqueKey}
+                              variant="pending"
+                              time={item.original}
+                              open={popoverOpenId === uniqueKey}
+                              onOpenChange={onOpenChange}
+                              onEdit={() =>
+                                handleEditDecidedTime(item.original)
+                              }
+                              onDelete={() =>
+                                handleDelete(item.original.id, "pending")
+                              }
+                              details={
+                                <p className="text-muted-foreground">
+                                  {item.original.kindergarten.name}
+                                </p>
+                              }
+                            />
+                          );
+                        }
 
                         return (
                           <TimeEntry
@@ -458,7 +502,7 @@ function RouteComponent() {
             kindergartens={KindergartenByManagerResponse}
             submitLabel="Bekräfta Bokning"
             selectedDate={date}
-            updateDecidedTime={selectedDecidedTime}
+            updateTime={selectedDecidedTime}
           />
         )}
 
@@ -476,7 +520,7 @@ function RouteComponent() {
       <ConfirmDialog
         open={deleteTarget !== null}
         onOpenChange={(open) => {
-          if (!open && !DeleteAvailableTimeFunction.isPending) {
+          if (!open && !isDeleting) {
             setDeleteTarget(null);
           }
         }}
@@ -494,7 +538,7 @@ function RouteComponent() {
             : ""
         }
         pendingLabel="Raderar..."
-        isPending={DeleteAvailableTimeFunction.isPending}
+        isPending={isDeleting}
         icon={<Trash2Icon />}
         onConfirm={confirmDelete}
       />

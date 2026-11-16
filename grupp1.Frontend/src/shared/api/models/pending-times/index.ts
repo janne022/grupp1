@@ -5,6 +5,8 @@
  * OpenAPI spec version: 1.0.0
  */
 
+export * from './editPendingTimeRequest';
+export * from './editPendingTimeResponse';
 export * from './postPendingTimeRequest';
 export * from './postPendingTimeResponse';
 export * from './substituteDto';
