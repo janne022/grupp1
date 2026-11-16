@@ -1,3 +1,4 @@
+import { useState } from "react";
 import {
   DropdownMenu,
   DropdownMenuContent,
@@ -20,7 +21,7 @@ export default function FilterMenu({
     SetStateAction<{ fullDay: boolean; halfDay: boolean; thisWeek: boolean }>
   >;
 }) {
-  let filterObject = filterState;
+  const [filterList, setFilterList] = useState(filterState);
 
   return (
     <DropdownMenu>
@@ -37,25 +38,34 @@ export default function FilterMenu({
         <DropdownMenuGroup>
           <DropdownMenuLabel>Visa pass som är</DropdownMenuLabel>
           <DropdownMenuCheckboxItem
-            checked={filterState.fullDay}
+            checked={filterList.fullDay}
             onCheckedChange={(e) =>
-              filterSetter({ ...filterState, fullDay: e.valueOf() })
+              setFilterList({
+                ...filterList,
+                fullDay: e.valueOf(),
+              })
             }
           >
             Heldag (7h eller mer)
           </DropdownMenuCheckboxItem>
           <DropdownMenuCheckboxItem
-            checked={filterObject.halfDay}
+            checked={filterList.halfDay}
             onCheckedChange={(e) =>
-              filterSetter({ ...filterState, halfDay: e.valueOf() })
+              setFilterList({
+                ...filterList,
+                halfDay: e.valueOf(),
+              })
             }
           >
             Halvdag (mindre än 7h)
           </DropdownMenuCheckboxItem>
           <DropdownMenuCheckboxItem
-            checked={filterObject.thisWeek}
+            checked={filterList.thisWeek}
             onCheckedChange={(e) =>
-              filterSetter({ ...filterState, thisWeek: e.valueOf() })
+              setFilterList({
+                ...filterList,
+                thisWeek: e.valueOf(),
+              })
             }
           >
             Denna vecka
@@ -65,7 +75,7 @@ export default function FilterMenu({
             <Button
               variant="ghost"
               onClick={() =>
-                filterSetter({
+                setFilterList({
                   ...filterState,
                   fullDay: false,
                   halfDay: false,
@@ -75,9 +85,7 @@ export default function FilterMenu({
             >
               Rensa
             </Button>
-            <Button onClick={() => filterSetter(filterObject)}>
-              Visa pass
-            </Button>
+            <Button onClick={() => filterSetter(filterList)}>Visa pass</Button>
           </div>
         </DropdownMenuGroup>
       </DropdownMenuContent>
