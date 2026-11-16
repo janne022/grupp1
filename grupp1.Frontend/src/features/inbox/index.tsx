@@ -23,6 +23,11 @@ function RouteComponent() {
   });
 
   const [searchQuery, setSearchQuery] = useState("");
+  const [filterState, setFilterState] = useState({
+    fullDay: false,
+    halfDay: false,
+    thisWeek: false,
+  });
 
   const decidedTimesResponse = GetAllDecidedTimes({});
 
@@ -79,6 +84,8 @@ function RouteComponent() {
                   </Badge>
                 </div>
                 <HeaderBar
+                  filterState={filterState}
+                  filterSetter={setFilterState}
                   searchState={searchQuery}
                   searchSetter={setSearchQuery}
                 />
