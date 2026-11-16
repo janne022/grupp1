@@ -24,7 +24,7 @@ namespace Vicaria.Server.Features.Emails
 
         public async Task<ErrorOr<Success>> SendEmailAsync(Email email)
         {
-            if (String.IsNullOrEmpty(email.To.Email))
+            if (string.IsNullOrEmpty(email.To.Email))
             {
                 _logger.LogError("Recipient email was null or empty in SendEmailAsync");
                 return Error.Validation("Email.MissingRecipient", "Recipient's email address was missing");
