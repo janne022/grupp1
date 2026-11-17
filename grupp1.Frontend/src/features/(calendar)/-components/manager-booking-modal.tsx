@@ -1,6 +1,6 @@
 import { useMemo, useState, type Dispatch, type SetStateAction } from "react";
 import { Clock, User } from "lucide-react";
-import { Controller, useForm, useWatch } from "react-hook-form";
+import { useForm, useWatch } from "react-hook-form";
 import { zodResolver } from "@hookform/resolvers/zod";
 import * as z from "zod";
 import type {
@@ -30,7 +30,6 @@ import {
   Field,
   FieldContent,
   FieldDescription,
-  FieldError,
   FieldGroup,
   FieldLabel,
   FieldTitle,
@@ -43,10 +42,11 @@ import { ScrollArea } from "../../../shared/components/ui/scroll-area";
 import { Input } from "../../../shared/components/ui/input";
 import type { UseQueryResult } from "@tanstack/react-query";
 import BookingSuccess from "./booking-success";
-import { Calendar } from "@/shared/components/ui/calendar";
 import { cn } from "cn";
-import { sv } from "date-fns/locale";
-import type { DateRange } from "react-day-picker";
+import {
+  DateRangeTimeFields,
+  type DateTimeValue,
+} from "./date-range-time-fields";
 
 interface BookTimeProps {
   open: boolean;
@@ -100,11 +100,6 @@ function toEditTarget(time: EditableTime): EditTarget {
     substituteName: `${time.substituteFirstName} ${time.substituteLastName}`,
   };
 }
-
-type DateTimeValue = {
-  date: Date;
-  time: string;
-};
 
 type FormValues = {
   StartDateTime: DateTimeValue;
@@ -336,15 +331,6 @@ function ManagerBookingForm({
   const [searchQuery, setSearchQuery] = useState("");
   const [bookingResult, setBookingResult] =
     useState<PostPendingTimeResponse | null>(null);
-  const [selectedRange, setSelectedRange] = useState<DateRange | undefined>(
-    () => ({
-      from: initialValues.StartDateTime.date,
-      to: initialValues.EndDateTime.date,
-    }),
-  );
-  const [calendarMonth, setCalendarMonth] = useState(
-    () => initialValues.StartDateTime.date,
-  );
 
   const postService = PostPendingTime();
   const editDecidedTimeService = EditDecidedTime();
@@ -360,8 +346,7 @@ function ManagerBookingForm({
     control,
     handleSubmit,
     setValue,
-    getValues,
-    formState: { isValid },
+    formState: { isValid, errors },
   } = form;
 
   const startDateTime = useWatch({
@@ -418,33 +403,6 @@ function ManagerBookingForm({
   const selectedKindergarten = visibleKindergartens.find(
     (kindergarten) => kindergarten.id === effectiveSelectedKindergartenId,
   );
-
-  function handleRangeSelect(_range: DateRange | undefined, clickedDate: Date) {
-    const pendingStart =
-      selectedRange?.from && !selectedRange.to ? selectedRange.from : null;
-
-    const next: DateRange =
-      pendingStart && clickedDate >= pendingStart
-        ? { from: pendingStart, to: clickedDate }
-        : { from: clickedDate, to: undefined };
-
-    setSelectedRange(next);
-
-    const startDate = next.from ?? clickedDate;
-    const endDate = next.to ?? startDate;
-    const options = { shouldDirty: true, shouldValidate: true };
-
-    setValue(
-      "StartDateTime",
-      { ...getValues("StartDateTime"), date: startDate },
-      options,
-    );
-    setValue(
-      "EndDateTime",
-      { ...getValues("EndDateTime"), date: endDate },
-      options,
-    );
-  }
 
   async function onSubmit(data: FormSchemaValues) {
     setSubmitError(null);
@@ -554,122 +512,16 @@ function ManagerBookingForm({
           )}
 
           <div className={cn("grid gap-6", !isEditing && "sm:grid-cols-2")}>
-            <FieldGroup>
-              <Controller
-                name="StartDateTime"
-                control={control}
-                render={({ fieldState }) => (
-                  <Field data-invalid={fieldState.invalid}>
-                    <Calendar
-                      mode="range"
-                      disabled={[
-                        { before: new Date(new Date().setHours(0, 0, 0, 0)) },
-                        { dayOfWeek: [0, 6] },
-                      ]}
-                      locale={sv}
-                      month={calendarMonth}
-                      onMonthChange={setCalendarMonth}
-                      weekStartsOn={1}
-                      className="w-full p-0"
-                      classNames={{
-                        root: "relative w-full",
-                        month: "flex w-full flex-col gap-1",
-                        nav: "absolute top-0 left-1/2 z-10 flex h-7 w-56 -translate-x-1/2 items-center justify-between",
-                        month_caption: "flex h-7 items-center justify-center",
-                        caption_label: "text-sm font-medium",
-                        weekdays: "grid w-full grid-cols-5",
-                        week: "mt-1 grid w-full grid-cols-5",
-                        day: "group/day relative h-[clamp(1.75rem,5dvh,2.5rem)] min-w-0 rounded-md p-0 text-center nth-[n+6]:hidden",
-                      }}
-                      selected={selectedRange}
-                      onSelect={handleRangeSelect}
-                    />
-
-                    {fieldState.invalid && (
-                      <FieldError errors={[fieldState.error]} />
-                    )}
-                  </Field>
-                )}
-              />
-
-              <FieldTitle className="font-semibold">
-                Välj tidsintervall
-              </FieldTitle>
-
-              <div className="flex flex-row items-center gap-2">
-                <Controller
-                  name="StartDateTime"
-                  control={control}
-                  render={({ field, fieldState }) => (
-                    <Field data-invalid={fieldState.invalid}>
-                      <Input
-                        min="06:00"
-                        max="18:00"
-                        type="time"
-                        step="60"
-                        value={field.value.time}
-                        onChange={(event) =>
-                          field.onChange({
-                            ...field.value,
-                            time: event.target.value,
-                          })
-                        }
-                        onBlur={field.onBlur}
-                        name={field.name}
-                        ref={field.ref}
-                        aria-invalid={fieldState.invalid}
-                      />
-                      {fieldState.invalid && (
-                        <FieldError errors={[fieldState.error]} />
-                      )}
-                    </Field>
-                  )}
-                />
-
-                <p className="flex items-center">till</p>
-
-                <Controller
-                  name="EndDateTime"
-                  control={control}
-                  render={({ field, fieldState }) => (
-                    <Field data-invalid={fieldState.invalid}>
-                      <Input
-                        min="06:00"
-                        max="18:00"
-                        type="time"
-                        step="60"
-                        value={field.value.time}
-                        onChange={(event) =>
-                          field.onChange({
-                            ...field.value,
-                            time: event.target.value,
-                          })
-                        }
-                        onBlur={field.onBlur}
-                        name={field.name}
-                        ref={field.ref}
-                        aria-invalid={fieldState.invalid}
-                      />
-                      {fieldState.invalid && (
-                        <FieldError errors={[fieldState.error]} />
-                      )}
-                    </Field>
-                  )}
-                />
-              </div>
-
-              <Controller
-                name="EndDateTime"
-                control={control}
-                render={({ fieldState }) => (
-                  <Field data-invalid={fieldState.invalid}>
-                    {fieldState.error?.message && (
-                      <FieldError errors={[fieldState.error]} />
-                    )}
-                  </Field>
-                )}
-              />
-            </FieldGroup>
+            <DateRangeTimeFields
+              value={{ start: startDateTime, end: endDateTime }}
+              onChange={({ start, end }) => {
+                const options = { shouldDirty: true, shouldValidate: true };
+                setValue("StartDateTime", start, options);
+                setValue("EndDateTime", end, options);
+              }}
+              startError={errors.StartDateTime?.time ?? errors.StartDateTime}
+              endError={errors.EndDateTime?.time ?? errors.EndDateTime}
+            />
 
             {!isEditing && (
               <FieldGroup className="min-h-0">
