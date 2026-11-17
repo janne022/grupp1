@@ -13,8 +13,8 @@ import {
 } from "../../../shared/components/ui/sidebar";
 
 const navLinks = [
-  { label: "kalender", to: "/" },
-  { label: "Dina meddelanden", to: "/inbox" },
+  { label: "Kalender", to: "/" },
+  { label: "Inkorg", to: "/inbox" },
 ];
 
 export default function Appbar() {
