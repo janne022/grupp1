@@ -1,9 +1,8 @@
-import { DatePickerTime } from "../../../shared/components/ui/date-picker";
 import { SelectGroups } from "./selectGroups";
 import { Button } from "../../../shared/components/ui/button";
 import * as z from "zod";
 import { zodResolver } from "@hookform/resolvers/zod";
-import { Controller, useForm } from "react-hook-form";
+import { Controller, useForm, useWatch } from "react-hook-form";
 import {
   Dialog,
   DialogClose,
@@ -19,7 +18,7 @@ import {
   FieldGroup,
 } from "../../../shared/components/ui/field";
 
-import React, { useEffect, type Dispatch } from "react";
+import React, { type Dispatch } from "react";
 import type {
   GetMyAvailableTimesDTO,
   KindergartenDto,
@@ -29,110 +28,149 @@ import {
   EditAvailableTime,
 } from "@/features/(calendar)/-api/AvailableTimeService";
 import { XIcon } from "lucide-react";
+import {
+  DateRangeTimeFields,
+  type DateTimeValue,
+} from "./date-range-time-fields";
 
-export default function AddEditTimeModal({
-  open: open,
-  setOpen: setOpen,
-  selectedDate: selectedDate,
-  updateAvailableTime: updateAvailableTime,
-  allKindergartens: kindergartens,
-}: {
+interface AddEditTimeModalProps {
   open: boolean;
   setOpen: Dispatch<React.SetStateAction<boolean>>;
   selectedDate?: Date | undefined;
   updateAvailableTime: GetMyAvailableTimesDTO | null;
   allKindergartens: KindergartenDto[];
-}) {
-  // TODO: Extract Selectgroups to children
+}
 
-  function splitDateTime(dateTime: string | Date) {
-    const date = new Date(dateTime);
+const TIME_REGEX = /^([01]\d|2[0-3]):[0-5]\d$/;
 
+function splitDateTime(dateTime: string | Date): DateTimeValue {
+  const date = new Date(dateTime);
+
+  return {
+    date: new Date(date.getFullYear(), date.getMonth(), date.getDate()),
+    time: `${String(date.getHours()).padStart(2, "0")}:${String(date.getMinutes()).padStart(2, "0")}`,
+  };
+}
+
+function hasDateTimeChanged(current: DateTimeValue, original: string): boolean {
+  const previous = splitDateTime(original);
+
+  return (
+    current.date.toDateString() !== previous.date.toDateString() ||
+    current.time !== previous.time
+  );
+}
+
+function toIsoDateTime(dateTime: DateTimeValue) {
+  const [hours, minutes] = dateTime.time.split(":").map(Number);
+
+  const date = new Date(dateTime.date);
+  date.setHours(hours, minutes, 0, 0);
+
+  return date.toISOString();
+}
+
+const dateTimeSchema = z.object({
+  date: z.date(),
+  time: z.string().regex(TIME_REGEX, "Ange en giltig tid"),
+});
+
+const formSchema = z
+  .object({
+    StartDateTime: dateTimeSchema,
+    EndDateTime: dateTimeSchema,
+    kindergartens: z.array(z.string()).min(1, "Välj minst en förskola"),
+  })
+  .refine(
+    (data) =>
+      new Date(toIsoDateTime(data.StartDateTime)) <
+      new Date(toIsoDateTime(data.EndDateTime)),
+    {
+      message: "Sluttiden måste vara efter starttiden",
+      path: ["EndDateTime"],
+    },
+  );
+
+type FormSchemaValues = z.infer<typeof formSchema>;
+
+function getInitialValues(
+  updateAvailableTime: GetMyAvailableTimesDTO | null,
+  selectedDate: Date | undefined,
+): FormSchemaValues {
+  if (updateAvailableTime) {
     return {
-      date: new Date(date.getFullYear(), date.getMonth(), date.getDate()),
-      time: `${String(date.getHours()).padStart(2, "0")}:${String(date.getMinutes()).padStart(2, "0")}`,
+      StartDateTime: splitDateTime(updateAvailableTime.startTime),
+      EndDateTime: splitDateTime(updateAvailableTime.endTime),
+      kindergartens: updateAvailableTime.kindergartens.map((k) => k.id),
     };
   }
 
-  function hasDateTimeChanged(
-    current: { date: Date; time: string },
-    original: string,
-  ): boolean {
-    const previous = splitDateTime(original);
+  const { date } = splitDateTime(selectedDate ?? new Date());
 
-    return (
-      current.date.toDateString() !== previous.date.toDateString() ||
-      current.time !== previous.time
-    );
-  }
+  return {
+    StartDateTime: { date, time: "08:00" },
+    EndDateTime: { date, time: "16:00" },
+    kindergartens: [],
+  };
+}
 
-  function toIsoDateTime(dateTime: { date: Date; time: string }) {
-    const [hours, minutes] = dateTime.time.split(":").map(Number);
+export default function AddEditTimeModal({
+  open,
+  setOpen,
+  ...props
+}: AddEditTimeModalProps) {
+  // Reset the form when the modal is opened or closed to ensure a fresh state each time
+  const formKey = `${props.updateAvailableTime?.id ?? "new"}-${
+    props.selectedDate?.getTime() ?? "none"
+  }`;
 
-    const date = new Date(dateTime.date);
-    date.setHours(hours, minutes, 0, 0);
+  return (
+    <Dialog open={open} onOpenChange={(e) => setOpen(e.valueOf())}>
+      <DialogContent
+        showCloseButton={false}
+        className="flex max-h-[calc(100dvh-2rem)] flex-col overflow-y-auto sm:max-w-md"
+      >
+        {open && (
+          <AddEditTimeForm
+            key={formKey}
+            onClose={() => setOpen(false)}
+            {...props}
+          />
+        )}
+      </DialogContent>
+    </Dialog>
+  );
+}
 
-    return date.toISOString();
-  }
+type AddEditTimeFormProps = Omit<AddEditTimeModalProps, "open" | "setOpen"> & {
+  onClose: () => void;
+};
 
-  const dateTime = z.object({ date: z.date(), time: z.string() });
-
-  const formSchema = z
-    .object({
-      StartDateTime: dateTime,
-      EndDateTime: dateTime,
-      kindergartens: z.array(z.string()).min(1, "Välj minst en förskola"),
-    })
-    .refine(
-      (data) =>
-        new Date(toIsoDateTime(data.StartDateTime)) <
-        new Date(toIsoDateTime(data.EndDateTime)),
-      {
-        message: "Sluttiden måste vara efter starttiden",
-        path: ["EndDateTime"],
-      },
-    );
-
-  const form = useForm<z.infer<typeof formSchema>>({
+function AddEditTimeForm({
+  onClose,
+  selectedDate,
+  updateAvailableTime,
+  allKindergartens: kindergartens,
+}: AddEditTimeFormProps) {
+  const form = useForm<FormSchemaValues>({
     resolver: zodResolver(formSchema),
-    defaultValues: {
-      StartDateTime: splitDateTime(
-        updateAvailableTime?.startTime ?? selectedDate ?? new Date(),
-      ),
-      EndDateTime: splitDateTime(
-        updateAvailableTime?.endTime ?? selectedDate ?? new Date(),
-      ),
-      kindergartens: updateAvailableTime?.kindergartens.map((k) => k.id) ?? [],
-    },
+    mode: "onChange",
+    defaultValues: getInitialValues(updateAvailableTime, selectedDate),
   });
 
-  const { reset } = form;
+  const {
+    control,
+    setValue,
+    formState: { errors },
+  } = form;
 
-  useEffect(() => {
-    if (!open) return;
+  const startDateTime = useWatch({ control, name: "StartDateTime" });
+  const endDateTime = useWatch({ control, name: "EndDateTime" });
 
-    reset({
-      StartDateTime: updateAvailableTime
-        ? splitDateTime(updateAvailableTime.startTime)
-        : {
-            date: selectedDate ?? new Date(),
-            time: "08:00",
-          },
-
-      EndDateTime: updateAvailableTime
-        ? splitDateTime(updateAvailableTime.endTime)
-        : {
-            date: selectedDate ?? new Date(),
-            time: "16:00",
-          },
-
-      kindergartens: updateAvailableTime?.kindergartens.map((k) => k.id) ?? [],
-    });
-  }, [open, updateAvailableTime, selectedDate, reset]);
   const postService = AddAvailableTime();
   const editService = EditAvailableTime();
 
-  function onSubmit(data: z.infer<typeof formSchema>) {
+  function onSubmit(data: FormSchemaValues) {
     if (updateAvailableTime) {
       // Check if any of the fields have changed
       const hasStartTimeChanged = hasDateTimeChanged(
@@ -158,7 +196,7 @@ export default function AddEditTimeModal({
         !hasEndTimeChanged &&
         !hasKindergartensChanged
       ) {
-        setOpen(false);
+        onClose();
         return;
       }
 
@@ -172,7 +210,7 @@ export default function AddEditTimeModal({
         },
         availableTimeId: updateAvailableTime.id,
       });
-      setOpen(false);
+      onClose();
       return;
     }
 
@@ -182,92 +220,60 @@ export default function AddEditTimeModal({
       kindergartens: data.kindergartens,
     });
 
-    setOpen(false);
+    onClose();
   }
 
   return (
-    <Dialog open={open} onOpenChange={(e) => setOpen(e.valueOf())}>
-      <DialogContent showCloseButton={false} className="sm:max-w-sm">
-        <form
-          className="flex flex-col gap-4"
-          id="add-availabletime-form"
-          onSubmit={form.handleSubmit(onSubmit)}
-        >
-          <DialogHeader className="flex flex-row items-center gap-0">
-            <DialogTitle className="text-center mx-auto">
-              {updateAvailableTime
-                ? "Ändra din tid"
-                : "Lägg till en tillgänglig tid!"}
-            </DialogTitle>
-            <DialogClose
-              render={
-                <Button variant="ghost" className="m-0 p-0">
-                  <XIcon />
-                </Button>
-              }
-            />
-          </DialogHeader>
-          <FieldGroup>
-            <Controller
-              name="StartDateTime"
-              control={form.control}
-              render={({ field, fieldState }) => {
-                return (
-                  <Field data-invalid={fieldState.invalid}>
-                    <DatePickerTime
-                      {...field}
-                      labelName="Startdag"
-                      onChange={(x) => {
-                        field.onChange(x);
-                      }}
-                    />
-                  </Field>
-                );
-              }}
-            />
-            <Controller
-              name="EndDateTime"
-              control={form.control}
-              render={({ field, fieldState }) => (
-                <Field data-invalid={fieldState.invalid}>
-                  <DatePickerTime
-                    {...field}
-                    labelName="Slutdag"
-                    onChange={(x) => {
-                      field.onChange(x);
-                    }}
-                  />
-
-                  {fieldState.invalid && (
-                    <FieldError errors={[fieldState.error]} />
-                  )}
-                </Field>
-              )}
-            />
-          </FieldGroup>
-          <FieldGroup>
-            <Controller
-              name="kindergartens"
-              control={form.control}
-              render={({ field, fieldState }) => (
-                <Field
-                  data-invalid={fieldState.invalid}
-                  className="flex flex-col items-center"
-                >
-                  <FieldError errors={[fieldState.error]} />
-                  <SelectGroups {...field} KindergartenDto={kindergartens} />
-                </Field>
-              )}
-            />
-          </FieldGroup>
-          <DialogFooter className="flex flex-row justify-between">
-            <DialogClose render={<Button variant="outline">Avbryt</Button>} />
-            <Button form="add-availabletime-form" type="submit">
-              {updateAvailableTime ? "Ändra" : "Bekräfta"}
+    <form
+      className="flex flex-col gap-4"
+      id="add-availabletime-form"
+      onSubmit={form.handleSubmit(onSubmit)}
+    >
+      <DialogHeader className="flex flex-row items-center gap-0">
+        <DialogTitle className="text-center mx-auto">
+          {updateAvailableTime
+            ? "Ändra din tid"
+            : "Lägg till en tillgänglig tid!"}
+        </DialogTitle>
+        <DialogClose
+          render={
+            <Button variant="ghost" className="m-0 p-0">
+              <XIcon />
             </Button>
-          </DialogFooter>
-        </form>
-      </DialogContent>
-    </Dialog>
+          }
+        />
+      </DialogHeader>
+      <DateRangeTimeFields
+        value={{ start: startDateTime, end: endDateTime }}
+        onChange={({ start, end }) => {
+          const options = { shouldDirty: true, shouldValidate: true };
+          setValue("StartDateTime", start, options);
+          setValue("EndDateTime", end, options);
+        }}
+        startError={errors.StartDateTime?.time ?? errors.StartDateTime}
+        endError={errors.EndDateTime?.time ?? errors.EndDateTime}
+      />
+      <FieldGroup>
+        <Controller
+          name="kindergartens"
+          control={control}
+          render={({ field, fieldState }) => (
+            <Field
+              data-invalid={fieldState.invalid}
+              className="flex flex-col items-center"
+            >
+              <FieldError errors={[fieldState.error]} />
+              <SelectGroups {...field} KindergartenDto={kindergartens} />
+            </Field>
+          )}
+        />
+      </FieldGroup>
+      <DialogFooter className="flex flex-row justify-between">
+        <DialogClose render={<Button variant="outline">Avbryt</Button>} />
+        <Button form="add-availabletime-form" type="submit">
+          {updateAvailableTime ? "Ändra" : "Bekräfta"}
+        </Button>
+      </DialogFooter>
+    </form>
   );
 }

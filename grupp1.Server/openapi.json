@@ -669,6 +669,46 @@
         }
       }
     },
+    "/api/pending-times/{pendingTimeId}/substitute": {
+      "delete": {
+        "tags": [
+          "RemoveCurrentUser"
+        ],
+        "parameters": [
+          {
+            "name": "pendingTimeId",
+            "in": "path",
+            "required": true,
+            "schema": {
+              "type": "string",
+              "format": "uuid"
+            }
+          }
+        ],
+        "responses": {
+          "200": {
+            "description": "OK",
+            "content": {
+              "text/plain": {
+                "schema": {
+                  "$ref": "#/components/schemas/RemoveCurrentUserResponse"
+                }
+              },
+              "application/json": {
+                "schema": {
+                  "$ref": "#/components/schemas/RemoveCurrentUserResponse"
+                }
+              },
+              "text/json": {
+                "schema": {
+                  "$ref": "#/components/schemas/RemoveCurrentUserResponse"
+                }
+              }
+            }
+          }
+        }
+      }
+    },
     "/api/decided-times/{pending-time-id}": {
       "post": {
         "tags": [
@@ -2248,6 +2288,39 @@
           }
         }
       },
+      "RemoveCurrentUserResponse": {
+        "required": [
+          "id",
+          "startTime",
+          "endTime",
+          "kindergarten",
+          "substitutes"
+        ],
+        "type": "object",
+        "properties": {
+          "id": {
+            "type": "string",
+            "format": "uuid"
+          },
+          "startTime": {
+            "type": "string",
+            "format": "date-time"
+          },
+          "endTime": {
+            "type": "string",
+            "format": "date-time"
+          },
+          "kindergarten": {
+            "$ref": "#/components/schemas/KindergartenDto"
+          },
+          "substitutes": {
+            "type": "array",
+            "items": {
+              "$ref": "#/components/schemas/SubstituteDto"
+            }
+          }
+        }
+      },
       "ResendConfirmationEmailRequest": {
         "required": [
           "email"
@@ -2558,6 +2631,9 @@
     },
     {
       "name": "GetPendingTimes"
+    },
+    {
+      "name": "RemoveCurrentUser"
     },
     {
       "name": "AcceptPendingTime"
