@@ -18,6 +18,8 @@ var postgres = builder.AddAzurePostgresFlexibleServer("databaseServer")
     .WithDataVolume()
     .WithPgAdmin());
 
+var mailpit = builder.AddMailPit("mailpit");
+
 var database = postgres.AddDatabase("database");
 
 var migrationService = builder.AddProject<Projects.grupp1_MigrationService>("migrationservice")
@@ -28,6 +30,7 @@ var server = builder.AddProject<Projects.grupp1_Server>("server")
     .WithReference(cache)
     .WaitFor(cache)
     .WithHttpHealthCheck("/health")
+    .WithReference(mailpit)
     .WithExternalHttpEndpoints()
     .WithReference(database)
     .WaitFor(migrationService)

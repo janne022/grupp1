@@ -42,7 +42,7 @@ import {
   ContextMenuItem,
   ContextMenuTrigger,
 } from "@/shared/components/ui/context-menu";
-import { useCurrentUser } from "@/shared/services/MeService";
+import { currentUserQuery, useCurrentUser } from "@/shared/services/MeService";
 import ManagerBooking from "@/features/(calendar)/-components/manager-booking-modal";
 import { useAvailableTimesByManager } from "@/features/(calendar)/-api/AvailableTimeByManagerService";
 import {
@@ -56,6 +56,15 @@ import { DeletePendingTime } from "@/features/(calendar)/-api/PendingTimeService
 
 export const Route = createFileRoute("/(calendar)/")({
   component: RouteComponent,
+  beforeLoad: async ({ context }) => {
+    const user = await context.queryClient.query(currentUserQuery);
+
+    if (!user) {
+      throw Route.redirect({
+        to: "/login",
+      });
+    }
+  },
 });
 
 type TimeVariant = "available" | "decided" | "pending";

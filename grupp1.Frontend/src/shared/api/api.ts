@@ -92,10 +92,22 @@ export async function apiFetch<T>(
   if (response.status === 204 || response.status === 205) {
     return undefined as T;
   }
+  const data = await readBody(response)
 
   if (!response.ok) {
-    throw new ApiError(response.status, await response.json());
+    throw new ApiError(response.status, data);
   }
 
-  return response.json() as Promise<T>;
+  return data as T
+}
+
+async function readBody(response: Response): Promise<unknown> {
+  const text = await response.text();
+  if (!text) return undefined;
+
+  try {
+    return JSON.parse(text);
+  } catch {
+    return text;
+  }
 }

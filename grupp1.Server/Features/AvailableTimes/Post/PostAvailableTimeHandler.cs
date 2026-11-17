@@ -1,11 +1,12 @@
 ﻿using Microsoft.EntityFrameworkCore;
+using Npgsql.EntityFrameworkCore.PostgreSQL.Query.Expressions.Internal;
 using Vicaria.Server.Domain.Models;
 using Vicaria.Server.Infrastructure;
 
 
 namespace Vicaria.Server.Features.AvailableTimes.Post
 {
-    public sealed class PostAvailableTimeHandler(VicariaDbContext context, ILogger<PostAvailableTimeHandler> _logger) : IHandler<PostAvailableTimeCommand, PostAvailableTimeResponse>
+    public sealed class PostAvailableTimeHandler(VicariaDbContext dbContext, ILogger<PostAvailableTimeHandler> _logger) : IHandler<PostAvailableTimeCommand, PostAvailableTimeResponse>
     {
         public async Task<PostAvailableTimeResponse> HandleAsync(PostAvailableTimeCommand command, CancellationToken cancellationToken = default)
         {
@@ -35,11 +36,11 @@ namespace Vicaria.Server.Features.AvailableTimes.Post
 
 
 
-            int existingCount = await context.Kindergartens.CountAsync(kg => command.Kindergartens.Contains(kg.Id), cancellationToken);
+            int existingCount = await dbContext.Kindergartens.CountAsync(kg => command.Kindergartens.Contains(kg.Id), cancellationToken);
 
             bool allExist = existingCount == command.Kindergartens.Count;
 
-            if(!allExist)
+            if (!allExist)
             {
                 _logger.LogInformation("Failed to create available time: One or more kindergartens could not be found");
 
@@ -50,14 +51,14 @@ namespace Vicaria.Server.Features.AvailableTimes.Post
                 };
             }
 
-            bool hasOverlap = await context.AvailableTimes
+            bool hasOverlap = await dbContext.AvailableTimes
                                            .Where(at => at.UserId == command.UserId
                                            && at.StartTime < command.EndTime
                                            && at.EndTime > command.StartTime
                                            && at.Kindergartens.Any(kg => command.Kindergartens.Contains(kg.KindergartenId)))
                                            .AnyAsync(cancellationToken);
 
-            if(hasOverlap)
+            if (hasOverlap)
             {
                 _logger.LogInformation("Failed to create available time: User {UserId} already has an overlapping available time", command.UserId);
 
@@ -76,7 +77,7 @@ namespace Vicaria.Server.Features.AvailableTimes.Post
                 UserId = command.UserId
             };
 
-            foreach(Guid kindergartenId in command.Kindergartens)
+            foreach (Guid kindergartenId in command.Kindergartens)
             {
                 availableTime.Kindergartens.Add(new KindergartenAvailableTime
                 {
@@ -85,10 +86,28 @@ namespace Vicaria.Server.Features.AvailableTimes.Post
                 });
             }
 
+            var matchingPendingTimes = await dbContext.PendingTimes
+                .Include(pt => pt.AvailableSubs)
+                .Where(pt =>
+                    !pt.IsBooked &&
+                    command.StartTime <= pt.StartTime &&
+                    command.EndTime >= pt.EndTime &&
+                    command.Kindergartens.Contains(pt.KindergartenId) &&
+                    !pt.AvailableSubs.Any(s => s.UserId == command.UserId))
+                .ToListAsync(cancellationToken);
 
-            await context.AvailableTimes.AddAsync(availableTime, cancellationToken);
+            foreach (var pendingTime in matchingPendingTimes)
+            {
+                pendingTime.AvailableSubs.Add(new UserPendingTime
+                {
+                    UserId = command.UserId,
+                    PendingTimeId = pendingTime.Id
+                });
+            }
 
-            await context.SaveChangesAsync(cancellationToken);
+            await dbContext.AvailableTimes.AddAsync(availableTime, cancellationToken);
+
+            await dbContext.SaveChangesAsync(cancellationToken);
 
             _logger.LogInformation("Available time {availableTimeId} created successfully", availableTime.Id);
 
