@@ -92,7 +92,7 @@ function toEditTarget(time: EditableTime): EditTarget {
 
   return {
     kind: "decided",
-    id: time.timeId,
+    id: time.decidedTimeId,
     kindergartenId: time.kindergartenId,
     kindergartenName: time.kindergartenName,
     startTime: time.startTime,

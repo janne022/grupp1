@@ -47,8 +47,6 @@ function RouteComponent() {
   const countTimeDifference = (start: Date, end: Date) => {
     const difference = Math.abs(end.getTime() - start.getTime());
 
-    console.log(Math.floor(difference / 3600000));
-
     return {
       milliseconds: difference,
       seconds: Math.floor(difference / 1000),
@@ -70,42 +68,55 @@ function RouteComponent() {
     const pendingTimesList = pendingTimesResponse.data?.pendingTimes ?? [];
     const decidedTimesList = decidedTimesResponse.data?.decidedTimes ?? [];
 
-    const visiblePendingTimes = pendingTimesList.filter(
-      (pendingTime) =>
-        pendingTime.kindergarten.name
-          .toLowerCase()
-          .includes(searchPendingQuery.toLowerCase()) ||
-        formatTime(pendingTime.startTime).includes(searchPendingQuery) ||
-        formatTime(pendingTime.endTime).includes(searchPendingQuery) ||
-        (new Date(pendingTime.startTime)
+    const matchesSearchAndFilters = (
+      time: { kindergartenName: string; startTime: string; endTime: string },
+      searchQuery: string,
+      filterState: typeof filterPendingState,
+    ) => {
+      const start = new Date(time.startTime);
+      const end = new Date(time.endTime);
+      const query = searchQuery.toLowerCase();
+
+      const matchesSearch =
+        time.kindergartenName.toLowerCase().includes(query) ||
+        formatTime(time.startTime).includes(query) ||
+        formatTime(time.endTime).includes(query) ||
+        start
           .toLocaleDateString("sv-SE", {
             weekday: "long",
             day: "numeric",
             month: "long",
           })
-          .includes(searchPendingQuery) &&
-          (!filterPendingState.fullDay ||
-            countTimeDifference(
-              new Date(pendingTime.startTime),
-              new Date(pendingTime.endTime),
-            ).hours >= 7)
+          .includes(query);
 
-            &&
+      const hours = countTimeDifference(start, end).hours;
 
+      const matchesFilters =
+        (!filterState.fullDay || hours >= 7) &&
+        (!filterState.halfDay || hours < 7) &&
+        (!filterState.thisWeek || isSameISOWeek(new Date(), start));
 
-          (!filterPendingState.halfDay ||
-            countTimeDifference(
-              new Date(pendingTime.startTime),
-              new Date(pendingTime.endTime),
-            ).hours < 7) &&
-          (!filterPendingState.thisWeek ||
-            isSameISOWeek(new Date(), new Date(pendingTime.startTime)))),
+      return matchesSearch && matchesFilters;
+    };
+
+    const visiblePendingTimes = pendingTimesList.filter((pendingTime) =>
+      matchesSearchAndFilters(
+        {
+          kindergartenName: pendingTime.kindergarten.name,
+          startTime: pendingTime.startTime,
+          endTime: pendingTime.endTime,
+        },
+        searchPendingQuery,
+        filterPendingState,
+      ),
     );
 
     const visibleDecidedTimes = decidedTimesList.filter((decidedTime) =>
-      decidedTime.kindergartenName
-        .toLowerCase()
-        .includes(searchDecidedQuery.toLowerCase()),
+      matchesSearchAndFilters(
+        decidedTime,
+        searchDecidedQuery,
+        filterDecidedState,
+      ),
     );
 
     return (

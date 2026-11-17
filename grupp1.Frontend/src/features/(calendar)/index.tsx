@@ -215,7 +215,7 @@ function RouteComponent() {
   const calendarEvents = isManager
     ? [
         ...(DecidedTimesResponse.data?.decidedTimes ?? []).map((item) => ({
-          id: item.timeId,
+          id: item.decidedTimeId,
           startTime: item.startTime,
           endTime: item.endTime,
           type: "decided" as const,
@@ -423,7 +423,7 @@ function RouteComponent() {
                                 handleEditDecidedTime(item.original)
                               }
                               onDelete={() =>
-                                handleDelete(item.original.timeId, "decided")
+                                handleDelete(item.original.decidedTimeId, "decided")
                               }
                               details={
                                 <p className="text-muted-foreground">
