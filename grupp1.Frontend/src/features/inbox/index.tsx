@@ -23,8 +23,14 @@ function RouteComponent() {
     includeBookedTimes: false,
   });
 
-  const [searchQuery, setSearchQuery] = useState("");
-  const [filterState, setFilterState] = useState({
+  const [searchPendingQuery, setSearchPendingQuery] = useState("");
+  const [searchDecidedQuery, setSearchDecidedQuery] = useState("");
+  const [filterPendingState, setFilterPendingState] = useState({
+    fullDay: false,
+    halfDay: false,
+    thisWeek: false,
+  });
+  const [filterDecidedState, setFilterDecidedState] = useState({
     fullDay: false,
     halfDay: false,
     thisWeek: false,
@@ -66,32 +72,40 @@ function RouteComponent() {
 
     const visiblePendingTimes = pendingTimesList.filter(
       (pendingTime) =>
-        ((pendingTime.kindergarten.name
+        pendingTime.kindergarten.name
           .toLowerCase()
-          .includes(searchQuery.toLowerCase()) ||
-          formatTime(pendingTime.startTime).includes(searchQuery) ||
-          formatTime(pendingTime.endTime).includes(searchQuery) ||
-          new Date(pendingTime.startTime)
-            .toLocaleDateString("sv-SE", {
-              weekday: "long",
-              day: "numeric",
-              month: "long",
-            })
-            .includes(searchQuery)) &&
-          filterState.fullDay &&
-          filterState.halfDay) ||
-        ((!filterState.fullDay ||
-          countTimeDifference(
-            new Date(pendingTime.startTime),
-            new Date(pendingTime.endTime),
-          ).hours >= 7) &&
-          (!filterState.halfDay ||
+          .includes(searchPendingQuery.toLowerCase()) ||
+        formatTime(pendingTime.startTime).includes(searchPendingQuery) ||
+        formatTime(pendingTime.endTime).includes(searchPendingQuery) ||
+        (new Date(pendingTime.startTime)
+          .toLocaleDateString("sv-SE", {
+            weekday: "long",
+            day: "numeric",
+            month: "long",
+          })
+          .includes(searchPendingQuery) &&
+          (!filterPendingState.fullDay ||
+            countTimeDifference(
+              new Date(pendingTime.startTime),
+              new Date(pendingTime.endTime),
+            ).hours >= 7)
+
+            &&
+
+
+          (!filterPendingState.halfDay ||
             countTimeDifference(
               new Date(pendingTime.startTime),
               new Date(pendingTime.endTime),
             ).hours < 7) &&
-          (!filterState.thisWeek ||
+          (!filterPendingState.thisWeek ||
             isSameISOWeek(new Date(), new Date(pendingTime.startTime)))),
+    );
+
+    const visibleDecidedTimes = decidedTimesList.filter((decidedTime) =>
+      decidedTime.kindergartenName
+        .toLowerCase()
+        .includes(searchDecidedQuery.toLowerCase()),
     );
 
     return (
@@ -113,16 +127,16 @@ function RouteComponent() {
                   </Badge>
                 </div>
                 <HeaderBar
-                  filterState={filterState}
-                  filterSetter={setFilterState}
-                  searchState={searchQuery}
-                  searchSetter={setSearchQuery}
+                  filterState={filterPendingState}
+                  filterSetter={setFilterPendingState}
+                  searchState={searchPendingQuery}
+                  searchSetter={setSearchPendingQuery}
                 />
               </div>
             </div>
             <div className="overflow-y-scroll max-h-199 p-0.5">
               {visiblePendingTimes.length === 0 ? (
-                <p>Ingen förskola matchade din sökning...</p>
+                <p>Inget pass matchade din sökning...</p>
               ) : (
                 visiblePendingTimes?.map((pendingTime) => (
                   <PendingMessage
@@ -141,14 +155,19 @@ function RouteComponent() {
                 <div className="flex justify-between items-center">
                   <h1 className="text-2xl">Övriga pass</h1>
                   <Badge className="p-3" variant="secondary">
-                    {decidedTimesList?.length} pass i listan
+                    {visibleDecidedTimes?.length} pass i listan
                   </Badge>
                 </div>
-                {/* <HeaderBar /> */}
+                <HeaderBar
+                  filterState={filterDecidedState}
+                  filterSetter={setFilterDecidedState}
+                  searchState={searchDecidedQuery}
+                  searchSetter={setSearchDecidedQuery}
+                />
               </div>
             </div>
             <div className="overflow-y-scroll max-h-199 p-0.5">
-              {decidedTimesList?.map((decidedTime) => (
+              {visibleDecidedTimes?.map((decidedTime) => (
                 <DecidedMessage
                   key={decidedTime.decidedTimeId}
                   decidedTime={decidedTime}
