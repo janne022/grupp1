@@ -1650,7 +1650,7 @@
       },
       "GetAllDecidedTimesDTO": {
         "required": [
-          "timeId",
+          "decidedTimeId",
           "startTime",
           "endTime",
           "substituteId",
@@ -1661,7 +1661,7 @@
         ],
         "type": "object",
         "properties": {
-          "timeId": {
+          "decidedTimeId": {
             "type": "string",
             "format": "uuid"
           },

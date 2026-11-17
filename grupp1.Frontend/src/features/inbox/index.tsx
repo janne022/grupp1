@@ -120,13 +120,16 @@ function RouteComponent() {
     );
 
     return (
-      <Tabs defaultValue="pending" className="p-3">
+      <Tabs
+        defaultValue="pending"
+        className="p-3 h-[calc(100dvh-5rem)] md:h-dvh"
+      >
         <TabsList variant="line">
           <TabsTrigger value="pending">Tillgängliga pass</TabsTrigger>
           <TabsTrigger value="decided">Övriga</TabsTrigger>
         </TabsList>
-        <TabsContent value="pending">
-          <div>
+        <TabsContent value="pending" className="flex flex-col min-h-0">
+          <div className="flex flex-col flex-1 min-h-0">
             <div className="flex flex-col gap-3">
               <div className="pb-2 flex flex-col gap-2">
                 <div className="flex justify-between items-center">
@@ -145,7 +148,7 @@ function RouteComponent() {
                 />
               </div>
             </div>
-            <div className="overflow-y-scroll max-h-199 p-0.5">
+            <div className="flex-1 min-h-0 overflow-y-auto p-0.5">
               {visiblePendingTimes.length === 0 ? (
                 <p>Inget pass matchade din sökning...</p>
               ) : (
@@ -159,8 +162,8 @@ function RouteComponent() {
             </div>
           </div>
         </TabsContent>
-        <TabsContent value="decided">
-          <div>
+        <TabsContent value="decided" className="flex flex-col min-h-0">
+          <div className="flex flex-col flex-1 min-h-0">
             <div className="flex flex-col gap-3">
               <div className="pb-2 flex flex-col gap-2">
                 <div className="flex justify-between items-center">
@@ -177,7 +180,7 @@ function RouteComponent() {
                 />
               </div>
             </div>
-            <div className="overflow-y-scroll max-h-199 p-0.5">
+            <div className="flex-1 min-h-0 overflow-y-auto p-0.5">
               {visibleDecidedTimes?.map((decidedTime) => (
                 <DecidedMessage
                   key={decidedTime.decidedTimeId}
