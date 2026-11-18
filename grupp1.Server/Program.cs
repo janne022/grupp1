@@ -93,6 +93,9 @@ public class Program
 
         var app = builder.Build();
 
+        app.UseDefaultFiles();
+        app.UseStaticFiles();
+
         // Add health check endpoints
         app.MapDefaultEndpoints();
 
@@ -114,6 +117,8 @@ public class Program
         api.MapIdentityApi<User>();
 
         app.MapControllers();
+
+        app.MapFallbackToFile("index.html");
         app.Run();
 
         #endregion
