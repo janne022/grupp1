@@ -1,0 +1,81 @@
+import { useMutation, useQuery, useQueryClient } from "@tanstack/react-query";
+import { apiClient, ApiError } from "@/shared/api/api";
+import type { AcceptPendingTimeResponse } from "@/shared/api/models/accept-pending-time";
+import type { GetPendingTimesResponse } from "@/shared/api/models/get-pending-times";
+
+type GetAllPendingTimesParams = {
+  fromTime?: string;
+  toTime?: string;
+  includeBookedTimes?: boolean;
+};
+
+function AcceptPendingTime() {
+  const query = useQueryClient();
+
+  return useMutation({
+    mutationFn: (pendingTimeId: string) => {
+      return apiClient.post<AcceptPendingTimeResponse>(
+        `/api/decided-times/${pendingTimeId}`,
+      );
+    },
+
+    onSuccess: async () => {
+      await Promise.all([
+        query.invalidateQueries({ queryKey: ["pendingTimesData"] }),
+        query.invalidateQueries({ queryKey: ["decidedTimesData"] }),
+      ]);
+    },
+  });
+}
+
+function RejectPendingTime() {
+  const query = useQueryClient();
+
+  return useMutation({
+    mutationFn: (pendingTimeId: string) => {
+      return apiClient.delete<void>(
+        `/api/pending-times/${pendingTimeId}/substitute`,
+      );
+    },
+
+    onSuccess: async () => {
+      await query.invalidateQueries({
+        queryKey: ["pendingTimesData"],
+      });
+    },
+  });
+}
+
+function GetAllPendingTimes(
+  params: GetAllPendingTimesParams = {},
+  enabled = true,
+) {
+  return useQuery({
+    queryKey: ["pendingTimesData", params],
+    queryFn: async ({
+      signal,
+    }: {
+      signal: AbortSignal;
+    }): Promise<GetPendingTimesResponse | null> => {
+      try {
+        const response = await apiClient.get<GetPendingTimesResponse>(
+          "/api/pending-times",
+          {
+            signal,
+            params,
+          },
+        );
+        return response;
+      } catch (error) {
+        if (error instanceof ApiError && error.status === 401) {
+          return null;
+        }
+
+        throw error;
+      }
+    },
+    enabled: enabled,
+  });
+}
+
+export { GetAllPendingTimes, RejectPendingTime, AcceptPendingTime };

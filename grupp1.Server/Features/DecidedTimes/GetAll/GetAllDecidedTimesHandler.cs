@@ -1,5 +1,8 @@
 using ErrorOr;
+using Microsoft.AspNetCore.Identity;
 using Microsoft.EntityFrameworkCore;
+using Vicaria.Server.Domain;
+using Vicaria.Server.Domain.Models;
 using Vicaria.Server.Features.DecidedTimes.GetAll.DTOs;
 using Vicaria.Server.Infrastructure;
 
@@ -7,7 +10,7 @@ namespace Vicaria.Server.Features.DecidedTimes.GetAll;
 
 public class GetAllDecidedTimesHandler(
     VicariaDbContext DbContext,
-    ILogger<GetAllDecidedTimesHandler> _logger
+    UserManager<User> userManager
 ) : IHandler<GetAllDecidedTimesQuery, ErrorOr<GetAllDecidedTimesResponse>>
 {
     public async Task<ErrorOr<GetAllDecidedTimesResponse>> HandleAsync(
@@ -15,100 +18,68 @@ public class GetAllDecidedTimesHandler(
         CancellationToken cancellationToken = default
     )
     {
-        #region Pre-run checks
+        #region query filtering
+        User? currentUser = await userManager.FindByIdAsync(query.Userid.ToString());
+        HashSet<string> currentRoles = [.. await userManager.GetRolesAsync(currentUser!)];
 
-        bool noIdsSupplied = false;
-        if (query.KindergartenIds is null || query.KindergartenIds.Length <= 0)
+        IQueryable<DecidedTime> dbQuery = DbContext.DecidedTimes.AsNoTracking();
+
+        if (currentRoles.Contains(VicariaUserRoles.Manager))
         {
-            noIdsSupplied = true;
+            dbQuery = dbQuery.Where(decidedTime => decidedTime.ManagerId == query.Userid);
+        }
+        else if (currentRoles.Contains(VicariaUserRoles.Substitute))
+        {
+            dbQuery = dbQuery.Where(decidedTime => decidedTime.SubstituteId == query.Userid);
         }
 
-        bool hasFromTime = false;
         if (query.FromTime is not null)
         {
-            hasFromTime = true;
+            dbQuery = dbQuery.Where(decidedTime => decidedTime.StartTime >= query.FromTime.Value);
         }
 
-        bool hasToTime = false;
         if (query.ToTime is not null)
         {
-            hasToTime = true;
+            dbQuery = dbQuery.Where(decidedTime => decidedTime.StartTime <= query.ToTime.Value);
         }
 
-        #endregion
-        #region Belonging check
-
-        var managedKindergartenIds = await DbContext
-            .UserKinderGartens.Where(uk => uk.UserId == query.ManagerId)
-            .Select(uk => uk.KindergartenId)
-            .ToListAsync(cancellationToken);
-
-        Guid[] kindergartensToShow;
-        if (noIdsSupplied)
+        if (query.KindergartenIds is not null && query.KindergartenIds.Length > 0)
         {
-            kindergartensToShow = managedKindergartenIds.ToArray();
-        }
-        else
-        {
-            kindergartensToShow = query.KindergartenIds!;
+            dbQuery = dbQuery.Where(decidedTime => query.KindergartenIds.Contains(decidedTime.KindergartenId));
         }
 
-        bool managesThemAll = true;
-        foreach (var entry in kindergartensToShow)
+        if (currentRoles.Contains(VicariaUserRoles.Manager))
         {
-            bool managesCurrentKindergarten = managedKindergartenIds.Contains(entry);
-
-            if (!managesCurrentKindergarten)
-            {
-                managesThemAll = false;
-                break;
-            }
-        }
-
-        if (!managesThemAll)
-        {
-            _logger.LogWarning(
-                "KindergartenIds {KinderIds} did not all belong to "
-                    + "UserId {UserId} in GetAllDecidedTimesHandler",
-                query.KindergartenIds,
-                query.ManagerId
+            dbQuery = dbQuery
+                .Where(decidedTime => decidedTime.Kindergarten.Managers.Any(manager => manager.UserId == query.Userid)
             );
-            return Error.NotFound("Kindergarten.NotManaged","Not manager of kindergarten");
+        }
+        else if (currentRoles.Contains(VicariaUserRoles.Substitute))
+        {
+            dbQuery = dbQuery.Where(decidedTime => decidedTime.Kindergarten.AvailableSubs.Any(availableSub => availableSub.AvailableTime.UserId == query.Userid));
         }
 
         #endregion
-        #region Filter data
 
-        var relevantTimes = DbContext.DecidedTimes.Where(dt =>
-            kindergartensToShow.Contains(dt.KindergartenId)
-        );
+        #region materialisation
 
-        if (hasFromTime)
-        {
-            relevantTimes = relevantTimes.Where(dt => dt.StartTime >= query.FromTime!.Value);
-        }
+        GetAllDecidedTimesDTO[] decidedTimes = await dbQuery
+            .OrderBy(decidedTime => decidedTime.StartTime)
+            .Select(decidedTime => new GetAllDecidedTimesDTO(
+               DecidedTimeId: decidedTime.Id,
+               StartTime: decidedTime.StartTime,
+               EndTime: decidedTime.EndTime,
 
-        if (hasToTime)
-        {
-            relevantTimes = relevantTimes.Where(dt => dt.StartTime <= query.ToTime!.Value);
-        }
+               SubstituteId: decidedTime.SubstituteId,
+               SubstituteFirstName: decidedTime.Substitute.FirstName,
+               SubstituteLastName: decidedTime.Substitute.LastName,
 
-        var decidedTimes = await relevantTimes
-            .OrderBy(dt => dt.StartTime)
-            .Select(dt => new GetAllDecidedTimesDTO(
-                dt.Id,
-                dt.StartTime,
-                dt.EndTime,
-                dt.SubstituteId,
-                dt.Substitute.FirstName,
-                dt.Substitute.LastName,
-                dt.KindergartenId,
-                dt.Kindergarten.Name
+               KindergartenId: decidedTime.KindergartenId,
+               KindergartenName: decidedTime.Kindergarten.Name
             ))
-            .ToListAsync(cancellationToken);
+            .ToArrayAsync(cancellationToken);
 
         return new GetAllDecidedTimesResponse(decidedTimes);
-
         #endregion
     }
 }
