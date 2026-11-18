@@ -35,6 +35,7 @@ const formSchema = z
     firstName: z.string().min(1, "First name is required"),
     lastName: z.string().min(1, "Last name is required"),
     email: z.email(),
+    phoneNumber: z.string().min(1, "Phone number is required"),
     password: z.string().min(8, "Password must be at least 8 characters"),
     confirmPassword: z.string(),
     role: z.enum(["Manager", "Substitute"]),
@@ -56,6 +57,7 @@ export function SignupForm({
       firstName: "",
       lastName: "",
       email: "",
+      phoneNumber: "",
       password: "",
       confirmPassword: "",
       role: undefined,
@@ -67,6 +69,7 @@ export function SignupForm({
       firstName: data.firstName,
       lastName: data.lastName,
       email: data.email,
+      phoneNumber: data.phoneNumber,
       password: data.password,
       role: data.role,
     });
@@ -131,6 +134,22 @@ export function SignupForm({
                       id="email"
                       type="email"
                       placeholder="john.doe@example.com"
+                      required
+                    />
+                  </Field>
+                )}
+              />
+              <Controller
+                name="phoneNumber"
+                control={form.control}
+                render={({ field, fieldState }) => (
+                  <Field data-invalid={fieldState.invalid}>
+                    <FieldLabel htmlFor="phoneNumber">Phone Number</FieldLabel>
+                    <Input
+                      {...field}
+                      id="phoneNumber"
+                      type="tel"
+                      autoComplete="tel"
                       required
                     />
                   </Field>
