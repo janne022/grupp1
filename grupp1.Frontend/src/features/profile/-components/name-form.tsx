@@ -34,7 +34,7 @@ const fields = [
 ] as const;
 
 export function NameForm({ firstName, lastName }: NameFormValues) {
-  const [editing, setEditing] = useState({ firstName: false, lastName: false });
+  const [editing, setEditing] = useState(false);
   const changeNames = useChangeNames();
 
   const form = useForm<NameFormValues>({
@@ -42,20 +42,30 @@ export function NameForm({ firstName, lastName }: NameFormValues) {
     defaultValues: { firstName, lastName },
   });
 
-  function toggle(name: keyof NameFormValues) {
-    if (editing[name]) {
-      form.resetField(name);
+  const { isDirty, dirtyFields } = form.formState;
+
+  function toggle() {
+    if (editing) {
+      form.reset();
     }
-    setEditing((prev) => ({ ...prev, [name]: !prev[name] }));
+    setEditing((prev) => !prev);
   }
 
   function onSubmit(data: NameFormValues) {
+    if (!isDirty) {
+      setEditing(false);
+      return;
+    }
+
     changeNames.mutate(
-      { newFirstName: data.firstName, newLastName: data.lastName },
+      {
+        newFirstName: dirtyFields.firstName ? data.firstName : null,
+        newLastName: dirtyFields.lastName ? data.lastName : null,
+      },
       {
         onSuccess: () => {
           form.reset(data);
-          setEditing({ firstName: false, lastName: false });
+          setEditing(false);
         },
         onError: () => {
           form.setError("root", {
@@ -69,7 +79,7 @@ export function NameForm({ firstName, lastName }: NameFormValues) {
   return (
     <form onSubmit={form.handleSubmit(onSubmit)}>
       <FieldGroup>
-        {fields.map(({ name, label }) => (
+        {fields.map(({ name, label }, index) => (
           <Controller
             key={name}
             name={name}
@@ -78,12 +88,16 @@ export function NameForm({ firstName, lastName }: NameFormValues) {
               <Field data-invalid={fieldState.invalid}>
                 <FieldLabel htmlFor={name}>{label}</FieldLabel>
                 <div className="flex items-center gap-2">
-                  <Input {...field} id={name} disabled={!editing[name]} />
-                  <EditToggleButton
-                    unlocked={editing[name]}
-                    onClick={() => toggle(name)}
-                    label={label}
-                  />
+                  <Input {...field} id={name} disabled={!editing} />
+                  {index === 0 ? (
+                    <EditToggleButton
+                      unlocked={editing}
+                      onClick={toggle}
+                      label="namn"
+                    />
+                  ) : (
+                    <div className="size-9 shrink-0" aria-hidden />
+                  )}
                 </div>
                 {fieldState.invalid && (
                   <FieldError errors={[fieldState.error]} />
@@ -98,7 +112,7 @@ export function NameForm({ firstName, lastName }: NameFormValues) {
             {form.formState.errors.root.message}
           </p>
         )}
-        {(editing.firstName || editing.lastName) && (
+        {editing && (
           <Button
             type="submit"
             className="self-end"

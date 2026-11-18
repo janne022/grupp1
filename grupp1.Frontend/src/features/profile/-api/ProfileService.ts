@@ -2,7 +2,10 @@ import { useMutation, useQueryClient } from "@tanstack/react-query";
 import { apiClient } from "@/shared/api/api";
 import { currentUserQuery } from "@/shared/services/MeService";
 
-type ChangeNamesRequest = { newFirstName: string; newLastName: string };
+type ChangeNamesRequest = {
+  newFirstName: string | null;
+  newLastName: string | null;
+};
 type ChangePasswordRequest = { oldPassword: string; newPassword: string };
 type ChangeEmailRequest = { newEmail: string };
 
