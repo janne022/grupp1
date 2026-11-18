@@ -7,7 +7,7 @@ using Vicaria.Server.Infrastructure;
 
 namespace Vicaria.Server.Features.Account.NameChange
 {
-    [Route("api/account")]
+    [Route("api/account/names")]
     [Authorize]
     [ApiController]
     public class UserNamesChangeController(
