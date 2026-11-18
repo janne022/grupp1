@@ -11,6 +11,7 @@ namespace Vicaria.Server.Features.DecidedTimes.UnbookDecidedTime
     [Authorize]
     [Route("api/decided-times")]
     [ApiController]
+    [Tags("DecidedTimes")]
     public class UnbookDecidedTimeController(IHandler<UnbookDecidedTimeCommand, ErrorOr<Deleted>> handler) : ControllerBase
     {
         [HttpDelete("{id:guid}")]
