@@ -10,6 +10,9 @@ permissions:
   id-token: write
   contents: read
 
+concurrency:
+  group: deploy-production
+  cancel-in-progress: false
 jobs:
   deploy:
     runs-on: ubuntu-latest
@@ -30,8 +33,24 @@ jobs:
         with:
           dotnet-version: '10.0.x'
 
+      - name: Setup Node.js
+        uses: actions/setup-node@v6
+        with:
+          node-version: 24
+          cache: npm
+          cache-dependency-path: grupp1.Frontend/package-lock.json
+
       - name: Install Aspire CLI
         run: dotnet tool install -g aspire.cli
+
+      - name: Build backend
+        run: dotnet build grupp1.Server/grupp1.Server.csproj -c Release
+
+      - name: Generate API client
+        working-directory: grupp1.Frontend
+        run: |
+          npm ci
+          npm run generate:api
 
       - name: Log in to Azure (OIDC)
         uses: azure/login@v3

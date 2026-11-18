@@ -4,6 +4,7 @@
 using System.Diagnostics;
 using Microsoft.Extensions.Logging;
 using Scalar.Aspire;
+using Azure.Provisioning.PostgreSql;
 
 var builder = DistributedApplication.CreateBuilder(args);
 
@@ -17,6 +18,20 @@ var cache = builder.AddAzureManagedRedis("cache")
     .RunAsContainer();
 
 var postgres = builder.AddAzurePostgresFlexibleServer("databaseServer")
+    .ConfigureInfrastructure(infra =>
+        {
+            var server = infra.GetProvisionableResources()
+                .OfType<PostgreSqlFlexibleServer>()
+                .Single();
+
+            infra.Add(new PostgreSqlFlexibleServerConfiguration("postgisExtension")
+            {
+                Parent = server,
+                Name = "azure.extensions",
+                Value = "POSTGIS",
+                Source = "user-override"
+            });
+        })
     .RunAsContainer(db => db.WithLifetime(ContainerLifetime.Persistent)
     .WithImage("postgis/postgis")
     .WithDataVolume()
@@ -25,11 +40,11 @@ var postgres = builder.AddAzurePostgresFlexibleServer("databaseServer")
 
 var database = postgres.AddDatabase("database");
 
-var migrationService = builder.AddProject<Projects.grupp1_MigrationService>("migrationservice")
+var migrationService = builder.AddDotnetProject("migrationservice", "../grupp1.MigrationService/grupp1.MigrationService.csproj")
     .WithReference(database)
     .WaitFor(database);
 
-var server = builder.AddProject<Projects.grupp1_Server>("server")
+var server = builder.AddDotnetProject("server", "../grupp1.Server/grupp1.Server.csproj")
     .WithReference(cache)
     .WaitFor(cache)
     .WithHttpHealthCheck("/health")

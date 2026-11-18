@@ -6,7 +6,7 @@ var builder = Host.CreateApplicationBuilder(args);
 
 builder.Services.AddLogging();
 
-builder.AddNpgsqlDbContext<VicariaDbContext>("database", configureDbContextOptions: options =>
+builder.AddAzureNpgsqlDbContext<VicariaDbContext>("database", configureDbContextOptions: options =>
 {
     options.UseNpgsql(npgsqlOptions =>
     {

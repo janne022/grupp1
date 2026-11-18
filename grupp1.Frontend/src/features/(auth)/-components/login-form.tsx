@@ -1,0 +1,159 @@
+import { cn } from "cn";
+import * as z from "zod";
+import { zodResolver } from "@hookform/resolvers/zod";
+import { ForgotPasswordModal } from "@/shared/components/forgot-password-modal";
+
+import { Button } from "@/shared/components/ui/button";
+import {
+  Card,
+  CardContent,
+  CardDescription,
+  CardHeader,
+} from "@/shared/components/ui/card";
+import {
+  Field,
+  FieldDescription,
+  FieldError,
+  FieldGroup,
+  FieldLabel,
+} from "@/shared/components/ui/field";
+import { Input } from "@/shared/components/ui/input";
+import { useLogin } from "@/features/(auth)/-api/LoginService";
+import { Controller, useForm } from "react-hook-form";
+import { useNavigate } from "@tanstack/react-router";
+import { useQueryClient } from "@tanstack/react-query";
+import { currentUserQuery } from "@/shared/services/MeService";
+import { useState } from "react";
+import NoAccountModal from "@/shared/components/ui/noAccountModal";
+
+const formSchema = z.object({
+  email: z.email("Ange en giltig e-postadress"),
+  password: z.string().min(1, "Ange ditt lösenord"), //the 1 makes sure the usr has typed anything inte password field at all
+});
+
+export function LoginForm({
+  className,
+  ...props
+}: React.ComponentProps<"div">) {
+  const login = useLogin();
+  const queryClient = useQueryClient();
+  const navigate = useNavigate();
+  const [noAccountOpen, setNoAccountOpen] = useState(false);
+
+  const form = useForm<z.infer<typeof formSchema>>({
+    resolver: zodResolver(formSchema),
+    defaultValues: {
+      email: "",
+      password: "",
+    },
+  });
+
+  function onSubmit(data: z.infer<typeof formSchema>) {
+    login.mutate(
+      {
+        email: data.email,
+        password: data.password,
+      },
+      {
+        onSuccess: async () => {
+          await queryClient.query({ ...currentUserQuery, staleTime: 0 });
+          navigate({ to: "/" });
+        },
+      },
+    );
+  }
+
+  return (
+    <div
+      className={cn(
+        "flex flex-col gap-6 justify-center text-center",
+        className,
+      )}
+      {...props}
+    >
+      <img
+        className="w-28 self-center pb-6"
+        src="/VicariaLogo-Compressed.png"
+      />
+      <h1 className="text-2xl">Välkommen tillbaka!</h1>
+      <Card className="ring-0">
+        <CardHeader>
+          {/* <CardTitle className="font-bold text-2xl">Login</CardTitle> */}
+          <CardDescription>
+            Skriv ner konto detaljer för att logga in
+          </CardDescription>
+        </CardHeader>
+        <CardContent>
+          <form
+            id="login-form"
+            noValidate
+            onSubmit={form.handleSubmit(onSubmit)}
+          >
+            <FieldGroup>
+              <Controller
+                name="email"
+                control={form.control}
+                render={({ field, fieldState }) => (
+                  <Field data-invalid={fieldState.invalid}>
+                    <FieldLabel htmlFor="email">E-postadress</FieldLabel>
+                    <Input
+                      {...field}
+                      id="email"
+                      type="email"
+                      aria-invalid={fieldState.invalid}
+                    />
+                    {fieldState.invalid && (
+                      <FieldError errors={[fieldState.error]} />
+                    )}
+                  </Field>
+                )}
+              />
+              <Controller
+                name="password"
+                control={form.control}
+                render={({ field, fieldState }) => (
+                  <Field data-invalid={fieldState.invalid}>
+                    <div className="flex items-center">
+                      <FieldLabel htmlFor="password">Lösenord</FieldLabel>
+                      <div className="ml-auto">
+                        <ForgotPasswordModal />
+                      </div>
+                    </div>
+                    <Input
+                      {...field}
+                      id="password"
+                      type="password"
+                      aria-invalid={fieldState.invalid}
+                    />
+                    {fieldState.invalid && (
+                      <FieldError errors={[fieldState.error]} />
+                    )}
+                  </Field>
+                )}
+              />
+              <Field>
+                <Button type="submit" form="login-form">
+                  Logga in
+                </Button>
+                {login.isError && (
+                  <FieldError>Fel lösenord eller e-postadress</FieldError>
+                )}
+                <FieldDescription className="text-center">
+                  <button
+                    type="button"
+                    onClick={() => setNoAccountOpen(true)}
+                    className="underline-offset-4 hover:underline"
+                  >
+                    Har du inte ett konto?
+                  </button>
+                </FieldDescription>
+              </Field>
+            </FieldGroup>
+          </form>
+        </CardContent>
+      </Card>
+
+      <NoAccountModal open={noAccountOpen} setOpen={setNoAccountOpen} />
+    </div>
+  );
+}
