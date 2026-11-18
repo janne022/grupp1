@@ -7,14 +7,14 @@ using Vicaria.Server.Infrastructure;
 
 namespace Vicaria.Server.Features.Account.NameChange
 {
-    [Route("api/account/names")]
+    [Route("api/account")]
     [Authorize]
     [ApiController]
     public class UserNamesChangeController(
         IHandler<UserNamesChangeCommand, ErrorOr<Success>> handler
     ) : ControllerBase
     {
-        [HttpPatch]
+        [HttpPatch("names")]
         public async Task<ActionResult> UpdateNames(
             [FromBody] UserNamesChangeQuery query,
             CancellationToken cancellationToken = default
