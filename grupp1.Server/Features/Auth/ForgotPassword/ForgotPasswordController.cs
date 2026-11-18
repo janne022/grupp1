@@ -3,7 +3,7 @@ using Microsoft.AspNetCore.Http;
 using Microsoft.AspNetCore.Mvc;
 using Vicaria.Server.Infrastructure;
 
-namespace grupp1.Server.Features.Auth.ForgotPassword
+namespace Vicaria.Server.Features.Auth.ForgotPassword
 {
     [Route("api/auth")]
     [ApiController]

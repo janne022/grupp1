@@ -1,5 +1,4 @@
 ﻿using ErrorOr;
-using Microsoft.AspNetCore.Http;
 using Microsoft.AspNetCore.Mvc;
 using Vicaria.Server.Infrastructure;
 
@@ -12,6 +11,7 @@ namespace Vicaria.Server.Features.Auth.ResetPassword
         [HttpPost("reset-password")]
         public async Task<IActionResult> ResetPasswordAsync(ResetPasswordCommand command, CancellationToken cancellationToken)
         {
+
             var result = await handler.HandleAsync(command, cancellationToken);
 
             return result.Match<IActionResult>(

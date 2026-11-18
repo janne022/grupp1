@@ -2,7 +2,7 @@
 {
     public record class ResetPasswordCommand
         (
-            string UserId,
+            Guid UserId,
             string Token,
             string NewPassword
         );

@@ -1,7 +1,7 @@
-﻿namespace grupp1.Server.Features.Auth.ForgotPassword
+﻿namespace Vicaria.Server.Features.Auth.ForgotPassword
 {
     public record class ForgotPasswordCommand
     {
-        public string Email { get; set; }
+        public required string Email { get; set; }
     }
 }
