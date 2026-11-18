@@ -11,7 +11,7 @@ namespace Vicaria.Server.Features.Kindergarten.AddManagerToKindergarten;
 [Route("api/kindergartens")]
 [ApiController]
 public class AddManagerToKindergartenController(
-    IHandler<AddManagerToKindergartenCommand, ErrorOr<AddManagerToKindergartenResult>> handler
+    IHandler<AddManagerToKindergartenCommand, ErrorOr<Success>> handler
 ) : ControllerBase
 {
     //TODO: right now any manager can add themselves to any kindergarten. this needs fixing but is good for testing
@@ -37,7 +37,7 @@ public class AddManagerToKindergartenController(
         var result = await handler.HandleAsync(command, cancellationToken);
 
         return result.Match<IActionResult>(
-            value => Ok(value),
+            _ => NoContent(),
             error => this.ToProblem(error)
         );
 

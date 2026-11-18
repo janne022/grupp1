@@ -2,6 +2,8 @@ using Vicaria.Server.Infrastructure;
 using Microsoft.AspNetCore.Identity;
 using Vicaria.Server.Domain.Models;
 using Microsoft.EntityFrameworkCore;
+using Vicaria.Server.Infrastructure.Emails;
+using Vicaria.Server.Features.Emails;
 
 namespace Vicaria.Server;
 
@@ -17,7 +19,9 @@ public class Program
         var port = builder.Configuration["FRONTEND_PORT"];
         var frontendDomainOrigin = $"http://webfrontend-grupp1.dev.localhost:{port}";
 
-        builder.AddRedisClientBuilder("cache").WithOutputCache();
+        builder.AddRedisClientBuilder("cache")
+        .WithAzureAuthentication()
+        .WithOutputCache();
 
         builder.AddServiceDefaults();
 
@@ -29,7 +33,7 @@ public class Program
         builder.Services.AddAuthentication();
         builder.Services.AddHttpContextAccessor(); // Pre-setup to be able to access HTTP request/responses, e.g. see the cookies for current user
 
-        builder.AddNpgsqlDbContext<VicariaDbContext>("database", configureDbContextOptions: options =>
+        builder.AddAzureNpgsqlDbContext<VicariaDbContext>("database", configureDbContextOptions: options =>
         {
             options.UseNpgsql(npgsqlOptions =>
             {
@@ -74,6 +78,8 @@ public class Program
             options.Cookie.SecurePolicy = CookieSecurePolicy.Always;
         });
 
+        builder.Services.AddScoped<IEmailService, EmailService>();
+
         // Bootleg wolverine, scans for all handlers and registers them as scoped services
         var handlers = typeof(Program).Assembly
         .GetTypes()
@@ -88,6 +94,9 @@ public class Program
         }
 
         var app = builder.Build();
+
+        app.UseDefaultFiles();
+        app.UseStaticFiles();
 
         // Add health check endpoints
         app.MapDefaultEndpoints();
@@ -110,6 +119,8 @@ public class Program
         api.MapIdentityApi<User>();
 
         app.MapControllers();
+
+        app.MapFallbackToFile("index.html");
         app.Run();
 
         #endregion
