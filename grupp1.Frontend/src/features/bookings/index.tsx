@@ -52,7 +52,7 @@ const TESTDATAREMOVELATER: BookingData[] = [
 ];
 
 function RouteComponent() {
-  function deleteBooking(id: string) {
+  function deleteBooking(_id: string) {
     //api call here /api/decidedtime/delete/{id}
   }
 
