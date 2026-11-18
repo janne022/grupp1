@@ -1,6 +1,10 @@
-import { LogOutIcon, BellIcon, Menu, UserCircle } from "lucide-react";
+import { LogOutIcon, BellIcon, Menu, UserCircle, User } from "lucide-react";
 
-import { Avatar, AvatarFallback, AvatarImage } from "@/shared/components/ui/avatar";
+import {
+  Avatar,
+  AvatarFallback,
+  AvatarImage,
+} from "@/shared/components/ui/avatar";
 import {
   DropdownMenu,
   DropdownMenuContent,
@@ -98,12 +102,12 @@ export function NavUser({ isMobile = false }: NavUserProps) {
               </DropdownMenuLabel>
               <DropdownMenuSeparator />
               <DropdownMenuGroup>
-                <DropdownMenuItem>
-                  {/* TODO: Connect this to the profile page */}
-                  <Link to="/" className="flex flex-row gap-2 items-center">
-                    <UserCircle />
-                    Profil
-                  </Link>
+                <DropdownMenuItem
+                  className="cursor-pointer"
+                  render={<Link to="/profile" />}
+                >
+                  <UserCircle />
+                  Profil
                 </DropdownMenuItem>
                 <DropdownMenuItem>
                   {/* TODO: Add a real link */}
