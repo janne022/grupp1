@@ -25,11 +25,11 @@ var postgres = builder.AddAzurePostgresFlexibleServer("databaseServer")
 
 var database = postgres.AddDatabase("database");
 
-var migrationService = builder.AddProject<Projects.grupp1_MigrationService>("migrationservice")
+var migrationService = builder.AddDotnetProject("migrationservice", "../grupp1.MigrationService/grupp1.MigrationService.csproj")
     .WithReference(database)
     .WaitFor(database);
 
-var server = builder.AddProject<Projects.grupp1_Server>("server")
+var server = builder.AddDotnetProject("server", "../grupp1.Server/grupp1.Server.csproj")
     .WithReference(cache)
     .WaitFor(cache)
     .WithHttpHealthCheck("/health")
