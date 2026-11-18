@@ -13,6 +13,7 @@ import { Route as authLoginRouteImport } from './features/(auth)/login'
 import { Route as authSignupRouteImport } from './features/(auth)/signup'
 import { Route as calendarIndexRouteImport } from './features/(calendar)/index'
 import { Route as InboxIndexRouteImport } from './features/inbox/index'
+import { Route as ProfileIndexRouteImport } from './features/profile/index'
 
 const authLoginRoute = authLoginRouteImport.update({
   id: '/(auth)/login',
@@ -34,18 +35,25 @@ const InboxIndexRoute = InboxIndexRouteImport.update({
   path: '/inbox/',
   getParentRoute: () => rootRouteImport,
 } as any)
+const ProfileIndexRoute = ProfileIndexRouteImport.update({
+  id: '/profile/',
+  path: '/profile/',
+  getParentRoute: () => rootRouteImport,
+} as any)
 
 export interface FileRoutesByFullPath {
   '/login': typeof authLoginRoute
   '/signup': typeof authSignupRoute
   '/': typeof calendarIndexRoute
   '/inbox/': typeof InboxIndexRoute
+  '/profile/': typeof ProfileIndexRoute
 }
 export interface FileRoutesByTo {
   '/login': typeof authLoginRoute
   '/signup': typeof authSignupRoute
   '/': typeof calendarIndexRoute
   '/inbox': typeof InboxIndexRoute
+  '/profile': typeof ProfileIndexRoute
 }
 export interface FileRoutesById {
   __root__: typeof rootRouteImport
@@ -53,14 +61,20 @@ export interface FileRoutesById {
   '/(auth)/signup': typeof authSignupRoute
   '/(calendar)/': typeof calendarIndexRoute
   '/inbox/': typeof InboxIndexRoute
+  '/profile/': typeof ProfileIndexRoute
 }
 export interface FileRouteTypes {
   fileRoutesByFullPath: FileRoutesByFullPath
-  fullPaths: '/login' | '/signup' | '/' | '/inbox/'
+  fullPaths: '/login' | '/signup' | '/' | '/inbox/' | '/profile/'
   fileRoutesByTo: FileRoutesByTo
-  to: '/login' | '/signup' | '/' | '/inbox'
+  to: '/login' | '/signup' | '/' | '/inbox' | '/profile'
   id:
-    '__root__' | '/(auth)/login' | '/(auth)/signup' | '/(calendar)/' | '/inbox/'
+    | '__root__'
+    | '/(auth)/login'
+    | '/(auth)/signup'
+    | '/(calendar)/'
+    | '/inbox/'
+    | '/profile/'
   fileRoutesById: FileRoutesById
 }
 export interface RootRouteChildren {
@@ -68,6 +82,7 @@ export interface RootRouteChildren {
   authSignupRoute: typeof authSignupRoute
   calendarIndexRoute: typeof calendarIndexRoute
   InboxIndexRoute: typeof InboxIndexRoute
+  ProfileIndexRoute: typeof ProfileIndexRoute
 }
 
 declare module '@tanstack/react-router' {
@@ -100,6 +115,13 @@ declare module '@tanstack/react-router' {
       preLoaderRoute: typeof InboxIndexRouteImport
       parentRoute: typeof rootRouteImport
     }
+    '/profile/': {
+      id: '/profile/'
+      path: '/profile'
+      fullPath: '/profile/'
+      preLoaderRoute: typeof ProfileIndexRouteImport
+      parentRoute: typeof rootRouteImport
+    }
   }
 }
 
@@ -108,6 +130,7 @@ const rootRouteChildren: RootRouteChildren = {
   authSignupRoute: authSignupRoute,
   calendarIndexRoute: calendarIndexRoute,
   InboxIndexRoute: InboxIndexRoute,
+  ProfileIndexRoute: ProfileIndexRoute,
 }
 export const routeTree = rootRouteImport
   ._addFileChildren(rootRouteChildren)
