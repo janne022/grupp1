@@ -73,7 +73,7 @@ export function LoginForm({
     >
       <img
         className="w-28 self-center pb-6"
-        src="../../public/VicariaLogo-Compressed.png"
+        src="/VicariaLogo-Compressed.png"
       />
       <h1 className="text-2xl">Välkommen tillbaka!</h1>
       <Card className="ring-0">
