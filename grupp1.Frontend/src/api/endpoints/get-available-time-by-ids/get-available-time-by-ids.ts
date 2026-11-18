@@ -9,39 +9,39 @@ import type {
 } from '../../models';
 
 
-export type getApiAvailabletimesIdResponse200TextPlain = {
+export type getApiAvailabletimesAvailableTimeIdResponse200TextPlain = {
   data: GetByIdResponse
   status: 200
 }
 
-export type getApiAvailabletimesIdResponse200ApplicationJson = {
+export type getApiAvailabletimesAvailableTimeIdResponse200ApplicationJson = {
   data: GetByIdResponse
   status: 200
 }
 
-export type getApiAvailabletimesIdResponse200TextJson = {
+export type getApiAvailabletimesAvailableTimeIdResponse200TextJson = {
   data: GetByIdResponse
   status: 200
 }
 
-export type getApiAvailabletimesIdResponseSuccess = (getApiAvailabletimesIdResponse200TextPlain | getApiAvailabletimesIdResponse200ApplicationJson | getApiAvailabletimesIdResponse200TextJson) & {
+export type getApiAvailabletimesAvailableTimeIdResponseSuccess = (getApiAvailabletimesAvailableTimeIdResponse200TextPlain | getApiAvailabletimesAvailableTimeIdResponse200ApplicationJson | getApiAvailabletimesAvailableTimeIdResponse200TextJson) & {
   headers: Headers;
 };
 ;
 
-export type getApiAvailabletimesIdResponse = (getApiAvailabletimesIdResponseSuccess)
+export type getApiAvailabletimesAvailableTimeIdResponse = (getApiAvailabletimesAvailableTimeIdResponseSuccess)
 
-export const getGetApiAvailabletimesIdUrl = (id: string,) => {
-
-
+export const getGetApiAvailabletimesAvailableTimeIdUrl = (availableTimeId: string,) => {
 
 
-  return `/api/availabletimes/${id}`
+
+
+  return `/api/availabletimes/${availableTimeId}`
 }
 
-export const getApiAvailabletimesId = async (id: string, options?: RequestInit): Promise<getApiAvailabletimesIdResponse> => {
+export const getApiAvailabletimesAvailableTimeId = async (availableTimeId: string, options?: RequestInit): Promise<getApiAvailabletimesAvailableTimeIdResponse> => {
 
-  const res = await fetch(getGetApiAvailabletimesIdUrl(id),
+  const res = await fetch(getGetApiAvailabletimesAvailableTimeIdUrl(availableTimeId),
   {
     ...options,
     method: 'GET'
@@ -53,8 +53,8 @@ export const getApiAvailabletimesId = async (id: string, options?: RequestInit):
   const contentType = (res.headers.get('content-type') ?? '').toLowerCase();
   const body = [204, 205, 304].includes(res.status) ? null : await res.text();
 
-  const data: getApiAvailabletimesIdResponse['data'] = body ? (contentType.includes('json') ? JSON.parse(body) : body) : {}
-  return { data, status: res.status, headers: res.headers } as getApiAvailabletimesIdResponse
+  const data: getApiAvailabletimesAvailableTimeIdResponse['data'] = body ? (contentType.includes('json') ? JSON.parse(body) : body) : {}
+  return { data, status: res.status, headers: res.headers } as getApiAvailabletimesAvailableTimeIdResponse
 }
 
 

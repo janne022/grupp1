@@ -7,23 +7,27 @@ namespace Vicaria.Server.Features.DecidedTimes.GetById;
 public class GetDecidedTimeByIdHandler(
     VicariaDbContext dbContext,
     ILogger<GetDecidedTimeByIdHandler> _logger
-) : IHandler<GetDecidedTimeByIdQuery, GetDecidedTimeByIdResponse>
+) : IHandler<GetDecidedTimeByIdQuery, GetDecidedTimeByIdResponse?>
 {
-    public async Task<GetDecidedTimeByIdResponse> HandleAsync(
+    public async Task<GetDecidedTimeByIdResponse?> HandleAsync(
         GetDecidedTimeByIdQuery query,
         CancellationToken cancellationToken = default)
-    {   
+    {
         _logger.LogInformation("Starting to find DecidedTime {DecidedTimeId}", query.DecidedTimeGuid);
 
         var decidedTime = await dbContext.DecidedTimes
-            .Include(at => at.User)
-            .Include(at => at.Kindergarten)
-            .SingleOrDefaultAsync(at => at.Id == query.DecidedTimeGuid);
+            .AsNoTracking()
+            .Where(dt => dt.Kindergarten.Managers
+            .Any(m => m.UserId == query.UserId) || dt.ManagerId == query.UserId)
+            .Include(dt => dt.Substitute)
+            .Include(dt => dt.Kindergarten)
+            .SingleOrDefaultAsync(dt => dt.Id == query.DecidedTimeGuid, cancellationToken);
 
-        if (decidedTime == null)
+
+        if (decidedTime is null)
         {
             _logger.LogWarning("DecidedTime id: {DecidedTimeId} not found", query.DecidedTimeGuid);
-            throw new KeyNotFoundException($"DecidedTime time {query.DecidedTimeGuid} was not found.");
+            return null;
         }
 
         GetDecidedTimeByIdResponse response = new(
@@ -32,14 +36,15 @@ public class GetDecidedTimeByIdHandler(
             EndTime: decidedTime.EndTime,
 
             SubstituteInfo: new SubstituteDTO(
-                Id: decidedTime.UserId,
-                FirstName: decidedTime.User.FirstName,
-                LastName: decidedTime.User.LastName
+                Id: decidedTime.SubstituteId,
+                FirstName: decidedTime.Substitute.FirstName,
+                LastName: decidedTime.Substitute.LastName
             ),
             KindergartenInfo: new KindergartenDTO(
                 Id: decidedTime.KindergartenId,
                 Name: decidedTime.Kindergarten.Name,
-                Location: decidedTime.Kindergarten.Location
+                Latitude: decidedTime.Kindergarten.Location?.Y,
+                Longitude: decidedTime.Kindergarten.Location?.X
             )
         );
 

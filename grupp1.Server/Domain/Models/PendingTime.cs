@@ -1,6 +1,3 @@
-using System.ComponentModel;
-using System.ComponentModel.DataAnnotations.Schema;
-
 namespace Vicaria.Server.Domain.Models;
 
 public class PendingTime
@@ -11,5 +8,7 @@ public class PendingTime
     public Kindergarten Kindergarten { get; set; } = null!;
     public DateTime StartTime { get; set; }
     public DateTime EndTime { get; set; }
-    public HashSet<UserPendingTime> AvailableSubs { get; set; } = null!;
+    public HashSet<UserPendingTime> AvailableSubs { get; set; } = [];
+    public Guid ManagerId { get; set; }
+    public User Manager { get; set; } = null!;
 }

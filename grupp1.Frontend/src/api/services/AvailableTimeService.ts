@@ -7,8 +7,13 @@ import type {
   UpdateAvailableTimeQuery,
   UpdateAvailableTimeResponse,
 } from "../models";
+import { useCurrentUser } from "./MeService";
 
 function GetAllAvailableTimes(enabled = true) {
+
+  const { data: user } = useCurrentUser();
+  const userId = user?.id;
+  
   return useQuery({
     queryKey: ["availableTimesData"],
     queryFn: async ({
@@ -18,7 +23,7 @@ function GetAllAvailableTimes(enabled = true) {
     }): Promise<GetMyAvailableTimesResponse | null> => {
       try {
         const response = await apiClient.get<GetMyAvailableTimesResponse>(
-          "/api/availabletimes",
+          `/api/available-times/${userId}`,
           {
             signal,
           },
@@ -41,7 +46,7 @@ function AddAvailableTime() {
   return useMutation({
     mutationFn: (req: PostAvailableTimeRequest) => {
       return apiClient.post<PostAvailableTimeResponse>(
-        "/api/availabletimes",
+        "/api/available-times",
         req,
       );
     },
@@ -58,7 +63,7 @@ function DeleteAvailableTime() {
   const query = useQueryClient();
   return useMutation({
     mutationFn: (id: string) => {
-      return apiClient.delete<void>(`/api/availabletimes/${id}`);
+      return apiClient.delete<void>(`/api/available-times/${id}`);
     },
 
     onSuccess: async () => {
@@ -74,7 +79,7 @@ function EditAvailableTime() {
   return useMutation({
     mutationFn: (req: UpdateAvailableTimeQuery) => {
       return apiClient.patch<UpdateAvailableTimeResponse>(
-        `/api/availabletimes`,
+        `/api/available-times/${req.availableTimeId}`,
         req,
       );
     },

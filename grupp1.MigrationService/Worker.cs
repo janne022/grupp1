@@ -1,5 +1,10 @@
+using System.Runtime.CompilerServices;
+using Bogus;
+using Bogus.DataSets;
+using Microsoft.AspNetCore.Identity;
 using Microsoft.EntityFrameworkCore;
 using NetTopologySuite.Geometries;
+using Vicaria.Server.Domain;
 using Vicaria.Server.Domain.Models;
 using Vicaria.Server.Infrastructure;
 
@@ -38,7 +43,7 @@ namespace Vicaria.MigrationService
 
                     // Apply migrations
                     await dbContext.Database.MigrateAsync(stoppingToken);
-
+                    logger.LogInformation("Starting to seed data");
                     // Seed data
                     await SeedDataAsync(dbContext, stoppingToken);
                 });
@@ -56,82 +61,115 @@ namespace Vicaria.MigrationService
             }
         }
 
-        private static async Task SeedDataAsync(
-    VicariaDbContext dbContext, CancellationToken cancellationToken)
+        private async Task SeedDataAsync(VicariaDbContext dbContext, CancellationToken cancellationToken)
         {
-            // Seed initial data for Kindergartens, new data can be added here as needed
-
-            #region user seed data
-
-            // Fucking PISS RETARD HACK!!! Kill my ASS
-            User seedUser = new()
+            if (await dbContext.Users.AnyAsync())
             {
-                FirstName = "Fucking",
-                LastName = "Hack!"
-            };
+                logger.LogInformation("Database already seeded");
+                return;
+            }
 
-            var existingUsers = (await dbContext.Users.Select(u => u.Id)
-            .ToListAsync(cancellationToken))
-            .ToHashSet();
+            int randomSeed = 696969;
+            int generateKindergartens = 4;
+            int generateSubstitutes = 10;
 
-            #endregion
-            #region kindergarten seed data
+            Randomizer.Seed = new Random(randomSeed);
+            var faker = new Faker("sv");
 
-            HashSet<Kindergarten> kindergartens = new HashSet<Kindergarten>
-            {
-                new() { Name = "Solrosen", Location = new Point(39.0292426, 125.6597113) { SRID = 4326 } },
-                new() { Name = "Korven", Location = new Point(18.0763706, 59.2919783) { SRID = 4326 } },
-                new() { Name = "Chas Academy", Location = new Point(18.0788231, 59.293051) { SRID = 4326 } }
-            };
+            var roleIds = await dbContext.Roles
+                .ToDictionaryAsync(r => r.Name!, r => r.Id, cancellationToken);
 
-            var existingKindergartens = (await dbContext.Kindergartens.Select(k => k.Name)
-            .ToListAsync(cancellationToken))
-            .ToHashSet();
 
-            var newKindergartens = kindergartens
-            .Where(k => !existingKindergartens
-            .Contains(k.Name)).ToList();
-
-            #endregion
-            #region AvailableTime seed data
-
-            List<AvailableTime> availableTimes =
+            List<Kindergarten> kindergartens =
             [
-                new() { StartTime = new(2026, 10, 1, 0, 0, 0, DateTimeKind.Utc), EndTime = new(2026, 10, 5, 23, 59, 59, DateTimeKind.Utc), UserId = seedUser.Id, Kindergartens = [], DecidedTimes = [] },
-                new() { StartTime = new(2026, 10, 10, 0, 0, 0, DateTimeKind.Utc), EndTime = new(2026, 10, 15, 23, 59, 59, DateTimeKind.Utc), UserId = seedUser.Id, Kindergartens = [], DecidedTimes = [] },
-                new() { StartTime = new(2026, 10, 12, 0, 0, 0, DateTimeKind.Utc), EndTime = new(2026, 10, 20, 23, 59, 59, DateTimeKind.Utc), UserId = seedUser.Id, Kindergartens = [], DecidedTimes = [] },
-                new() { StartTime = new(2026, 10, 16, 0, 0, 0, DateTimeKind.Utc), EndTime = new(2026, 10, 16, 23, 59, 59, DateTimeKind.Utc), UserId = seedUser.Id, Kindergartens = [], DecidedTimes = [] },
-                new() { StartTime = new(2026, 10, 16, 0, 0, 0, DateTimeKind.Utc), EndTime = new(2026, 10, 25, 23, 59, 59, DateTimeKind.Utc), UserId = seedUser.Id, Kindergartens = [], DecidedTimes = [] },
-                new() { StartTime = new(2026, 10, 17, 0, 0, 0, DateTimeKind.Utc), EndTime = new(2026, 10, 22, 23, 59, 59, DateTimeKind.Utc), UserId = seedUser.Id, Kindergartens = [], DecidedTimes = [] },
-                new() { StartTime = new(2026, 11, 1, 0, 0, 0, DateTimeKind.Utc), EndTime = new(2026, 11, 15, 23, 59, 59, DateTimeKind.Utc), UserId = seedUser.Id, Kindergartens = [], DecidedTimes = [] },
+                new() { Id = Guid.CreateVersion7(), Name = "Korven", Location = new Point(18.0763706, 59.2919783), Managers = [] },
+                new() { Id = Guid.CreateVersion7(), Name = "Chas Academy", Location = new Point(18.0788231, 59.293051), Managers = [] },
+                new() { Id = Guid.CreateVersion7(), Name = "Solrosen", Location = new Point(125.6597113, 39.0292426), Managers = [] },
+                .. SeedFakers.CreateFakeKindergartens().Generate(generateKindergartens),
             ];
 
-            var existingAvailableTimes = (await dbContext.AvailableTimes
-                .Select(at => at.Id)
-                .ToListAsync(cancellationToken))
-                .ToHashSet();
+            var knownManager = SeedFakers.CreateKnownFakeUser("Test", "Manager", "m.m@m.se", faker.Phone.PhoneNumber());
+            var generatedManagers = SeedFakers.CreateFakeUsers().Generate(kindergartens.Count);
 
-            var newAvailableTimes = availableTimes
-                .Where(at => !existingAvailableTimes.Contains(at.Id))
+            List<User> allManagers = [];
+            allManagers.Add(knownManager);
+            allManagers.AddRange(generatedManagers);
+
+            var knownSubstitute = SeedFakers.CreateKnownFakeUser("Test", "Vikarie", "s.s@s.se", faker.Phone.PhoneNumber());
+            var generatedSubstitutes = SeedFakers.CreateFakeUsers().Generate(generateSubstitutes);
+            List<User> allSubstitutes = [];
+            allSubstitutes.Add(knownSubstitute);
+            allSubstitutes.AddRange(generatedSubstitutes);
+
+
+            var managerRoles = allManagers
+                .Select(u => new IdentityUserRole<Guid>
+                {
+                    UserId = u.Id,
+                    RoleId = roleIds[VicariaUserRoles.Manager]
+                })
                 .ToList();
 
-            #endregion
-            # region DB table updates
+            var substituteRoles = allSubstitutes
+                .Select(u => new IdentityUserRole<Guid>
+                {
+                    UserId = u.Id,
+                    RoleId = roleIds[VicariaUserRoles.Substitute]
+                })
+                .ToList();
 
-            var strategy = dbContext.Database.CreateExecutionStrategy();
-            await strategy.ExecuteAsync(async () =>
-            {
-                // Seed the database
-                await using var transaction = await dbContext.Database
-                    .BeginTransactionAsync(cancellationToken);
-                await dbContext.Kindergartens.AddRangeAsync(newKindergartens, cancellationToken);
-                await dbContext.Users.AddAsync(seedUser, cancellationToken);
-                await dbContext.AvailableTimes.AddRangeAsync(newAvailableTimes, cancellationToken);
-                await dbContext.SaveChangesAsync(cancellationToken);
-                await transaction.CommitAsync(cancellationToken);
-            });
+            string[] testKindergartenNames = ["Korven", "Chas Academy", "Solrosen"];
 
-            #endregion
+            var testManagerKindergartens = kindergartens
+                .Where(k => testKindergartenNames.Contains(k.Name))
+                .Select(k => new UserKinderGarten
+                {
+                    UserId = knownManager.Id,
+                    KindergartenId = k.Id
+                })
+                .ToList();
+
+            var generatedManagerKindergartens = kindergartens//give each kindergarten a manager
+                .Select((k, i) => new UserKinderGarten
+                {
+                    UserId = generatedManagers[i].Id,
+                    KindergartenId = k.Id
+                })
+                .ToList();
+
+
+            var availableTimes = SeedFakers.CreateFakeAvailableTimes(faker, allSubstitutes, kindergartens);
+
+            List<UserKinderGarten> allUserKindergarten = [];
+            allUserKindergarten.AddRange(generatedManagerKindergartens);
+            allUserKindergarten.AddRange(testManagerKindergartens);
+
+            var pendingTimes = allUserKindergarten
+                .SelectMany(uk => SeedFakers.CreateFakePendingTimes(
+                    faker, uk.UserId, uk.KindergartenId, availableTimes))
+                .ToList();
+
+            var decidedTimes = SeedFakers.CreateFakeDecidedTimes(faker, pendingTimes, allSubstitutes);
+
+
+            await using var transaction = await dbContext.Database //because im scared
+                .BeginTransactionAsync(cancellationToken);
+
+            dbContext.Kindergartens.AddRange(kindergartens);
+            dbContext.Users.AddRange(allManagers);
+            dbContext.Users.AddRange(allSubstitutes);
+            dbContext.UserRoles.AddRange(managerRoles);
+            dbContext.UserRoles.AddRange(substituteRoles);
+            dbContext.UserKinderGartens.AddRange(generatedManagerKindergartens);
+            dbContext.UserKinderGartens.AddRange(testManagerKindergartens);
+            dbContext.AvailableTimes.AddRange(availableTimes);
+            dbContext.PendingTimes.AddRange(pendingTimes);
+            dbContext.DecidedTimes.AddRange(decidedTimes);
+
+            await dbContext.SaveChangesAsync(cancellationToken);
+            await transaction.CommitAsync(cancellationToken);
+
+
         }
     }
 }

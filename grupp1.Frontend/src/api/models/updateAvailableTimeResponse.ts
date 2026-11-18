@@ -4,7 +4,7 @@
  * grupp1.Server | v1
  * OpenAPI spec version: 1.0.0
  */
-import type { KindergartenDto } from './kindergartenDTO';
+import type { UpdateAvailableTimeKindergartenDTO } from './updateAvailableTimeKindergartenDTO';
 import type { UpdateAvailableTimeStatus } from './updateAvailableTimeStatus';
 
 export interface UpdateAvailableTimeResponse {
@@ -15,6 +15,6 @@ export interface UpdateAvailableTimeResponse {
   /** @nullable */
   endTime: string | null;
   /** @nullable */
-  kindergartens: KindergartenDto[] | null;
+  kindergartens: UpdateAvailableTimeKindergartenDTO[] | null;
   statusMessage: UpdateAvailableTimeStatus;
 }

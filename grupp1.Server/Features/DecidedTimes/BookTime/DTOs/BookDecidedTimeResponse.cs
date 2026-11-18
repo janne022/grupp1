@@ -5,5 +5,5 @@ public record class BookDecidedTimeResponse(
     DateTime? StartTime,
     DateTime? EndTime,
     SubstituteDTO SubstituteInfo,
-    KindergartenDTO KindergartenInfo
+    BookTimeKindergartenDTO KindergartenInfo
 );

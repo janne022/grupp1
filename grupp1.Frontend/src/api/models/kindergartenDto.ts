@@ -4,16 +4,33 @@
  * grupp1.Server | v1
  * OpenAPI spec version: 1.0.0
  */
-import type { Point } from './point';
+
+export interface KindergartenDto {
+  id: string;
+  name: string;
+  /**
+     * @nullable
+     * @pattern ^-?(?:0|[1-9]\d*)(?:\.\d+)?(?:[eE][+-]?\d+)?$
+     */
+  latitude: number | string | null;
+  /**
+     * @nullable
+     * @pattern ^-?(?:0|[1-9]\d*)(?:\.\d+)?(?:[eE][+-]?\d+)?$
+     */
+  longitude: number | string | null;
+}
 
 export interface KindergartenDTO {
   id: string;
   name: string;
-  location: null | Point;
-}
-
-export interface KindergartenDto {
-  name: string;
-  id: string;
-  location: null | Point;
+  /**
+     * @nullable
+     * @pattern ^-?(?:0|[1-9]\d*)(?:\.\d+)?(?:[eE][+-]?\d+)?$
+     */
+  latitude: number | string | null;
+  /**
+     * @nullable
+     * @pattern ^-?(?:0|[1-9]\d*)(?:\.\d+)?(?:[eE][+-]?\d+)?$
+     */
+  longitude: number | string | null;
 }

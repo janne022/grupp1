@@ -6,7 +6,7 @@ using Vicaria.Server.Infrastructure;
 
 namespace Vicaria.Server.Features.UserInfo
 {
-    [Route("api/userinfo")]
+    [Route("api/user-info")]
     [Authorize]
     [ApiController]
     public class UserInfoController(IHandler<UserInfoQuery, UserInfoResponse?> handler,

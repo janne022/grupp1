@@ -60,6 +60,33 @@ public class VicariaDbContext : IdentityDbContext<User, IdentityRole<Guid>, Guid
                     ConcurrencyStamp = "ManagerRole",
                 }
             );
+
+        builder
+            .Entity<DecidedTime>()
+            .HasOne(dt => dt.Substitute)
+            .WithMany(user => user.DecidedTimes)
+            .HasForeignKey(dt => dt.SubstituteId);
+
+        builder
+            .Entity<DecidedTime>()
+            .HasOne(dt => dt.Manager)
+            .WithMany()
+            .HasForeignKey(dt => dt.ManagerId)
+            .OnDelete(DeleteBehavior.Restrict);
+
+        builder
+            .Entity<DecidedTime>()
+            .HasOne(dt => dt.PendingTime)
+            .WithOne()
+            .HasForeignKey<DecidedTime>(dt => dt.PendingTimeId)
+            .OnDelete(DeleteBehavior.Restrict);
+
+        builder
+            .Entity<PendingTime>()
+            .HasOne(pt => pt.Manager)
+            .WithMany()
+            .HasForeignKey(pt => pt.ManagerId)
+            .OnDelete(DeleteBehavior.Restrict);
     }
 
     #endregion
