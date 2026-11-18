@@ -9,4 +9,3 @@ export * from './editPendingTimeRequest';
 export * from './editPendingTimeResponse';
 export * from './postPendingTimeRequest';
 export * from './postPendingTimeResponse';
-export * from './substituteDto';

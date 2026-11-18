@@ -2,9 +2,9 @@ import { Link } from "@tanstack/react-router";
 import {
   PersonStanding,
   Home,
-  CalendarClockIcon,
   UserGroup,
   Settings,
+  Mail,
 } from "lucide-react";
 import { NavUser } from "./NavUser";
 import {
@@ -21,7 +21,7 @@ import {
 
 const navLinks = [
   { label: "Hem", to: "/", Icon: Home },
-  { label: "Översikt", to: "/calendar", Icon: CalendarClockIcon },
+  { label: "Inkorg", to: "/inbox", Icon: Mail },
   { label: "länk 3", to: "/link3", Icon: UserGroup },
   { label: "länk 4", to: "/link4", Icon: Settings },
 ];

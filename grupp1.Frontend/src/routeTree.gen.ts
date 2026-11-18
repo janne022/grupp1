@@ -12,7 +12,7 @@ import { Route as rootRouteImport } from './features/__root'
 import { Route as authLoginRouteImport } from './features/(auth)/login'
 import { Route as authSignupRouteImport } from './features/(auth)/signup'
 import { Route as calendarIndexRouteImport } from './features/(calendar)/index'
-import { Route as BookingsIndexRouteImport } from './features/bookings/index'
+import { Route as InboxIndexRouteImport } from './features/inbox/index'
 
 const authLoginRoute = authLoginRouteImport.update({
   id: '/(auth)/login',
@@ -29,9 +29,9 @@ const calendarIndexRoute = calendarIndexRouteImport.update({
   path: '/',
   getParentRoute: () => rootRouteImport,
 } as any)
-const BookingsIndexRoute = BookingsIndexRouteImport.update({
-  id: '/bookings/',
-  path: '/bookings/',
+const InboxIndexRoute = InboxIndexRouteImport.update({
+  id: '/inbox/',
+  path: '/inbox/',
   getParentRoute: () => rootRouteImport,
 } as any)
 
@@ -39,39 +39,35 @@ export interface FileRoutesByFullPath {
   '/login': typeof authLoginRoute
   '/signup': typeof authSignupRoute
   '/': typeof calendarIndexRoute
-  '/bookings/': typeof BookingsIndexRoute
+  '/inbox/': typeof InboxIndexRoute
 }
 export interface FileRoutesByTo {
   '/login': typeof authLoginRoute
   '/signup': typeof authSignupRoute
   '/': typeof calendarIndexRoute
-  '/bookings': typeof BookingsIndexRoute
+  '/inbox': typeof InboxIndexRoute
 }
 export interface FileRoutesById {
   __root__: typeof rootRouteImport
   '/(auth)/login': typeof authLoginRoute
   '/(auth)/signup': typeof authSignupRoute
   '/(calendar)/': typeof calendarIndexRoute
-  '/bookings/': typeof BookingsIndexRoute
+  '/inbox/': typeof InboxIndexRoute
 }
 export interface FileRouteTypes {
   fileRoutesByFullPath: FileRoutesByFullPath
-  fullPaths: '/login' | '/signup' | '/' | '/bookings/'
+  fullPaths: '/login' | '/signup' | '/' | '/inbox/'
   fileRoutesByTo: FileRoutesByTo
-  to: '/login' | '/signup' | '/' | '/bookings'
+  to: '/login' | '/signup' | '/' | '/inbox'
   id:
-    | '__root__'
-    | '/(auth)/login'
-    | '/(auth)/signup'
-    | '/(calendar)/'
-    | '/bookings/'
+    '__root__' | '/(auth)/login' | '/(auth)/signup' | '/(calendar)/' | '/inbox/'
   fileRoutesById: FileRoutesById
 }
 export interface RootRouteChildren {
   authLoginRoute: typeof authLoginRoute
   authSignupRoute: typeof authSignupRoute
   calendarIndexRoute: typeof calendarIndexRoute
-  BookingsIndexRoute: typeof BookingsIndexRoute
+  InboxIndexRoute: typeof InboxIndexRoute
 }
 
 declare module '@tanstack/react-router' {
@@ -97,11 +93,11 @@ declare module '@tanstack/react-router' {
       preLoaderRoute: typeof calendarIndexRouteImport
       parentRoute: typeof rootRouteImport
     }
-    '/bookings/': {
-      id: '/bookings/'
-      path: '/bookings'
-      fullPath: '/bookings/'
-      preLoaderRoute: typeof BookingsIndexRouteImport
+    '/inbox/': {
+      id: '/inbox/'
+      path: '/inbox'
+      fullPath: '/inbox/'
+      preLoaderRoute: typeof InboxIndexRouteImport
       parentRoute: typeof rootRouteImport
     }
   }
@@ -111,7 +107,7 @@ const rootRouteChildren: RootRouteChildren = {
   authLoginRoute: authLoginRoute,
   authSignupRoute: authSignupRoute,
   calendarIndexRoute: calendarIndexRoute,
-  BookingsIndexRoute: BookingsIndexRoute,
+  InboxIndexRoute: InboxIndexRoute,
 }
 export const routeTree = rootRouteImport
   ._addFileChildren(rootRouteChildren)

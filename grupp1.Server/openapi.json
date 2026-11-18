@@ -167,6 +167,16 @@
         "responses": {
           "200": {
             "description": "OK"
+          },
+          "400": {
+            "description": "Bad Request",
+            "content": {
+              "application/problem+json": {
+                "schema": {
+                  "$ref": "#/components/schemas/HttpValidationProblemDetails"
+                }
+              }
+            }
           }
         }
       }
@@ -1690,7 +1700,7 @@
       },
       "GetAllDecidedTimesDTO": {
         "required": [
-          "timeId",
+          "decidedTimeId",
           "startTime",
           "endTime",
           "substituteId",
@@ -1701,7 +1711,7 @@
         ],
         "type": "object",
         "properties": {
-          "timeId": {
+          "decidedTimeId": {
             "type": "string",
             "format": "uuid"
           },

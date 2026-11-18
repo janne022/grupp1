@@ -7,6 +7,7 @@
 
 export * from './userInfoResponse';
 export * from './kindergartenDto';
+export * from './substituteDto';
 export * from './accept-pending-time';
 export * from './auth';
 export * from './available-times';
@@ -15,3 +16,4 @@ export * from './get-pending-times';
 export * from './grupp1-server';
 export * from './kindergarten';
 export * from './pending-times';
+export * from './remove-current-user';

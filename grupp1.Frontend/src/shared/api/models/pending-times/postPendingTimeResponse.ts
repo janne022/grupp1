@@ -5,7 +5,7 @@
  * OpenAPI spec version: 1.0.0
  */
 import type { KindergartenDto } from '../kindergartenDto';
-import type { SubstituteDto } from './substituteDto';
+import type { SubstituteDto } from '../substituteDto';
 
 export interface PostPendingTimeResponse {
   id: string;

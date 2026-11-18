@@ -6,7 +6,7 @@
  */
 
 export interface GetAllDecidedTimesDTO {
-  timeId: string;
+  decidedTimeId: string;
   startTime: string;
   endTime: string;
   substituteId: string;
