@@ -9,6 +9,7 @@ namespace Vicaria.Server.Features.AvailableTimes.GetMy
     [Route("api/available-times")]
     [Authorize]
     [ApiController]
+    [Tags("AvailableTimes")]
     public class GetMyAvailableTimesController(
         IHandler<GetMyAvailableTimesQuery, GetMyAvailableTimesResponse> handler
     ) : ControllerBase

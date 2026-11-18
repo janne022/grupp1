@@ -10,6 +10,7 @@ namespace Vicaria.Server.Features.AvailableTimes.Post
     [Route("api/available-times")]
     [Authorize(Roles = VicariaUserRoles.Substitute)]
     [ApiController]
+    [Tags("AvailableTimes")]
     public class PostAvailableTimeController(IHandler<PostAvailableTimeCommand, PostAvailableTimeResponse> handler) : ControllerBase
     {
 

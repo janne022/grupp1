@@ -13,6 +13,7 @@ namespace Vicaria.Server.Features.DecidedTimes.Book;
 [Route("api/decided-times")]
 [Authorize(Roles = VicariaUserRoles.Manager)]
 [ApiController]
+[Tags("DecidedTimes")]
 public class BookDecidedTimeController(
     IHandler<BookDecidedTimeCommand, BookDecidedTimeResponse> handler) : Controller
 {

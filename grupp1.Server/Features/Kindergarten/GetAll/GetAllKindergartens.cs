@@ -30,6 +30,7 @@ namespace Vicaria.Server.Features.Kindergarten.GetAll
     }
 
     [ApiController]
+    [Tags("Kindergarten")]
     [Authorize]
     [Route("api/kindergartens")]
     public sealed class GetAllKindergartensController(IHandler<GetAllKindergartensRequest, GetAllKindergartensResponse> handler) : ControllerBase

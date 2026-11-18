@@ -6,6 +6,7 @@ namespace Vicaria.Server.Features.Auth.MakeManager;
 
 [Route("api/auth")]
 [ApiController]
+[Tags("Auth")]
 [Authorize]
 public class MakeManagerController(
     IHandler<MakeManagerQuery, MakeManagerResponse> handler,
