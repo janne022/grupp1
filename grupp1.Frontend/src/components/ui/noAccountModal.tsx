@@ -1,11 +1,4 @@
-import {
-  Dialog,
-  DialogClose,
-  DialogContent,
-  DialogFooter,
-  DialogHeader,
-  DialogTitle,
-} from "./dialog";
+import { Dialog, DialogContent } from "./dialog";
 
 import type { Dispatch } from "react";
 
