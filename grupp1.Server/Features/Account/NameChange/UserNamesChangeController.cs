@@ -11,11 +11,11 @@ namespace Vicaria.Server.Features.Account.NameChange
     [Authorize]
     [ApiController]
     public class UserNamesChangeController(
-        IHandler<UserNamesChangeCommand, ErrorOr<UserNamesChangeResponse>> handler
+        IHandler<UserNamesChangeCommand, ErrorOr<Success>> handler
     ) : ControllerBase
     {
         [HttpPatch]
-        public async Task<ActionResult<UserNamesChangeResponse>> UpdateNames(
+        public async Task<ActionResult> UpdateNames(
             [FromBody] UserNamesChangeQuery query,
             CancellationToken cancellationToken = default
         )
@@ -46,8 +46,8 @@ namespace Vicaria.Server.Features.Account.NameChange
             var response = await handler.HandleAsync(command, cancellationToken);
             #endregion
 
-            return response.Match<ActionResult<UserNamesChangeResponse>>(
-                value => Ok(value),
+            return response.Match<ActionResult>(
+                _ => NoContent(),
                 errors => this.ToProblem(errors)
             );
         }

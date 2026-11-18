@@ -8,11 +8,11 @@ namespace Vicaria.Server.Features.Account.NameChange;
 public class UserNamesChangeHandler(
     VicariaDbContext dbContext,
     ILogger<UserNamesChangeHandler> _logger
-) : IHandler<UserNamesChangeCommand, ErrorOr<UserNamesChangeResponse>>
+) : IHandler<UserNamesChangeCommand, ErrorOr<Success>>
 {
     const int MaxNameLength = 200; // Grabbed off User.cs
 
-    public async Task<ErrorOr<UserNamesChangeResponse>> HandleAsync(
+    public async Task<ErrorOr<Success>> HandleAsync(
         UserNamesChangeCommand command,
         CancellationToken cancellationToken = default
     )
@@ -76,6 +76,6 @@ public class UserNamesChangeHandler(
         _logger.LogInformation("User {UserId} finished updating their name(s)", user.Id);
         #endregion
 
-        return new UserNamesChangeResponse(true);
+        return Result.Success;
     }
 }
