@@ -2,7 +2,6 @@ import { Link } from "@tanstack/react-router";
 import {
   PersonStanding,
   Home,
-  CalendarClockIcon,
   UserGroup,
   Settings,
   Mail,
