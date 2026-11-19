@@ -9,6 +9,7 @@ import {
   FieldGroup,
   FieldLabel,
 } from "@/shared/components/ui/field";
+import { ApiError } from "@/shared/api/api";
 import { Input } from "@/shared/components/ui/input";
 import { EditToggleButton } from "@/shared/components/ui/edit-toggle-button";
 import { useChangePassword } from "../-api/ProfileService";
@@ -18,7 +19,11 @@ const passwordSchema = z
     currentPassword: z.string().min(1, "Ange ditt nuvarande lösenord."),
     newPassword: z
       .string()
-      .min(8, "Lösenordet måste innehålla minst 8 tecken."),
+      .min(8, "Lösenordet måste innehålla minst 8 tecken.")
+      .regex(/[a-z]/, "Lösenordet måste innehålla en gemen.")
+      .regex(/[A-Z]/, "Lösenordet måste innehålla en versal.")
+      .regex(/[0-9]/, "Lösenordet måste innehålla en siffra.")
+      .regex(/[^a-zA-Z0-9]/, "Lösenordet måste innehålla ett specialtecken."),
     confirmPassword: z.string(),
   })
   .refine((data) => data.newPassword === data.confirmPassword, {
@@ -56,6 +61,7 @@ export function PasswordForm() {
   const form = useForm<PasswordFormValues>({
     resolver: zodResolver(passwordSchema),
     defaultValues: emptyPasswords,
+    reValidateMode: "onSubmit",
   });
 
   function toggle() {
@@ -75,11 +81,22 @@ export function PasswordForm() {
           setUnlocked(false);
           setChanged(true);
         },
-        onError: () => {
+        onError: (error) => {
+          const errors =
+            error instanceof ApiError && error.status === 400
+              ? (
+                  error.details as
+                    { errors?: Record<string, string[]> } | undefined
+                )?.errors
+              : undefined;
+
+          if (errors?.PasswordMismatch) {
+            form.setError("currentPassword", { message: "Fel lösenord." });
+            return;
+          }
+
           form.setError("root", {
-            message:
-              "Lösenordsbytet misslyckades. Kontrollera att ditt lösenord är minst 8 " +
-              "tecken långt, innehåller både gemener och versaler, samt specialtecken.",
+            message: "Lösenordet kunde inte bytas. Försök gärna igen.",
           });
         },
       },
@@ -121,6 +138,10 @@ export function PasswordForm() {
                 <div className="flex items-center gap-2">
                   <Input
                     {...field}
+                    onChange={(e) => {
+                      field.onChange(e);
+                      form.clearErrors(name);
+                    }}
                     id={name}
                     type="password"
                     autoComplete={autoComplete}
