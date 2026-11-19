@@ -1,5 +1,4 @@
 ﻿using ErrorOr;
-using Microsoft.AspNetCore.Http;
 using Microsoft.AspNetCore.Mvc;
 using Vicaria.Server.Infrastructure;
 

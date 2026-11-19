@@ -19,6 +19,8 @@ public class Program
         var port = builder.Configuration["FRONTEND_PORT"];
         var frontendDomainOrigin = $"http://webfrontend-grupp1.dev.localhost:{port}";
 
+        builder.Configuration["Frontend:BaseUrl"] = frontendDomainOrigin;
+
         builder.AddRedisClientBuilder("cache")
         .WithAzureAuthentication()
         .WithOutputCache();

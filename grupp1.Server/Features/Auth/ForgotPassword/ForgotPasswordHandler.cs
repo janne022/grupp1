@@ -18,8 +18,7 @@ namespace Vicaria.Server.Features.Auth.ForgotPassword
 
                 string baseUrl = config["Frontend:BaseUrl"]!;
 
-                string link = $"{baseUrl}/reset-password?userId={user.Id}&token={token}";
-
+                string link = $"{baseUrl}/reset-password?userId={user.Id}&token={Uri.EscapeDataString(token)}";
 
                 var email = new Email
                 (

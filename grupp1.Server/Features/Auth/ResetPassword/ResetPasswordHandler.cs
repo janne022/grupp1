@@ -12,19 +12,23 @@ namespace Vicaria.Server.Features.Auth.ResetPassword
 
             var user = await userManager.FindByIdAsync(command.UserId.ToString());
 
-            if(user is null)
+            if (user is null)
             {
                 logger.LogWarning("user {userId} is null", command.UserId);
-                return Error.Failure(description: "Länken är ogiltig eller har gått ut");
+                return Error.Validation("Länken är ogiltig eller har gått ut.");
             }
 
             var result = await userManager.ResetPasswordAsync(user, command.Token, command.NewPassword);
 
             if (!result.Succeeded)
             {
-                logger.LogWarning("Reset did not succeed");
-                return Error.Failure(description: "Något fel har inträffat");
+                logger.LogWarning("Password reset failed for {UserId}: {Codes}",
+                    user.Id, string.Join(", ", result.Errors.Select(e => e.Code)));
+                return Error.Validation("Länken är ogiltig eller har gått ut.");
             }
+
+            await userManager.SetLockoutEndDateAsync(user, null);
+            await userManager.ResetAccessFailedCountAsync(user);
 
             return Result.Success;
         }
