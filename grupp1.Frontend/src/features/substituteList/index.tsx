@@ -1,8 +1,17 @@
 import { createFileRoute } from "@tanstack/react-router";
 import { useGetAllSubstitutes } from "./-api/SubstituteService";
 import SubstituteCard from "./-components/substituteCard";
+import { currentUserQuery } from "@/shared/services/MeService";
+
 export const Route = createFileRoute("/substituteList/")({
   component: RouteComponent,
+  beforeLoad: async ({ context }) => {
+    const user = await context.queryClient.query(currentUserQuery);
+
+    if (!user?.roles.includes("Manager")) {
+        throw Route.redirect({to: "/"})
+    }
+  },
 });
 
 function RouteComponent() {
