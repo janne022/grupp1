@@ -16,7 +16,7 @@ namespace Vicaria.Server.Features.Auth.ForgotPassword
             {
                 string token = await userManager.GeneratePasswordResetTokenAsync(user);
 
-                string baseUrl = config["Frontend:BaseUrl"]!;
+                string baseUrl = config["WEBFRONTEND_HTTP"]!;
 
                 string link = $"{baseUrl}/reset-password?userId={user.Id}&token={Uri.EscapeDataString(token)}";
 
