@@ -14,6 +14,7 @@ import { Route as authResetPasswordRouteImport } from './features/(auth)/reset-p
 import { Route as authSignupRouteImport } from './features/(auth)/signup'
 import { Route as calendarIndexRouteImport } from './features/(calendar)/index'
 import { Route as InboxIndexRouteImport } from './features/inbox/index'
+import { Route as SubstituteListIndexRouteImport } from './features/substituteList/index'
 
 const authLoginRoute = authLoginRouteImport.update({
   id: '/(auth)/login',
@@ -40,6 +41,11 @@ const InboxIndexRoute = InboxIndexRouteImport.update({
   path: '/inbox/',
   getParentRoute: () => rootRouteImport,
 } as any)
+const SubstituteListIndexRoute = SubstituteListIndexRouteImport.update({
+  id: '/substituteList/',
+  path: '/substituteList/',
+  getParentRoute: () => rootRouteImport,
+} as any)
 
 export interface FileRoutesByFullPath {
   '/login': typeof authLoginRoute
@@ -47,6 +53,7 @@ export interface FileRoutesByFullPath {
   '/signup': typeof authSignupRoute
   '/': typeof calendarIndexRoute
   '/inbox/': typeof InboxIndexRoute
+  '/substituteList/': typeof SubstituteListIndexRoute
 }
 export interface FileRoutesByTo {
   '/login': typeof authLoginRoute
@@ -54,6 +61,7 @@ export interface FileRoutesByTo {
   '/signup': typeof authSignupRoute
   '/': typeof calendarIndexRoute
   '/inbox': typeof InboxIndexRoute
+  '/substituteList': typeof SubstituteListIndexRoute
 }
 export interface FileRoutesById {
   __root__: typeof rootRouteImport
@@ -62,19 +70,20 @@ export interface FileRoutesById {
   '/(auth)/signup': typeof authSignupRoute
   '/(calendar)/': typeof calendarIndexRoute
   '/inbox/': typeof InboxIndexRoute
+  '/substituteList/': typeof SubstituteListIndexRoute
 }
 export interface FileRouteTypes {
   fileRoutesByFullPath: FileRoutesByFullPath
-  fullPaths: '/login' | '/reset-password' | '/signup' | '/' | '/inbox/'
+  fullPaths: '/login' | '/signup' | '/' | '/inbox/' | '/substituteList/'
   fileRoutesByTo: FileRoutesByTo
-  to: '/login' | '/reset-password' | '/signup' | '/' | '/inbox'
+  to: '/login' | '/signup' | '/' | '/inbox' | '/substituteList'
   id:
     | '__root__'
     | '/(auth)/login'
-    | '/(auth)/reset-password'
     | '/(auth)/signup'
     | '/(calendar)/'
     | '/inbox/'
+    | '/substituteList/'
   fileRoutesById: FileRoutesById
 }
 export interface RootRouteChildren {
@@ -83,6 +92,7 @@ export interface RootRouteChildren {
   authSignupRoute: typeof authSignupRoute
   calendarIndexRoute: typeof calendarIndexRoute
   InboxIndexRoute: typeof InboxIndexRoute
+  SubstituteListIndexRoute: typeof SubstituteListIndexRoute
 }
 
 declare module '@tanstack/react-router' {
@@ -122,6 +132,13 @@ declare module '@tanstack/react-router' {
       preLoaderRoute: typeof InboxIndexRouteImport
       parentRoute: typeof rootRouteImport
     }
+    '/substituteList/': {
+      id: '/substituteList/'
+      path: '/substituteList'
+      fullPath: '/substituteList/'
+      preLoaderRoute: typeof SubstituteListIndexRouteImport
+      parentRoute: typeof rootRouteImport
+    }
   }
 }
 
@@ -131,6 +148,7 @@ const rootRouteChildren: RootRouteChildren = {
   authSignupRoute: authSignupRoute,
   calendarIndexRoute: calendarIndexRoute,
   InboxIndexRoute: InboxIndexRoute,
+  SubstituteListIndexRoute: SubstituteListIndexRoute,
 }
 export const routeTree = rootRouteImport
   ._addFileChildren(rootRouteChildren)
