@@ -1,11 +1,5 @@
 import { Link } from "@tanstack/react-router";
-import {
-  PersonStanding,
-  Home,
-  UserGroup,
-  Settings,
-  Mail,
-} from "lucide-react";
+import { PersonStanding, Home, Settings, Mail, Users } from "lucide-react";
 import { NavUser } from "./NavUser";
 import {
   SidebarHeader,
@@ -18,15 +12,19 @@ import {
   SidebarGroupContent,
   SidebarFooter,
 } from "../../../shared/components/ui/sidebar";
+import { useIsManager } from "@/shared/hooks/use-is-manager";
 
 const navLinks = [
   { label: "Hem", to: "/", Icon: Home },
   { label: "Inkorg", to: "/inbox", Icon: Mail },
-  { label: "länk 3", to: "/link3", Icon: UserGroup },
+  { label: "Vikarier", to: "/substituteList", Icon: Users, managerOnly: true },
   { label: "länk 4", to: "/link4", Icon: Settings },
 ];
 
 export default function Appbar() {
+  const isManager = useIsManager();
+  const navLinksFiltered = navLinks.filter((l) => !l.managerOnly || isManager);
+
   return (
     <Sidebar variant="inset" className="border-r">
       <SidebarHeader className="flex flex-row items-center gap-2">
@@ -37,7 +35,7 @@ export default function Appbar() {
         <SidebarGroupLabel></SidebarGroupLabel>
         <SidebarGroupContent>
           <SidebarMenu>
-            {navLinks.map((link) => {
+            {navLinksFiltered.map((link) => {
               const Icon = link.Icon;
 
               return (
