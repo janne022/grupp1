@@ -1316,38 +1316,6 @@
         }
       }
     },
-    "/api/auth/forgot-password": {
-      "post": {
-        "tags": [
-          "ForgotPassword"
-        ],
-        "requestBody": {
-          "content": {
-            "application/json": {
-              "schema": {
-                "$ref": "#/components/schemas/ForgotPasswordCommand"
-              }
-            },
-            "text/json": {
-              "schema": {
-                "$ref": "#/components/schemas/ForgotPasswordCommand"
-              }
-            },
-            "application/*+json": {
-              "schema": {
-                "$ref": "#/components/schemas/ForgotPasswordCommand"
-              }
-            }
-          },
-          "required": true
-        },
-        "responses": {
-          "200": {
-            "description": "OK"
-          }
-        }
-      }
-    },
     "/api/account/names": {
       "patch": {
         "tags": [
@@ -1376,6 +1344,35 @@
         "responses": {
           "200": {
             "description": "OK"
+          }
+        }
+      }
+    },
+    "/api/account/all": {
+      "get": {
+        "tags": [
+          "AllSubstitutes"
+        ],
+        "responses": {
+          "200": {
+            "description": "OK",
+            "content": {
+              "text/plain": {
+                "schema": {
+                  "$ref": "#/components/schemas/AllSubstitutesResponse"
+                }
+              },
+              "application/json": {
+                "schema": {
+                  "$ref": "#/components/schemas/AllSubstitutesResponse"
+                }
+              },
+              "text/json": {
+                "schema": {
+                  "$ref": "#/components/schemas/AllSubstitutesResponse"
+                }
+              }
+            }
           }
         }
       }
@@ -1477,6 +1474,48 @@
           },
           "refreshToken": {
             "type": "string"
+          }
+        }
+      },
+      "AllSubstitutesDTO": {
+        "required": [
+          "substituteId",
+          "firstName",
+          "lastName",
+          "phoneNumber",
+          "email"
+        ],
+        "type": "object",
+        "properties": {
+          "substituteId": {
+            "type": "string",
+            "format": "uuid"
+          },
+          "firstName": {
+            "type": "string"
+          },
+          "lastName": {
+            "type": "string"
+          },
+          "phoneNumber": {
+            "type": "string"
+          },
+          "email": {
+            "type": "string"
+          }
+        }
+      },
+      "AllSubstitutesResponse": {
+        "required": [
+          "allSubstitutes"
+        ],
+        "type": "object",
+        "properties": {
+          "allSubstitutes": {
+            "type": "array",
+            "items": {
+              "$ref": "#/components/schemas/AllSubstitutesDTO"
+            }
           }
         }
       },
@@ -2799,10 +2838,10 @@
       "name": "Auth"
     },
     {
-      "name": "ForgotPassword"
+      "name": "UserNamesChange"
     },
     {
-      "name": "UserNamesChange"
+      "name": "AllSubstitutes"
     }
   ]
 }
