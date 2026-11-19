@@ -167,16 +167,6 @@
         "responses": {
           "200": {
             "description": "OK"
-          },
-          "400": {
-            "description": "Bad Request",
-            "content": {
-              "application/problem+json": {
-                "schema": {
-                  "$ref": "#/components/schemas/HttpValidationProblemDetails"
-                }
-              }
-            }
           }
         }
       }
@@ -1287,6 +1277,38 @@
         "tags": [
           "Auth"
         ],
+        "responses": {
+          "200": {
+            "description": "OK"
+          }
+        }
+      }
+    },
+    "/api/account/names": {
+      "patch": {
+        "tags": [
+          "UserNamesChange"
+        ],
+        "requestBody": {
+          "content": {
+            "application/json": {
+              "schema": {
+                "$ref": "#/components/schemas/UserNamesChangeQuery"
+              }
+            },
+            "text/json": {
+              "schema": {
+                "$ref": "#/components/schemas/UserNamesChangeQuery"
+              }
+            },
+            "application/*+json": {
+              "schema": {
+                "$ref": "#/components/schemas/UserNamesChangeQuery"
+              }
+            }
+          },
+          "required": true
+        },
         "responses": {
           "200": {
             "description": "OK"
@@ -2623,6 +2645,27 @@
             "type": "string"
           }
         }
+      },
+      "UserNamesChangeQuery": {
+        "required": [
+          "newFirstName",
+          "newLastName"
+        ],
+        "type": "object",
+        "properties": {
+          "newFirstName": {
+            "type": [
+              "null",
+              "string"
+            ]
+          },
+          "newLastName": {
+            "type": [
+              "null",
+              "string"
+            ]
+          }
+        }
       }
     }
   },
@@ -2656,6 +2699,9 @@
     },
     {
       "name": "Auth"
+    },
+    {
+      "name": "UserNamesChange"
     }
   ]
 }
