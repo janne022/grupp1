@@ -73,7 +73,7 @@ namespace Vicaria.Server.Features.Emails
                 await client.SendAsync(message);
                 _logger.LogInformation(
                     "Mail was sent to {mail receiver} via {host}:{port}",
-                    email.To.Email,
+                    email.To.Id,
                     uri.Host,
                     uri.Port
                 );
@@ -86,7 +86,7 @@ namespace Vicaria.Server.Features.Emails
                 _logger.LogError(
                     ex,
                     "Failed to send email to {mailReceiver} via {host}:{port}",
-                    email.To.Email,
+                    email.To.Id,
                     uri.Host,
                     uri.Port
                 );
