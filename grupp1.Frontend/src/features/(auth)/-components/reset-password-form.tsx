@@ -32,7 +32,7 @@ const formSchema = z
     confirmPassword: z.string().min(1, "Bekräfta ditt lösenord"),
   })
   .refine((data) => data.password === data.confirmPassword, {
-    message: "Lösenorden matcher ej",
+    message: "Lösenorden matchar ej",
     path: ["confirmPassword"],
   });
 

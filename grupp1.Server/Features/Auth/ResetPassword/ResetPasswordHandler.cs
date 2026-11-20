@@ -15,7 +15,7 @@ namespace Vicaria.Server.Features.Auth.ResetPassword
             if (user is null)
             {
                 logger.LogWarning("user {userId} is null", command.UserId);
-                return Error.Validation("Länken är ogiltig eller har gått ut.");
+                return Error.Validation("Auth.LinkNotValid", "Länken är ogiltig eller har gått ut.");
             }
 
             var result = await userManager.ResetPasswordAsync(user, command.Token, command.NewPassword);
@@ -24,7 +24,7 @@ namespace Vicaria.Server.Features.Auth.ResetPassword
             {
                 logger.LogWarning("Password reset failed for {UserId}: {Codes}",
                     user.Id, string.Join(", ", result.Errors.Select(e => e.Code)));
-                return Error.Validation("Länken är ogiltig eller har gått ut.");
+                return Error.Validation("Auth.LinkNotValid", "Länken är ogiltig eller har gått ut.");
             }
 
             await userManager.SetLockoutEndDateAsync(user, null);
