@@ -10,6 +10,7 @@
 
 import { Route as rootRouteImport } from './features/__root'
 import { Route as authLoginRouteImport } from './features/(auth)/login'
+import { Route as authResetPasswordRouteImport } from './features/(auth)/reset-password'
 import { Route as authSignupRouteImport } from './features/(auth)/signup'
 import { Route as calendarIndexRouteImport } from './features/(calendar)/index'
 import { Route as InboxIndexRouteImport } from './features/inbox/index'
@@ -18,6 +19,11 @@ import { Route as ProfileIndexRouteImport } from './features/profile/index'
 const authLoginRoute = authLoginRouteImport.update({
   id: '/(auth)/login',
   path: '/login',
+  getParentRoute: () => rootRouteImport,
+} as any)
+const authResetPasswordRoute = authResetPasswordRouteImport.update({
+  id: '/(auth)/reset-password',
+  path: '/reset-password',
   getParentRoute: () => rootRouteImport,
 } as any)
 const authSignupRoute = authSignupRouteImport.update({
@@ -43,6 +49,7 @@ const ProfileIndexRoute = ProfileIndexRouteImport.update({
 
 export interface FileRoutesByFullPath {
   '/login': typeof authLoginRoute
+  '/reset-password': typeof authResetPasswordRoute
   '/signup': typeof authSignupRoute
   '/': typeof calendarIndexRoute
   '/inbox/': typeof InboxIndexRoute
@@ -50,6 +57,7 @@ export interface FileRoutesByFullPath {
 }
 export interface FileRoutesByTo {
   '/login': typeof authLoginRoute
+  '/reset-password': typeof authResetPasswordRoute
   '/signup': typeof authSignupRoute
   '/': typeof calendarIndexRoute
   '/inbox': typeof InboxIndexRoute
@@ -58,6 +66,7 @@ export interface FileRoutesByTo {
 export interface FileRoutesById {
   __root__: typeof rootRouteImport
   '/(auth)/login': typeof authLoginRoute
+  '/(auth)/reset-password': typeof authResetPasswordRoute
   '/(auth)/signup': typeof authSignupRoute
   '/(calendar)/': typeof calendarIndexRoute
   '/inbox/': typeof InboxIndexRoute
@@ -65,12 +74,13 @@ export interface FileRoutesById {
 }
 export interface FileRouteTypes {
   fileRoutesByFullPath: FileRoutesByFullPath
-  fullPaths: '/login' | '/signup' | '/' | '/inbox/' | '/profile/'
+  fullPaths: '/login' | '/reset-password' | '/signup' | '/' | '/inbox/' | '/profile/'
   fileRoutesByTo: FileRoutesByTo
-  to: '/login' | '/signup' | '/' | '/inbox' | '/profile'
+  to: '/login' | '/reset-password' | '/signup' | '/' | '/inbox' | '/profile'
   id:
     | '__root__'
     | '/(auth)/login'
+    | '/(auth)/reset-password'
     | '/(auth)/signup'
     | '/(calendar)/'
     | '/inbox/'
@@ -79,6 +89,7 @@ export interface FileRouteTypes {
 }
 export interface RootRouteChildren {
   authLoginRoute: typeof authLoginRoute
+  authResetPasswordRoute: typeof authResetPasswordRoute
   authSignupRoute: typeof authSignupRoute
   calendarIndexRoute: typeof calendarIndexRoute
   InboxIndexRoute: typeof InboxIndexRoute
@@ -92,6 +103,13 @@ declare module '@tanstack/react-router' {
       path: '/login'
       fullPath: '/login'
       preLoaderRoute: typeof authLoginRouteImport
+      parentRoute: typeof rootRouteImport
+    }
+    '/(auth)/reset-password': {
+      id: '/(auth)/reset-password'
+      path: '/reset-password'
+      fullPath: '/reset-password'
+      preLoaderRoute: typeof authResetPasswordRouteImport
       parentRoute: typeof rootRouteImport
     }
     '/(auth)/signup': {
@@ -127,6 +145,7 @@ declare module '@tanstack/react-router' {
 
 const rootRouteChildren: RootRouteChildren = {
   authLoginRoute: authLoginRoute,
+  authResetPasswordRoute: authResetPasswordRoute,
   authSignupRoute: authSignupRoute,
   calendarIndexRoute: calendarIndexRoute,
   InboxIndexRoute: InboxIndexRoute,
