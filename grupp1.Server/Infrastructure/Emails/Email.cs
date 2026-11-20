@@ -2,7 +2,7 @@ using Vicaria.Server.Domain.Models;
 
 namespace Vicaria.Server.Infrastructure.Emails
 {
-    public class Email(User to, string subject, IEmailTemplate emailTemplate, string? sendAddress)
+    public class Email(User to, string subject, IEmailTemplate emailTemplate, string? sendAddress = null)
     {
         public User To { get; } = to;
         public string Subject { get; } = subject;
