@@ -70,6 +70,8 @@ public class Program
             .AddEntityFrameworkStores<VicariaDbContext>()
             .AddDefaultTokenProviders();
 
+        builder.Services.AddSingleton<IEmailSender<User>, IdentityEmailMapper>(); // allows Identity endpoints to use Vicaria's EmailService
+
         builder.Services.ConfigureApplicationCookie(options =>
         {
             options.Cookie.Name = "VicariaCookie";

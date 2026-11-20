@@ -24,7 +24,7 @@ namespace Vicaria.Server.Features.Emails
 
         public async Task<ErrorOr<Success>> SendEmailAsync(Email email)
         {
-            if (string.IsNullOrEmpty(email.To.Email))
+            if (string.IsNullOrEmpty(email.SendAddress))
             {
                 _logger.LogError("Recipient email was null or empty in SendEmailAsync");
                 return Error.Validation("Email.MissingRecipient", "Recipient's email address was missing");
@@ -46,7 +46,7 @@ namespace Vicaria.Server.Features.Emails
 
             var message = new MimeMessage();
             message.From.Add(new MailboxAddress(fromName, fromAddress));
-            message.To.Add(new MailboxAddress("", email.To.Email));
+            message.To.Add(new MailboxAddress("", email.SendAddress));
             message.Subject = email.Subject;
             message.Body = new TextPart("html") { Text = email.EmailTemplate.GetBody() };
 
@@ -73,7 +73,7 @@ namespace Vicaria.Server.Features.Emails
                 await client.SendAsync(message);
                 _logger.LogInformation(
                     "Mail was sent to {mail receiver} via {host}:{port}",
-                    email.To.Email,
+                    email.To.Id,
                     uri.Host,
                     uri.Port
                 );
@@ -86,7 +86,7 @@ namespace Vicaria.Server.Features.Emails
                 _logger.LogError(
                     ex,
                     "Failed to send email to {mailReceiver} via {host}:{port}",
-                    email.To.Email,
+                    email.To.Id,
                     uri.Host,
                     uri.Port
                 );
