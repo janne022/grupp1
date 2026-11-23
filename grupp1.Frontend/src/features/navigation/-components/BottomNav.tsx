@@ -5,7 +5,7 @@ const navLinks = [
   { label: "Hem", to: "/", Icon: Home },
   { label: "Översikt", to: "/calendar", Icon: CalendarDays },
   { label: "länk 3", to: "/link3", Icon: Users },
-  { label: "Profil", to: "/link4", Icon: User },
+  { label: "Profil", to: "/profile", Icon: User },
 ];
 
 export default function BottomNav() {
