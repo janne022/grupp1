@@ -1,4 +1,5 @@
 export * from './accept-pending-time/accept-pending-time';
+export * from './all-substitutes/all-substitutes';
 export * from './auth/auth';
 export * from './available-times/available-times';
 export * from './decided-times/decided-times';
@@ -8,3 +9,4 @@ export * from './kindergarten/kindergarten';
 export * from './pending-times/pending-times';
 export * from './remove-current-user/remove-current-user';
 export * from './user-info/user-info';
+export * from './user-names-change/user-names-change';
