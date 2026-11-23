@@ -1,6 +1,12 @@
 import { LogOutIcon, BellIcon, Menu, UserCircle } from "lucide-react";
+import { Link } from "@tanstack/react-router";
+import { useLogoutAndRedirectToLogin } from "@/features/(auth)/-api/LogoutService";
 
-import { Avatar, AvatarFallback, AvatarImage } from "@/shared/components/ui/avatar";
+import {
+  Avatar,
+  AvatarFallback,
+  AvatarImage,
+} from "@/shared/components/ui/avatar";
 import {
   DropdownMenu,
   DropdownMenuContent,
@@ -18,14 +24,13 @@ import {
 
 import { useCurrentUser } from "@/shared/services/MeService";
 
-import { Link } from "@tanstack/react-router";
-
 type NavUserProps = {
   isMobile?: boolean;
 };
 
 export function NavUser({ isMobile = false }: NavUserProps) {
   const { data: user } = useCurrentUser();
+  const { logoutAndRedirectToLogin, isPending } = useLogoutAndRedirectToLogin();
 
   const fullNameSplit = [user?.firstName, user?.lastName].map((name) =>
     name
@@ -98,12 +103,12 @@ export function NavUser({ isMobile = false }: NavUserProps) {
               </DropdownMenuLabel>
               <DropdownMenuSeparator />
               <DropdownMenuGroup>
-                <DropdownMenuItem>
-                  {/* TODO: Connect this to the profile page */}
-                  <Link to="/" className="flex flex-row gap-2 items-center">
-                    <UserCircle />
-                    Profil
-                  </Link>
+                <DropdownMenuItem
+                  className="cursor-pointer"
+                  render={<Link to="/profile" />}
+                >
+                  <UserCircle />
+                  Profil
                 </DropdownMenuItem>
                 <DropdownMenuItem>
                   {/* TODO: Add a real link */}
@@ -114,8 +119,11 @@ export function NavUser({ isMobile = false }: NavUserProps) {
                 </DropdownMenuItem>
               </DropdownMenuGroup>
               <DropdownMenuSeparator />
-              <DropdownMenuItem>
-                {/* TODO: Connect this to logout functionality */}
+              <DropdownMenuItem
+                className="cursor-pointer"
+                disabled={isPending}
+                onClick={logoutAndRedirectToLogin}
+              >
                 <LogOutIcon />
                 Logga ut
               </DropdownMenuItem>
