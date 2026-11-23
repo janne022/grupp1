@@ -6,6 +6,7 @@
     <Nullable>enable</Nullable>
     <OpenApiDocumentsDirectory>$(MSBuildProjectDirectory)</OpenApiDocumentsDirectory>
     <OpenApiGenerateDocumentsOptions>--file-name openapi</OpenApiGenerateDocumentsOptions>
+    <UserSecretsId>ac2d66ac-1c46-45c2-8b2c-d234155bf138</UserSecretsId>
   </PropertyGroup>
 
   <ItemGroup>
