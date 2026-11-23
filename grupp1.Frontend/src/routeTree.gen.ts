@@ -74,12 +74,25 @@ export interface FileRoutesById {
 }
 export interface FileRouteTypes {
   fileRoutesByFullPath: FileRoutesByFullPath
-  fullPaths: '/login' | '/signup' | '/' | '/inbox/' | '/substituteList/'
+  fullPaths:
+    | '/login'
+    | '/reset-password'
+    | '/signup'
+    | '/'
+    | '/inbox/'
+    | '/substituteList/'
   fileRoutesByTo: FileRoutesByTo
-  to: '/login' | '/signup' | '/' | '/inbox' | '/substituteList'
+  to:
+    | '/login'
+    | '/reset-password'
+    | '/signup'
+    | '/'
+    | '/inbox'
+    | '/substituteList'
   id:
     | '__root__'
     | '/(auth)/login'
+    | '/(auth)/reset-password'
     | '/(auth)/signup'
     | '/(calendar)/'
     | '/inbox/'

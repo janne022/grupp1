@@ -1316,6 +1316,38 @@
         }
       }
     },
+    "/api/auth/forgot-password": {
+      "post": {
+        "tags": [
+          "ForgotPassword"
+        ],
+        "requestBody": {
+          "content": {
+            "application/json": {
+              "schema": {
+                "$ref": "#/components/schemas/ForgotPasswordCommand"
+              }
+            },
+            "text/json": {
+              "schema": {
+                "$ref": "#/components/schemas/ForgotPasswordCommand"
+              }
+            },
+            "application/*+json": {
+              "schema": {
+                "$ref": "#/components/schemas/ForgotPasswordCommand"
+              }
+            }
+          },
+          "required": true
+        },
+        "responses": {
+          "200": {
+            "description": "OK"
+          }
+        }
+      }
+    },
     "/api/account/names": {
       "patch": {
         "tags": [
@@ -2836,6 +2868,9 @@
     },
     {
       "name": "Auth"
+    },
+    {
+      "name": "ForgotPassword"
     },
     {
       "name": "UserNamesChange"
