@@ -1379,6 +1379,35 @@
           }
         }
       }
+    },
+    "/api/account/all": {
+      "get": {
+        "tags": [
+          "AllSubstitutes"
+        ],
+        "responses": {
+          "200": {
+            "description": "OK",
+            "content": {
+              "text/plain": {
+                "schema": {
+                  "$ref": "#/components/schemas/AllSubstitutesResponse"
+                }
+              },
+              "application/json": {
+                "schema": {
+                  "$ref": "#/components/schemas/AllSubstitutesResponse"
+                }
+              },
+              "text/json": {
+                "schema": {
+                  "$ref": "#/components/schemas/AllSubstitutesResponse"
+                }
+              }
+            }
+          }
+        }
+      }
     }
   },
   "components": {
@@ -1477,6 +1506,48 @@
           },
           "refreshToken": {
             "type": "string"
+          }
+        }
+      },
+      "AllSubstitutesDTO": {
+        "required": [
+          "substituteId",
+          "firstName",
+          "lastName",
+          "phoneNumber",
+          "email"
+        ],
+        "type": "object",
+        "properties": {
+          "substituteId": {
+            "type": "string",
+            "format": "uuid"
+          },
+          "firstName": {
+            "type": "string"
+          },
+          "lastName": {
+            "type": "string"
+          },
+          "phoneNumber": {
+            "type": "string"
+          },
+          "email": {
+            "type": "string"
+          }
+        }
+      },
+      "AllSubstitutesResponse": {
+        "required": [
+          "allSubstitutes"
+        ],
+        "type": "object",
+        "properties": {
+          "allSubstitutes": {
+            "type": "array",
+            "items": {
+              "$ref": "#/components/schemas/AllSubstitutesDTO"
+            }
           }
         }
       },
@@ -2803,6 +2874,9 @@
     },
     {
       "name": "UserNamesChange"
+    },
+    {
+      "name": "AllSubstitutes"
     }
   ]
 }
