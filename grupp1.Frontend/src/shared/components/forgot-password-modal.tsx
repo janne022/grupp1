@@ -9,28 +9,32 @@ import {
 import { Input } from "@/shared/components/ui/input";
 import { Button } from "@/shared/components/ui/button";
 import { Label } from "@/shared/components/ui/label";
+import { useForgotPassword } from "@/features/(auth)/-api/ForgotPasswordService";
 
 export function ForgotPasswordModal() {
   const [email, setEmail] = useState("");
   const [open, setOpen] = useState(false);
   const [submitted, setSubmitted] = useState(false);
+  const forgotPassword = useForgotPassword();
 
   const handleSubmit = async (event: React.SubmitEvent) => {
     event.preventDefault();
     event.stopPropagation();
 
-    // TODO: The actual API call hereeeee
+    forgotPassword.mutate(email, {
+      onSuccess: () => setSubmitted(true),
+    });
 
     setSubmitted(true);
   };
 
-const handleOpenChange = (nextOpen: boolean) => {
-  if (nextOpen) {
-    setSubmitted(false);
-    setEmail("");
-  }
-  setOpen(nextOpen);
-};
+  const handleOpenChange = (nextOpen: boolean) => {
+    if (nextOpen) {
+      setSubmitted(false);
+      setEmail("");
+    }
+    setOpen(nextOpen);
+  };
 
   return (
     <Dialog open={open} onOpenChange={handleOpenChange}>
