@@ -1,9 +1,5 @@
-using Castle.Core.Logging;
-using ErrorOr;
 using Microsoft.AspNetCore.Identity;
 using Microsoft.EntityFrameworkCore;
-using Microsoft.Extensions.Configuration.UserSecrets;
-using Microsoft.Extensions.Logging;
 using Microsoft.Extensions.Logging.Abstractions;
 using Vicaria.Server.Domain.Models;
 using Vicaria.Server.Features.Kindergarten.AddManagerToKindergarten;
