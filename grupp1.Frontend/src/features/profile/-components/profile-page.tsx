@@ -1,4 +1,6 @@
 import { Navigate } from "@tanstack/react-router";
+import { LogOutIcon } from "lucide-react";
+import { Button } from "@/shared/components/ui/button";
 import { useCurrentUser } from "@/shared/services/MeService";
 import {
   Card,
@@ -9,9 +11,12 @@ import {
 import { NameForm } from "@/features/profile/-components/name-form";
 import { PasswordForm } from "@/features/profile/-components/password-form";
 import { EmailForm } from "@/features/profile/-components/email-form";
+import { useLogoutAndRedirectToLogin } from "@/features/(auth)/-api/LogoutService";
 
 export function ProfilePage() {
   const { data: user, isPending, isError } = useCurrentUser();
+  const { logoutAndRedirectToLogin, isPending: isLoggingOut } =
+    useLogoutAndRedirectToLogin();
 
   if (isPending) {
     return <p className="p-4 text-muted-foreground">Var god vänta...</p>;
@@ -58,6 +63,16 @@ export function ProfilePage() {
           <PasswordForm />
         </CardContent>
       </Card>
+
+      <Button
+        variant="outline"
+        className="w-full"
+        onClick={logoutAndRedirectToLogin}
+        disabled={isLoggingOut}
+      >
+        <LogOutIcon />
+        Logga ut
+      </Button>
     </div>
   );
 }

@@ -1,6 +1,6 @@
-import { LogOutIcon, BellIcon, Menu, UserCircle /*User*/ } from "lucide-react";
-import { Link, useNavigate } from "@tanstack/react-router";
-import { useLogout } from "@/features/(auth)/-api/LogoutService";
+import { LogOutIcon, BellIcon, Menu, UserCircle } from "lucide-react";
+import { Link } from "@tanstack/react-router";
+import { useLogoutAndRedirectToLogin } from "@/features/(auth)/-api/LogoutService";
 
 import {
   Avatar,
@@ -30,6 +30,7 @@ type NavUserProps = {
 
 export function NavUser({ isMobile = false }: NavUserProps) {
   const { data: user } = useCurrentUser();
+  const { logoutAndRedirectToLogin, isPending } = useLogoutAndRedirectToLogin();
 
   const fullNameSplit = [user?.firstName, user?.lastName].map((name) =>
     name
@@ -37,19 +38,6 @@ export function NavUser({ isMobile = false }: NavUserProps) {
       .map((name) => name[0])
       .join(""),
   );
-
-  const logout = useLogout();
-  const navigate = useNavigate();
-
-  async function handleLogout() {
-    try {
-      await logout.mutateAsync();
-      await navigate({ to: "/login" });
-    } catch {
-      // this should never happen I HOPE HOPE HOPE
-      // I guess the user is stuck in our eternal Vicaria purgatory
-    }
-  }
 
   return (
     <SidebarMenu>
@@ -133,8 +121,8 @@ export function NavUser({ isMobile = false }: NavUserProps) {
               <DropdownMenuSeparator />
               <DropdownMenuItem
                 className="cursor-pointer"
-                disabled={logout.isPending}
-                onClick={handleLogout}
+                disabled={isPending}
+                onClick={logoutAndRedirectToLogin}
               >
                 <LogOutIcon />
                 Logga ut
