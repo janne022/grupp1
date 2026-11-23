@@ -17,7 +17,7 @@ import { useIsManager } from "@/shared/hooks/use-is-manager";
 const navLinks = [
   { label: "Hem", to: "/", Icon: Home },
   { label: "Inkorg", to: "/inbox", Icon: Mail },
-  { label: "Vikarier", to: "/substituteList", Icon: Users, managerOnly: true },
+  { label: "Vikarier", to: "/substitute-list", Icon: Users, managerOnly: true },
   { label: "länk 4", to: "/link4", Icon: Settings },
 ];
 

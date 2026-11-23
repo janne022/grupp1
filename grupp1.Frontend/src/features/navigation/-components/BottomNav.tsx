@@ -5,7 +5,7 @@ import { Home, CalendarDays, Users, User } from "lucide-react";
 const navLinks = [
   { label: "Hem", to: "/", Icon: Home },
   { label: "Översikt", to: "/calendar", Icon: CalendarDays },
-  { label: "Vikarier", to: "/substituteList", Icon: Users, managerOnly: true },
+  { label: "Vikarier", to: "/substitute-list", Icon: Users, managerOnly: true },
   { label: "Profil", to: "/link4", Icon: User },
 ];
 
