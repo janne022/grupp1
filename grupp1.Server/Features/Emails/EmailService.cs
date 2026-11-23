@@ -5,7 +5,6 @@ using MimeKit;
 using ErrorOr;
 using Vicaria.Server.Infrastructure.Emails;
 
-// TODO: Find and implement an actual email provider!
 // When the time comes to hook this up to an actual provider:
 //    dotnet user-secrets set "SMTP_URI" "smtp://smtp.ouremailprovider.com:port"
 //    dotnet user-secrets set "SMTP_USERNAME" "LoginAtTheEmailProvider"
