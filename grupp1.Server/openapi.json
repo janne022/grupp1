@@ -167,16 +167,6 @@
         "responses": {
           "200": {
             "description": "OK"
-          },
-          "400": {
-            "description": "Bad Request",
-            "content": {
-              "application/problem+json": {
-                "schema": {
-                  "$ref": "#/components/schemas/HttpValidationProblemDetails"
-                }
-              }
-            }
           }
         }
       }
@@ -1238,6 +1228,38 @@
         }
       }
     },
+    "/api/auth/reset-password": {
+      "post": {
+        "tags": [
+          "ResetPassword"
+        ],
+        "requestBody": {
+          "content": {
+            "application/json": {
+              "schema": {
+                "$ref": "#/components/schemas/ResetPasswordCommand"
+              }
+            },
+            "text/json": {
+              "schema": {
+                "$ref": "#/components/schemas/ResetPasswordCommand"
+              }
+            },
+            "application/*+json": {
+              "schema": {
+                "$ref": "#/components/schemas/ResetPasswordCommand"
+              }
+            }
+          },
+          "required": true
+        },
+        "responses": {
+          "200": {
+            "description": "OK"
+          }
+        }
+      }
+    },
     "/api/auth/register": {
       "post": {
         "tags": [
@@ -1290,6 +1312,99 @@
         "responses": {
           "200": {
             "description": "OK"
+          }
+        }
+      }
+    },
+    "/api/auth/forgot-password": {
+      "post": {
+        "tags": [
+          "ForgotPassword"
+        ],
+        "requestBody": {
+          "content": {
+            "application/json": {
+              "schema": {
+                "$ref": "#/components/schemas/ForgotPasswordCommand"
+              }
+            },
+            "text/json": {
+              "schema": {
+                "$ref": "#/components/schemas/ForgotPasswordCommand"
+              }
+            },
+            "application/*+json": {
+              "schema": {
+                "$ref": "#/components/schemas/ForgotPasswordCommand"
+              }
+            }
+          },
+          "required": true
+        },
+        "responses": {
+          "200": {
+            "description": "OK"
+          }
+        }
+      }
+    },
+    "/api/account/names": {
+      "patch": {
+        "tags": [
+          "UserNamesChange"
+        ],
+        "requestBody": {
+          "content": {
+            "application/json": {
+              "schema": {
+                "$ref": "#/components/schemas/UserNamesChangeQuery"
+              }
+            },
+            "text/json": {
+              "schema": {
+                "$ref": "#/components/schemas/UserNamesChangeQuery"
+              }
+            },
+            "application/*+json": {
+              "schema": {
+                "$ref": "#/components/schemas/UserNamesChangeQuery"
+              }
+            }
+          },
+          "required": true
+        },
+        "responses": {
+          "200": {
+            "description": "OK"
+          }
+        }
+      }
+    },
+    "/api/account/all": {
+      "get": {
+        "tags": [
+          "AllSubstitutes"
+        ],
+        "responses": {
+          "200": {
+            "description": "OK",
+            "content": {
+              "text/plain": {
+                "schema": {
+                  "$ref": "#/components/schemas/AllSubstitutesResponse"
+                }
+              },
+              "application/json": {
+                "schema": {
+                  "$ref": "#/components/schemas/AllSubstitutesResponse"
+                }
+              },
+              "text/json": {
+                "schema": {
+                  "$ref": "#/components/schemas/AllSubstitutesResponse"
+                }
+              }
+            }
           }
         }
       }
@@ -1391,6 +1506,48 @@
           },
           "refreshToken": {
             "type": "string"
+          }
+        }
+      },
+      "AllSubstitutesDTO": {
+        "required": [
+          "substituteId",
+          "firstName",
+          "lastName",
+          "phoneNumber",
+          "email"
+        ],
+        "type": "object",
+        "properties": {
+          "substituteId": {
+            "type": "string",
+            "format": "uuid"
+          },
+          "firstName": {
+            "type": "string"
+          },
+          "lastName": {
+            "type": "string"
+          },
+          "phoneNumber": {
+            "type": "string"
+          },
+          "email": {
+            "type": "string"
+          }
+        }
+      },
+      "AllSubstitutesResponse": {
+        "required": [
+          "allSubstitutes"
+        ],
+        "type": "object",
+        "properties": {
+          "allSubstitutes": {
+            "type": "array",
+            "items": {
+              "$ref": "#/components/schemas/AllSubstitutesDTO"
+            }
           }
         }
       },
@@ -1670,6 +1827,17 @@
             "items": {
               "$ref": "#/components/schemas/SubstituteDto"
             }
+          }
+        }
+      },
+      "ForgotPasswordCommand": {
+        "required": [
+          "email"
+        ],
+        "type": "object",
+        "properties": {
+          "email": {
+            "type": "string"
           }
         }
       },
@@ -2342,6 +2510,26 @@
           }
         }
       },
+      "ResetPasswordCommand": {
+        "required": [
+          "userId",
+          "token",
+          "newPassword"
+        ],
+        "type": "object",
+        "properties": {
+          "userId": {
+            "type": "string",
+            "format": "uuid"
+          },
+          "token": {
+            "type": "string"
+          },
+          "newPassword": {
+            "type": "string"
+          }
+        }
+      },
       "ResetPasswordRequest": {
         "required": [
           "email",
@@ -2623,6 +2811,27 @@
             "type": "string"
           }
         }
+      },
+      "UserNamesChangeQuery": {
+        "required": [
+          "newFirstName",
+          "newLastName"
+        ],
+        "type": "object",
+        "properties": {
+          "newFirstName": {
+            "type": [
+              "null",
+              "string"
+            ]
+          },
+          "newLastName": {
+            "type": [
+              "null",
+              "string"
+            ]
+          }
+        }
       }
     }
   },
@@ -2655,7 +2864,19 @@
       "name": "AvailableTimes"
     },
     {
+      "name": "ResetPassword"
+    },
+    {
       "name": "Auth"
+    },
+    {
+      "name": "ForgotPassword"
+    },
+    {
+      "name": "UserNamesChange"
+    },
+    {
+      "name": "AllSubstitutes"
     }
   ]
 }

@@ -2,9 +2,9 @@
 #pragma warning disable ASPIREPROCESSCOMMAND001 // to let us use AsExpress()
 #pragma warning disable ASPIREACAEXPRESS001 // to let us use AsExpress()
 using System.Diagnostics;
+using Azure.Provisioning.PostgreSql;
 using Microsoft.Extensions.Logging;
 using Scalar.Aspire;
-using Azure.Provisioning.PostgreSql;
 
 var builder = DistributedApplication.CreateBuilder(args);
 
@@ -14,37 +14,43 @@ var frontendDirectory = Path.GetFullPath(
     Path.Combine(builder.AppHostDirectory, "../grupp1.Frontend")
 );
 
-var cache = builder.AddAzureManagedRedis("cache")
-    .RunAsContainer();
+var cache = builder.AddAzureManagedRedis("cache").RunAsContainer();
 
-var postgres = builder.AddAzurePostgresFlexibleServer("databaseServer")
+var postgres = builder
+    .AddAzurePostgresFlexibleServer("databaseServer")
     .ConfigureInfrastructure(infra =>
-        {
-            var server = infra.GetProvisionableResources()
-                .OfType<PostgreSqlFlexibleServer>()
-                .Single();
+    {
+        var server = infra.GetProvisionableResources().OfType<PostgreSqlFlexibleServer>().Single();
 
-            infra.Add(new PostgreSqlFlexibleServerConfiguration("postgisExtension")
+        infra.Add(
+            new PostgreSqlFlexibleServerConfiguration("postgisExtension")
             {
                 Parent = server,
                 Name = "azure.extensions",
                 Value = "POSTGIS",
-                Source = "user-override"
-            });
-        })
-    .RunAsContainer(db => db.WithLifetime(ContainerLifetime.Persistent)
-    .WithImage("postgis/postgis")
-    .WithDataVolume()
-    .WithPgAdmin());
-
+                Source = "user-override",
+            }
+        );
+    })
+    .RunAsContainer(db =>
+        db.WithLifetime(ContainerLifetime.Persistent)
+            .WithImage("postgis/postgis")
+            .WithDataVolume()
+            .WithPgAdmin()
+    );
 
 var database = postgres.AddDatabase("database");
 
-var migrationService = builder.AddDotnetProject("migrationservice", "../grupp1.MigrationService/grupp1.MigrationService.csproj")
+var migrationService = builder
+    .AddDotnetProject(
+        "migrationservice",
+        "../grupp1.MigrationService/grupp1.MigrationService.csproj"
+    )
     .WithReference(database)
     .WaitFor(database);
 
-var server = builder.AddDotnetProject("server", "../grupp1.Server/grupp1.Server.csproj")
+var server = builder
+    .AddDotnetProject("server", "../grupp1.Server/grupp1.Server.csproj")
     .WithReference(cache)
     .WaitFor(cache)
     .WithHttpHealthCheck("/health")
@@ -66,7 +72,8 @@ if (builder.ExecutionContext.IsRunMode)
         .WithCommand(
             name: "orval",
             displayName: "Generate API Client",
-            executeCommand: context => RunOrvalAsync(context, frontendDirectory));
+            executeCommand: context => RunOrvalAsync(context, frontendDirectory)
+        );
 
     var mailpit = builder.AddMailPit("mailpit").ExcludeFromManifest();
 
@@ -74,21 +81,34 @@ if (builder.ExecutionContext.IsRunMode)
         .WithReference(webfrontend) // for CORS
         .WithEnvironment(
             "FRONTEND_PORT",
-            webfrontend.GetEndpoint("http").Property(EndpointProperty.Port))
-            .WithReference(mailpit)
-    ;
+            webfrontend.GetEndpoint("http").Property(EndpointProperty.Port)
+        )
+        .WithReference(mailpit);
 
-    builder.AddScalarApiReference()
-        .WithApiReference(server);
+    builder.AddScalarApiReference().WithApiReference(server);
+}
 
+if (builder.ExecutionContext.IsPublishMode)
+{
+    var smtpUri = builder.AddParameter("smtp-uri");
+    var smtpUsername = builder.AddParameter("smtp-username");
+    var smtpPassword = builder.AddParameter("smtp-password", secret: true);
+    var smtpFromAddress = builder.AddParameter("smtp-from-address");
 
+    server
+        .WithEnvironment("SMTP_URI", smtpUri)
+        .WithEnvironment("SMTP_USERNAME", smtpUsername)
+        .WithEnvironment("SMTP_PASSWORD", smtpPassword)
+        .WithEnvironment("SMTP_FROM_ADDRESS", smtpFromAddress);
 }
 
 builder.Build().Run();
 
 // Helper method for Orval
 static async Task<ExecuteCommandResult> RunOrvalAsync(
-    ExecuteCommandContext context, string frontendDirectory)
+    ExecuteCommandContext context,
+    string frontendDirectory
+)
 {
     var isWindows = OperatingSystem.IsWindows();
 
@@ -98,7 +118,7 @@ static async Task<ExecuteCommandResult> RunOrvalAsync(
         WorkingDirectory = frontendDirectory,
         UseShellExecute = false,
         RedirectStandardOutput = true,
-        RedirectStandardError = true
+        RedirectStandardError = true,
     };
 
     if (isWindows)
