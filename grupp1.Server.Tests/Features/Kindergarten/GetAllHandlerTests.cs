@@ -6,7 +6,7 @@ using Vicaria.Server.Features.Kindergarten.GetAll;
 using Vicaria.Server.Infrastructure;
 using Model = Vicaria.Server.Domain.Models;
 
-namespace Vicaria.Server.Tests.Kindergarten.GetAll;
+namespace Vicaria.Server.Tests.KindergartenTests.GetAll;
 
 public class GetAllHandlerTests
 {
