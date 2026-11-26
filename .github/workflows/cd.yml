@@ -61,3 +61,8 @@ jobs:
 
       - name: Deploy to Azure Container Apps via Aspire CLI
         run: aspire deploy --non-interactive
+        env:
+          Parameters__smtp-uri: ${{ secrets.SMTP_URI }}
+          Parameters__smtp-username: ${{ secrets.SMTP_USERNAME }}
+          Parameters__smtp-password: ${{ secrets.SMTP_PASSWORD }}
+          Parameters__smtp-from-address: ${{ secrets.SMTP_FROM_ADDRESS }}
